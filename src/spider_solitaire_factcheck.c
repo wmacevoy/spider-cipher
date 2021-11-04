@@ -25,9 +25,7 @@ const wchar_t* TEST_STRINGS [] =
    L"Q(0)A(1)23456789♣+0a0AQ♣0/0b1BA♣1/-39c2C2♣2/-38d3D3♣3/-37e4E4♣4/-36f5F5♣5/-35g6G6♣6/-34h7H7♣7/-33i8I8♣8/-32j9J9♣9/-31♦+10kAKQ♦10/-30lBLA♦11/-29mCM2♦12/-28nDN3♦13/-27oEO4♦14/-26pFP5♦15/-25q@Q6♦16/-24r=R7♦17/-23s\\S8♦18/-22t~T9♦19/-21♥+20u#UQ♥20/-20v$VA♥21/-19w%W2♥22/-18x^X3♥23/-17y&Y4♥24/-16z|Z5♥25/-15<-{6♥26/-14>+}7♥27/-13(/[8♥28/-12)*]9♥29/-11♠+30☐↩_Q♠30/-10,;:A♠31/-9.?!2♠32/-8\"\'`3♠33/-7👍😄❤️4♠34/-6👎😢💔5♠35/-5↓6♠36/-4↑7♠37/-3⇊8♠38/-2⇈9♠39/-1",
 };
 
-
 #define DECK_EQ(a,b) { int i; for (i=0; i<CARDS; ++i) { FACT(a[i],==,b[i]); } }
-
 struct CardNotRandIOStruct;
 typedef struct CardNotRandIOStruct
 CardNotRandIO;
@@ -289,6 +287,130 @@ FACTS(SpiderPseudoShuffle) {
   }
 }
 
-FACTS_FINISHED
+FACTS(SpiderPads) {
+  const char *testString = "spidersolitare";
+  Deck testDeck,tmp,deck;
+  deckInit(testDeck);
+  deckInit(tmp);
+  deckInit(deck);
+  
+  for (int i=0; testString[i] != 0; ++i) {
+    DECK_EQ(testDeck,deck);
+    FACT(testCutPad(testDeck),==,deckCutPad(deck));
+    FACT(testCipherPad(testDeck),==,deckCipherPad(deck));
+    Card plain = testString[i]-'a';
+    Card cutCard = cardAdd(plain,deckCutPad(deck));
+    int cutLoc = deckFindCard(deck,cutCard);
+    
+    testCut(testDeck,cutLoc,tmp);
+    testBackFrontShuffle(tmp,testDeck);
+    deckPseudoShuffle(deck,cutLoc);
+  }
+}
 
+FACTS(SpiderCiphers) {
+  const char *testString = "spidersolitare";
+  Deck testDeck,tmp,deck;
+  deckInit(testDeck);
+  deckInit(tmp);
+  deckInit(deck);
+
+  for (int k=0; k<10; ++k) {
+    for (int i=0; testString[i] != 0; ++i) {
+      DECK_EQ(testDeck,deck);
+      for (int j=0; j<CARDS; ++j) {
+	tmp[j]=deck[j];
+      }
+      Card plainCard = testString[i]-'a';
+      Card cipherCard = cardAdd(plainCard,testCipherPad(testDeck));
+      Card cutCard = cardAdd(plainCard,testCutPad(testDeck));
+      int cutLoc = testFindCard(testDeck,cutCard);
+      for (int j=0; j<CARDS; ++j) {
+	deck[j]=tmp[j];
+      }
+      FACT(testCipherPad(testDeck),==,deckCipherPad(deck));
+      FACT(testCutPad(testDeck),==,deckCutPad(deck));      
+      int cipher2 = deckEncryptCard(deck,plainCard);
+      FACT(cipherCard,==,cipher2);
+      
+      for (int j=0; j<CARDS; ++j) {
+	deck[j]=tmp[j];
+      }
+      FACT(testCipherPad(testDeck),==,deckCipherPad(deck));
+      FACT(testCutPad(testDeck),==,deckCutPad(deck));      
+      int plain2 = deckDecryptCard(deck,cipherCard);
+      FACT(plainCard,==,plain2);
+
+      deckPseudoShuffle(testDeck,cutLoc);
+      DECK_EQ(testDeck,deck);
+    }
+  }
+}
+
+int wstrlen(const
+	    wchar_t *s) {  int n; while (*s++ != 0) ++n; return n; }
+
+FACTS(SpiderEncode) {
+  for (int i=0; i<sizeof(TEST_STRINGS)/sizeof(wchar_t*); ++i) {
+    const wchar_t *str=TEST_STRINGS[i];
+    int strLen = wstrlen(str);
+
+    
+    int cardsLen=encodeLen((wchar_t*)str,strLen);
+    Card *cards=(Card*)malloc(sizeof(Card)*cardsLen);
+    encodeArray((wchar_t*)str,strLen,cards,cardsLen);
+
+    int decLen=decodeLen(cards,cardsLen);
+    FACT(decLen,>=,0);
+
+    wchar_t *decode = (wchar_t*)malloc(sizeof(wchar_t)*(decLen+1));
+    decodeArray(cards,cardsLen,decode,decLen);
+    decode[decLen]=0;
+
+    int maxLen = strLen > decLen ? strLen : decLen;
+    for (int j=0; j<maxLen; ++j) {
+      FACT(j < strLen ? str[j] : -1,==,j < decLen ? decode[j] : -1);
+    }
+
+    FACT(strLen,==,decLen);
+  }
+}
+
+FACTS(SpiderEnvelope) {
+  for (int i=0; i<sizeof(TEST_STRINGS)/sizeof(const wchar_t*); ++i) {
+    const wchar_t *str=TEST_STRINGS[i];
+    int strLen = wstrlen(TEST_STRINGS[i]);
+
+    CardNotRandIO nrcg;
+    CardNotRandIOInit(&nrcg);
+    Deck deck;
+    deckInit(deck);
+
+    int maxCardLen = (strLen+PREFIX)*10;
+    Card *cards = (Card*) malloc(sizeof(Card)*maxCardLen);
+    for (int i=0; i<maxCardLen; ++i) cards[i]=0;
+
+    int cardLen=encryptEnvelopeArray(deck,(wchar_t*)str,strLen,
+				     (CardIO*)&nrcg,
+				     &cards[0],maxCardLen);
+    FACT(cardLen,>,0);
+
+    int maxDecStrLen=(strLen+PREFIX)*10;
+    wchar_t *decStr = (wchar_t*) malloc(sizeof(wchar_t)*maxDecStrLen);
+    for (int i=0; i<maxDecStrLen; ++i) decStr[i]=0;
+    deckInit(deck);
+    int decLen=decryptEnvelopeArray(deck,&cards[0],cardLen,&decStr[0],maxDecStrLen);
+
+    int maxLen = strLen > decLen ? strLen : decLen;
+    for (int j=0; j<maxLen; ++j) {
+      FACT(j < strLen ? str[j] : -1,==,j < decLen ? decStr[j] : -1);
+    }
+
+    FACT(strLen,==,decLen);
+    free(decStr);
+    free(cards);
+  }
+}
+
+FACTS_FINISHED
 FACTS_MAIN

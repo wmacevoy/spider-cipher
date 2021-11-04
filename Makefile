@@ -1,6 +1,6 @@
 CSTD?=-std=c11
 CDBG?=-g
-COPT?=-O2
+COPT?=
 CINC?=-Iinclude -I../facts/include
 
 CFLAGS=$(CDBG) $(COPT) $(CSTD) $(CINC)
