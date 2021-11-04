@@ -348,7 +348,7 @@ FACTS(SpiderCiphers) {
 }
 
 int wstrlen(const
-	    wchar_t *s) {  int n; while (*s++ != 0) ++n; return n; }
+	    wchar_t *s) {  int n=0; while (*s++ != 0) ++n; return n; }
 
 FACTS(SpiderEncode) {
   for (int i=0; i<sizeof(TEST_STRINGS)/sizeof(wchar_t*); ++i) {
