@@ -80,16 +80,13 @@ int CIOCardsFmtWrite(CIOCardsFmt *me, int card) {
       exit(1);
     }
   }
+  fprintf(me->out,"(%02d)",card);
 
   int w = CIOGetWrites(me)+1;
 
   if (w % 5 == 0) {
     if (w % 10 == 0) {
-      if (w % 40 == 0) {
-	fprintf(me->out,"\n");
-      } else {
-	fprintf(me->out," ");
-      }
+      fprintf(me->out,"\n");
     } else {
       fprintf(me->out,"-");
     }

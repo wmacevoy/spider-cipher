@@ -1,8 +1,21 @@
 #pragma once
 
+#include <stdio.h>
+#include "cio.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+  struct CIORandStruct;
+  typedef struct CIORandStruct CIORand;
+  struct CIORandStruct {
+    CIO base;
+    FILE *urand;
+  };
+  
+  void CIORandInit(CIORand *me);
+  
   /*  number of cards in deck */
 #define CARDS  40
 
@@ -73,96 +86,31 @@ extern "C" {
   /* return decrypted card and advance deck */
   Card deckDecryptCard(Deck deck, Card plainCard);
 
-  struct CardIOStruct;
-  typedef struct CardIOStruct CardIO;
-  struct CardIOStruct {
-    int (*read)(CardIO *me);
-    int (*write)(CardIO *me, int card);
-    int (*peek)(CardIO *me, int offset);
-    void (*close)(CardIO *me);
-  };
+  struct CIOTranslateStruct;
 
-  struct CardArrayIOStruct;
-  typedef struct CardArrayIOStruct CardArrayIO;
-  
-  struct CardArrayIOStruct {
-    CardIO base;
-    Card *cards;
-    int position;
-    int step;
-    int size;
-    int capacity;
-    int reads;
-
-    int writes;
-  };
-  
-  void CardArrayIOInit(CardArrayIO *me, Card *cards, int step, int size, int capacity);
-
-  struct CardRandIOStruct;
-  typedef struct CardRandIOStruct CardRandIO;
-  struct CardRandIOStruct {
-    CardIO base;
-    FILE *urand;
-  };
-
-  void CardRandIOInit(CardRandIO *me);
-
-  struct CardTranslateIOStruct;
-
-  typedef struct CardTranslateIOStruct CardTranslateIO;
-  struct CardTranslateIOStruct {
-    CardIO base;
-    CardIO *io;
+  typedef struct CIOTranslateStruct CIOTranslate;
+  struct CIOTranslateStruct {
+    CIO base;
+    CIO *io;
     Card *deck;
     int mode;
   };
 
-  void CardTranslateIOInit(CardTranslateIO *me, CardIO *io, Deck deck, int mode);
-  struct WideCharIOStruct;
-  typedef struct WideCharIOStruct WideCharIO;
-  
-  struct WideCharIOStruct {
-    int (*read)(WideCharIO *me);
-    int (*write)(WideCharIO *me, int ch);
-    int (*peek)(WideCharIO *me, int offset);
-    void (*close)(WideCharIO *me);
-  };
+  void CIOTranslateInit(CIOTranslate *me, CIO *io, Deck deck, int mode);
 
+  int encodeIO(CIO *in, CIO *out);
   
-  struct WideCharArrayIOStruct;
-  typedef struct WideCharArrayIOStruct WideCharArrayIO;
-  
-
-  struct WideCharArrayIOStruct {
-    WideCharIO base;
-    wchar_t *chars;
-    int position;
-    int step;
-    int size;
-    int capacity;
-    int reads;
-    int writes;
-  };
-  
-  void WideCharArrayIOInit(WideCharArrayIO *me, wchar_t *chars, int step, int size, int capacity);
-  
-  int encodeIO(WideCharIO *in, CardIO *out);
-  int encodeArray(wchar_t *str, int strLen,
-		  Card *cards, int cardCapacity);
-  int encodeLen(wchar_t *str, int strLen);
-  
-  int decodeIO(CardIO *in, WideCharIO *out);
-  int decodeArray(Card *cards, int cardsLen,
-		  wchar_t *str, int capacity);
+  int decodeIO(CIO *in, CIO *out);
   int decodeLen(Card *cards, int cardsLen);
   int envelopeLen(int encodeLen);
 
-  int encryptEnvelopeIO(Deck deck, WideCharIO *in, CardIO *rng, CardIO *out);
-  int encryptEnvelopeArray(Deck deck, wchar_t *str, int strLen, CardIO *rng, Card *cards, int capacity);
+  int encryptEnvelopeIO(Deck deck, CIO *in, CIO *rng, CIO *out);
+  int encryptEnvelopeArray(Deck deck, wchar_t *str, int strLen,
+			   CIO *rng, Card *cards, int capacity);
 
-  int decryptEnvelopeIO(Deck deck, CardIO *in, CardIO *deniableOut, WideCharIO *out);
-  int decryptEnvelopeArray(Deck deck, Card *cards, int cardLen, wchar_t *str, int strCapacity);  
+  int decryptEnvelopeIO(Deck deck, CIO *in, CIO *deniableOut, CIO *out);
+  int decryptEnvelopeArray(Deck deck, Card *cards, int cardLen,
+			   wchar_t *str, int strCapacity);  
   
 #ifdef __cplusplus
 }
