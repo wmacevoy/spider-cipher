@@ -106,7 +106,6 @@ int CIOCardsFmtWrite(CIOCardsFmt *me, int card) {
     wchar_t face = cardFaceFromNo(faceNo);
     wchar_t suite = cardSuiteFromNo(suiteNo);
 
-    fprintf(me->io,"%02d",card);
     wchar_t ws[2]={face,suite};
     unsigned char buf[8];
     for (int i=0; i<2; ++i) {
@@ -120,16 +119,18 @@ int CIOCardsFmtWrite(CIOCardsFmt *me, int card) {
     }
   }
 
-  int w = CIOGetWrites(me)+1;
+  if (me->mode != 'b') {
+    int w = CIOGetWrites(me)+1;
 
-  if (w % 5 == 0) {
-    if (w % 10 == 0) {
-      fprintf(me->io,"\n");
+    if (w % 5 == 0) {
+      if (w % 10 == 0) {
+	fprintf(me->io,"\n");
+      } else {
+	fprintf(me->io,"-");
+      }
     } else {
-      fprintf(me->io,"-");
+      fprintf(me->io," ");
     }
-  } else {
-    fprintf(me->io," ");
   }
   return 0;
 }
@@ -218,6 +219,30 @@ int main(int argc, char *argv[]) {
       }
     }
 
+    {
+      const char *op="--decimal";
+      if (strcmp(arg,op)==0) {
+	mode = '#';
+	continue;
+      }
+    }
+    
+    {
+      const char *op="--base58";
+      if (strcmp(arg,op)==0) {
+	mode = 'b';
+	continue;
+      }
+    }
+
+    {
+      const char *op="--cards";
+      if (strcmp(arg,op)==0) {
+	mode = 'c';
+	continue;
+      }
+    }
+    
     {
       const char *op="--encrypt=";
       int oplen = strlen(op);      
