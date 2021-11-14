@@ -76,15 +76,34 @@ int cardSuiteNo(Card card)
   return card/10;
 }
 
+static const wchar_t *const FACES=L"QA23456789";
+
 wchar_t cardFaceFromNo(int cardFaceNo)
 {
-  return L"QA23456789"[cardFaceNo];
+  return FACES[cardFaceNo];
 }
+
+int cardFaceNoFromFace(wchar_t face) {
+  for (int i=0; FACES[i] != 0; ++i) {
+    if (FACES[i] == face) return i;
+  }
+  return -1;
+}
+
+static const wchar_t *const SUITES=L"\u2663\u2666\u2665\u2660";
 
 wchar_t cardSuiteFromNo(int cardSuiteNo)
 {
-  return L"\u2663\u2666\u2665\u2660"[cardSuiteNo];
+  return SUITES[cardSuiteNo];
 }
+
+int cardSuiteNoFromSuite(wchar_t suite) {
+  for (int i=0; SUITES[i] != 0; ++i) {
+    if (SUITES[i] == suite) return i;
+  }
+  return -1;
+}
+
 
 int cardFromFaceSuiteNo(int cardFaceNo, int cardSuiteNo) {
   if (0 <= cardFaceNo && cardFaceNo < 10 &&

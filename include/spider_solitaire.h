@@ -41,8 +41,12 @@ extern "C" {
   /* 'Q','A','1','2','3', ... '8','9' for 0,1,2,3,...,8,9 */
   wchar_t cardFaceFromNo(int cardFaceNo);
 
+  int cardFaceNoFromFace(wchar_t face);
+
   /* unicode club, diamond, heart, spade from 0,1,2,3 */
   wchar_t cardSuiteFromNo(int cardSuiteNo);
+  
+  int cardSuiteNoFromSuite(wchar_t suite);
 
   /* returns -1 if face or suite value are not in range */
   int cardFromFaceSuiteNo(int cardFaceNo, int cardSuiteNo);
