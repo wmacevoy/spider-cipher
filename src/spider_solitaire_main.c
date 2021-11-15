@@ -11,36 +11,7 @@
 FILE *fmemopen(void*,int,const char *);
 
 const char *base58="123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
-
-
-
-int CIOWriteUtf8(CIO *cio, const char *utf8, int utf8len) {
-  while (utf8len > 0) {
-    int declen = utf8declen(utf8,utf8len);
-    if (declen > 0) {
-      int status = CIOWrite(cio,utf8decval(utf8,declen));
-      if (status == -1) {
-	return -1;
-      }
-    } else {
-      return -2;
-    }
-    utf8 += declen;
-    utf8len -= declen;
-  }
-  return 0;
-}
-
-void CIOArraySetUtf8(CIOArray *array, const char *utf8) {
-  array->position = 0;
-  array->size = 0;
-  int status = CIOWriteUtf8(&array->base,utf8,strlen(utf8));
-  if (status != 0) {
-    fprintf(stderr,"invalid utf8 (%s) or out of memory.",utf8);
-    exit(1);
-  }
-  array->position=0;
-}
+const char *base40="BCDEFGHLMNPRSTUVWXYZbcdefghimnprstuvwxyz";
 
 struct CIOUTF8Struct;
 typedef struct CIOUTF8Struct CIOUTF8;
@@ -63,7 +34,7 @@ int CIOUTF8Peek(CIOUTF8 *me, int offset) {
       buf[len-1]=c;
       int declen = utf8declen(buf,len);
       if (declen > 0) {
-	CIOWrite(&me->buffer,utf8decval(buf,declen));
+	if (CIOWrite(&me->buffer,utf8decval(buf,declen))==-1) { return -1; }
 	decoded = 1;
 	break;
       }
@@ -147,18 +118,31 @@ int CIOCardsFmtWrite(CIOCardsFmt *me, int card) {
   }
   
   int ws[4];
+  int p=0;
+  if (me->mode != 'b') {
+    int c = CIOGetWrites(me);
+    if (c > 0) {
+      if (c % 20 == 0) {
+	ws[p++]='\n';
+      } else if (c % 5 == 0) {
+	ws[p++]='|';
+      } else {
+      ws[p++]=' ';
+      }
+    }
+  }
 
   if (me->mode == '#') {
-    ws[0]='0'+(card/10);
-    ws[1]='0'+(card%10);
-    ws[2]=0;
+    ws[p++]='0'+(card/10);
+    ws[p++]='0'+(card%10);
+    ws[p++]=0;
   } else if (me->mode == 'b') {
-    ws[0]=base58[card];
-    ws[1]=0;
+    ws[p++]=base40[card];
+    ws[p++]=0;
   } else if (me->mode == 'c') {
-    ws[0]=cardFaceFromNo(cardFaceNo(card));
-    ws[1]=cardSuiteFromNo(cardSuiteNo(card));
-    ws[2]=0;
+    ws[p++]=cardFaceFromNo(cardFaceNo(card));
+    ws[p++]=cardSuiteFromNo(cardSuiteNo(card));
+    ws[p++]=0;
   } else {
     return -1;
   }
@@ -166,6 +150,7 @@ int CIOCardsFmtWrite(CIOCardsFmt *me, int card) {
   for (int i=0; ws[i] != 0; ++i) {
     if (CIOWrite(&me->utf8,ws[i]) == -1) return -1;
   }
+
   return 0;
 }
 
@@ -177,38 +162,46 @@ int CIOCardsFmtRead(CIOCardsFmt *me, int card) {
     if (strchr(WS,c) == NULL) break;
     CIORead(&me->utf8);
   }
-  if (me->mode == '#') {
-    int c1=CIOPeek(&me->utf8,0)-'0';
-    if (0 <= c1 && c1 < 4) {
+
+  int c=CIOPeek(&me->utf8,0);
+  if (c == -1) return -1;
+  
+  const char *p=strchr(base40,c);
+  if (p != NULL) {
+    CIORead(&me->utf8);      
+    return p-base40;
+  }
+  
+  int face = c;
+  if (face == '0' || face == 'q') face = 'Q';
+  if (face == '1' || face == 'a') face = 'A';
+  int faceNo=cardFaceNoFromFace(face);
+  if (faceNo != -1) {
+    int suite = CIOPeek(&me->utf8,1);
+    if (suite == 'C' || suite == 'c') suite=cardSuiteFromNo(0);
+    if (suite == 'D' || suite == 'd') suite=cardSuiteFromNo(1);
+    if (suite == 'H' || suite == 'h') suite=cardSuiteFromNo(2);
+    if (suite == 'S' || suite == 's') suite=cardSuiteFromNo(3);    
+
+    int suiteNo=cardSuiteNoFromSuite(suite);
+    if (suiteNo != -1) {
       CIORead(&me->utf8);
-      int c0=CIOPeek(&me->utf8,0)-'0';
-      if (0 <= c0 && c0 < 10) {
-	CIORead(&me->utf8);	
-	int card = c1*10+c0;
-	return card;
-      }
-    }
-  } else if (me->mode == 'b') {
-    int b = CIOPeek(&me->utf8,0);
-    const char *p=strchr(base58,b);
-    if (p != NULL) {
-      CIORead(&me->utf8);      
-      card = p-base58;
-      return card;
-    }
-  } else if (me->mode == 'c') {
-    int face = CIOPeek(&me->utf8,0);
-    int faceNo=cardFaceNoFromFace(face);
-    if (faceNo != -1) {
-      CIORead(&me->utf8);
-      int suite = CIOPeek(&me->utf8,0);
-      int suiteNo=cardSuiteNoFromSuite(suite);
-      if (suiteNo != -1) {
-	CIORead(&me->utf8);	
-	return cardFromFaceSuiteNo(faceNo,suiteNo);
-      }
+      CIORead(&me->utf8);	
+      return cardFromFaceSuiteNo(faceNo,suiteNo);
     }
   }
+  
+  if ('0' <= c && c <= '9') {
+    CIORead(&me->utf8);
+    int card = c-'0';
+    c=CIOPeek(&me->utf8,0);
+    if ('0' <= c && c <= '9' && (card*10+(c-'0') < CARDS)) {
+      CIORead(&me->utf8);      
+      card = card*10 + (c-'0');
+    }
+    return card;
+  }
+
   return -1;
 }
 
@@ -244,7 +237,7 @@ int main(int argc, char *argv[]) {
     }
     
     {
-      const char *op="--base58";
+      const char *op="--base40";
       if (strcmp(arg,op)==0) {
 	mode = 'b';
 	continue;
@@ -288,6 +281,7 @@ int main(int argc, char *argv[]) {
 	CIOClose(&rcg);
 	CIOClose(&codeIn);
 	deckInit(deck);
+	printf("\n");
 	continue;
       }
     }
@@ -316,6 +310,7 @@ int main(int argc, char *argv[]) {
 	CIOClose(&codeOut);
 	CIOClose(&cardIn);
 	deckInit(deck);
+	printf("\n");
 	continue;
       }
     }
