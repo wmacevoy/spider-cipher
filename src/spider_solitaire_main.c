@@ -8,11 +8,6 @@
 #include "utf8.h"
 #include "cio.h"
 
-FILE *fmemopen(void*,int,const char *);
-
-const char *base58="123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
-const char *base40="BCDEFGHLMNPRSTUVWXYZbcdefghimnprstuvwxyz";
-
 void DeckKey(Deck deck, const char *key) {
   CIOArray u8Key;
   int keylen = strlen(key);
@@ -20,15 +15,15 @@ void DeckKey(Deck deck, const char *key) {
   CIOUTF8 wcKey;
   CIOUTF8Init(&wcKey,&u8Key.base);
   
-  CIO deny;
-  CIOInit(&deny);
+  CIO null;
+  CIOInit(&null);
 
   CIOTranslate trans;
   deckInit(deck);
-  CIOTranslateInit(&trans,&deny,deck,1);
+  CIOTranslateInit(&trans,&null,deck,1);
   encodeIO(&wcKey.base,&trans.base);
   CIOClose(&trans);
-  CIOClose(&deny);  
+  CIOClose(&null);  
   CIOClose(&wcKey);
   CIOClose(&u8Key);
 }
