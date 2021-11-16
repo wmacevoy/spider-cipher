@@ -11,7 +11,7 @@
 void DeckKey(Deck deck, const char *key) {
   CIOArray u8Key;
   int keylen = strlen(key);
-  CIOArrayConstU8Init(&u8Key,key,0,keylen);
+  CIOArrayConstU8Init(&u8Key,(uint8_t*)key,0,keylen);
   CIOUTF8 u32Key;
   CIOUTF8Init(&u32Key,&u8Key.base);
   
@@ -88,7 +88,7 @@ int main(int argc, char *argv[]) {
 	CIO *wcIn = NULL;
 
 	CIOArray memPlain;
-	CIOArrayConstU8Init(&memPlain,plain,0,strlen(plain));
+	CIOArrayConstU8Init(&memPlain,(uint8_t*)plain,0,strlen(plain));
 	CIOUTF8 memU32Plain;
 	CIOUTF8Init(&memU32Plain,&memPlain.base);
 	
@@ -127,7 +127,7 @@ int main(int argc, char *argv[]) {
 	CIO *wcIn = NULL;
 
 	CIOArray memCipher;
-	CIOArrayConstU8Init(&memCipher,cipher,0,strlen(cipher));
+	CIOArrayConstU8Init(&memCipher,(uint8_t*)cipher,0,strlen(cipher));
 	CIOUTF8 memU32Cipher;
 	CIOUTF8Init(&memU32Cipher,&memCipher.base);
 	if (strcmp(cipher,"-") != 0) {
