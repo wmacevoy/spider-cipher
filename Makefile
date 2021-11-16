@@ -15,17 +15,17 @@ tmp/utf8.o: ../utf8/src/utf8.c ../utf8/include/utf8.h
 	mkdir -p tmp
 	$(CC) -c $(CFLAGS) $(LDFLAGS) -o $@ $<
 
-tmp/cio.o: ../cio/src/cio.c ../cio/include/cio.h
+tmp/cio.o: ../cio/src/cio.c ../cio/include/cio.h ../utf8/include/utf8.h
 	mkdir -p tmp
 	$(CC) -c $(CFLAGS) $(LDFLAGS) -o $@ $<
 
 deps : tmp/utf8.o tmp/cio.o tmp/facts.o
 
-tmp/spider_solitaire.o: src/spider_solitaire.c include/spider_solitaire.h ../
+tmp/spider_solitaire.o: src/spider_solitaire.c include/spider_solitaire.h ../cio/include/cio.h ../utf8/include/utf8.h
 	mkdir -p tmp
 	$(CC) -c $(CFLAGS) $(LDFLAGS) -o $@ $<
 
-tmp/spider_solitaire_facts.o : src/spider_solitaire_facts.c include/spider_solitaire.h ../facts/include/facts.h
+tmp/spider_solitaire_facts.o : src/spider_solitaire_facts.c include/spider_solitaire.h ../cio/include/cio.h ../utf8/include/utf8.h ../facts/include/facts.h
 	mkdir -p tmp
 	$(CC) -c $(CFLAGS) $(LDFLAGS) -o $@ $<
 
@@ -33,7 +33,7 @@ tmp/spider_solitaire_main.o : src/spider_solitaire_main.c include/spider_solitai
 	mkdir -p tmp
 	$(CC) -c $(CFLAGS) $(LDFLAGS) -o $@ $<
 
-bin/spider_solitaire_facts : tmp/spider_solitaire_facts.o tmp/spider_solitaire.o tmp/cio.o tmp/facts.o
+bin/spider_solitaire_facts : tmp/spider_solitaire_facts.o tmp/spider_solitaire.o tmp/cio.o tmp/utf8.o tmp/facts.o
 	mkdir -p bin
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LDLIBS)
 

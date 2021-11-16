@@ -1,9 +1,12 @@
+#include <string.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <assert.h>
 #include <limits.h>
 #include "spider_solitaire.h"
+
+const char *const BASE40 = "BCDEFGHLMNPRSTUVWXYZbcdefghimnprstuvwxyz";  
 
 static int CIORandRead(CIORand *me) {
   uint8_t x;
@@ -523,3 +526,106 @@ int decryptEnvelopeIO(Deck deck, CIO *in, CIO *deniableOut, CIO *out) {
   CIOEnvelopeInit(&envIn,deck,-1,deniableOut,in);
   return decodeIO(&envIn.base,out);
 }
+
+static int CIOCardsFmtWrite(CIOCardsFmt *me, int card) {
+  if (card < 0 || card >= CARDS) {
+    return -1;
+  }
+  
+  int ws[4];
+  int p=0;
+  if (me->mode != 'b') {
+    int c = CIOGetWrites(me);
+    if (c > 0) {
+      if (c % 20 == 0) {
+	ws[p++]='\n';
+      } else if (c % 5 == 0) {
+	ws[p++]='|';
+      } else {
+      ws[p++]=' ';
+      }
+    }
+  }
+
+  if (me->mode == '#') {
+    ws[p++]='0'+(card/10);
+    ws[p++]='0'+(card%10);
+    ws[p++]=0;
+  } else if (me->mode == 'b') {
+    ws[p++]=BASE40[card];
+    ws[p++]=0;
+  } else if (me->mode == 'c') {
+    ws[p++]=cardFaceFromNo(cardFaceNo(card));
+    ws[p++]=cardSuiteFromNo(cardSuiteNo(card));
+    ws[p++]=0;
+  } else {
+    return -1;
+  }
+
+  for (int i=0; ws[i] != 0; ++i) {
+    if (CIOWrite(me->io,ws[i]) == -1) return -1;
+  }
+
+  return 0;
+}
+
+static const char *WS=" \t\n\r.,-_()[]|";
+
+static int CIOCardsFmtRead(CIOCardsFmt *me) {
+  for (;;) {
+    int c = CIOPeek(me->io,0);
+    if (strchr(WS,c) == NULL) break;
+    CIORead(me->io);
+  }
+
+  int c=CIOPeek(me->io,0);
+  if (c == -1) return -1;
+  
+  const char *p=strchr(BASE40,c);
+  if (p != NULL) {
+    CIORead(me->io);      
+    return p-BASE40;
+  }
+  
+  int face = c;
+  if (face == '0' || face == 'q') face = 'Q';
+  if (face == '1' || face == 'a') face = 'A';
+  int faceNo=cardFaceNoFromFace(face);
+  if (faceNo != -1) {
+    int suite = CIOPeek(me->io,1);
+    if (suite == 'C' || suite == 'c') suite=cardSuiteFromNo(0);
+    if (suite == 'D' || suite == 'd') suite=cardSuiteFromNo(1);
+    if (suite == 'H' || suite == 'h') suite=cardSuiteFromNo(2);
+    if (suite == 'S' || suite == 's') suite=cardSuiteFromNo(3);    
+
+    int suiteNo=cardSuiteNoFromSuite(suite);
+    if (suiteNo != -1) {
+      CIORead(me->io);
+      CIORead(me->io);	
+      return cardFromFaceSuiteNo(faceNo,suiteNo);
+    }
+  }
+  
+  if ('0' <= c && c <= '9') {
+    CIORead(me->io);
+    int card = c-'0';
+    c=CIOPeek(me->io,0);
+    if ('0' <= c && c <= '9' && (card*10+(c-'0') < CARDS)) {
+      CIORead(me->io);      
+      card = card*10 + (c-'0');
+    }
+    return card;
+  }
+
+  return -1;
+}
+
+void CIOCardsFmtInit(CIOCardsFmt *me,CIO *io, int mode) {
+  CIOInit(&me->base);
+  me->io=io;
+  me->base.read = (CIOReadPtr) &CIOCardsFmtRead;
+  me->base.peek = NULL;
+  me->base.write = (CIOWritePtr) &CIOCardsFmtWrite;
+  me->mode=mode;
+}
+

@@ -7,6 +7,8 @@
 extern "C" {
 #endif
 
+  extern const char *const BASE40;
+
   struct CIORandStruct;
   typedef struct CIORandStruct CIORand;
   struct CIORandStruct {
@@ -114,8 +116,17 @@ extern "C" {
 
   int decryptEnvelopeIO(Deck deck, CIO *in, CIO *deniableOut, CIO *out);
   int decryptEnvelopeArray(Deck deck, Card *cards, int cardLen,
-			   wchar_t *str, int strCapacity);  
+			   wchar_t *str, int strCapacity);
+
+  struct CIOCardsFmtStruct;
+  typedef struct CIOCardsFmtStruct CIOCardsFmt;
+  struct CIOCardsFmtStruct {
+    CIO base;
+    CIO *io;
+    int mode;
+  };
   
+  void CIOCardsFmtInit(CIOCardsFmt *me,CIO *io, int mode);
 #ifdef __cplusplus
 }
 #endif
