@@ -4,27 +4,37 @@
 #include <limits.h>
 #include "facts.h"
 
+#include "utf8.h"
 #include "spider_solitaire.h"
 
-const wchar_t* TEST_STRINGS [] =
+const char* const UTF8_TEST_STRINGS [] =
   {
-   L"",
-   L"x",
-   L"xy",
-   L"X",
-   L"XY",
-   L"1",
-   L"12",
-   L"♣",
-   L"♣♠",
-   L"xX1♣xyXY12♣♠",
-   L"Spider Solitare",
-   L"int main(int argc, char** argv) {\n" 
-   L"  ::testing::InitGoogleTest(&argc, argv);\n" 
-   L"  return RUN_ALL_TESTS();\n" 
-   L"}\n",
-   L"Q(0)A(1)23456789♣+0a0AQ♣0/0b1BA♣1/-39c2C2♣2/-38d3D3♣3/-37e4E4♣4/-36f5F5♣5/-35g6G6♣6/-34h7H7♣7/-33i8I8♣8/-32j9J9♣9/-31♦+10kAKQ♦10/-30lBLA♦11/-29mCM2♦12/-28nDN3♦13/-27oEO4♦14/-26pFP5♦15/-25q@Q6♦16/-24r=R7♦17/-23s\\S8♦18/-22t~T9♦19/-21♥+20u#UQ♥20/-20v$VA♥21/-19w%W2♥22/-18x^X3♥23/-17y&Y4♥24/-16z|Z5♥25/-15<-{6♥26/-14>+}7♥27/-13(/[8♥28/-12)*]9♥29/-11♠+30☐↩_Q♠30/-10,;:A♠31/-9.?!2♠32/-8\"\'`3♠33/-7👍😄❤️4♠34/-6👎😢💔5♠35/-5↓6♠36/-4↑7♠37/-3⇊8♠38/-2⇈9♠39/-1",
+   u8"",
+   u8"x",
+   u8"xy",
+   u8"X",
+   u8"XY",
+   u8"1",
+   u8"12",
+   u8"♣",
+   u8"♣♠",
+   u8"xX1♣xyXY12♣♠",
+   u8"Spider Solitare",
+   u8"int main(int argc, char** argv) {\n" 
+   u8"  ::testing::InitGoogleTest(&argc, argv);\n" 
+   u8"  return RUN_ALL_TESTS();\n" 
+   u8"}\n",
+   u8"Q(0)A(1)23456789♣+0a0AQ♣0/0b1BA♣1/-39c2C2♣2/-38d3D3♣3/-37e4E4♣4/-36f5F5♣5/-35g6G6♣6/-34h7H7♣7/-33i8I8♣8/-32j9J9♣9/-31♦+10kAKQ♦10/-30lBLA♦11/-29mCM2♦12/-28nDN3♦13/-27oEO4♦14/-26pFP5♦15/-25q@Q6♦16/-24r=R7♦17/-23s\\S8♦18/-22t~T9♦19/-21♥+20u#UQ♥20/-20v$VA♥21/-19w%W2♥22/-18x^X3♥23/-17y&Y4♥24/-16z|Z5♥25/-15<-{6♥26/-14>+}7♥27/-13(/[8♥28/-12)*]9♥29/-11♠+30☐↩_Q♠30/-10,;:A♠31/-9.?!2♠32/-8\"\'`3♠33/-7👍😄❤️4♠34/-6👎😢💔5♠35/-5↓6♠36/-4↑7♠37/-3⇊8♠38/-2⇈9♠39/-1",
 };
+
+const uint32_t* testString(int i) {
+  const unsigned char *utf8=UTF8_TEST_STRINGS[i];
+  int u32len=utf8decode(utf8, strlen(utf8), NULL, 0);
+  uint32_t *u32 = (uint32_t*)malloc(sizeof(uint32_t)*(u32len+1));
+  utf8decode(utf8, strlen(utf8), u32, u32len);
+  u32[u32len]=0;
+  return u32;
+}
 
 #define DECK_EQ(a,b) { int i; for (i=0; i<CARDS; ++i) { FACT(a[i],==,b[i]); } }
 
@@ -174,25 +184,25 @@ FACTS(SpiderFaceAndSuiteNo) {
 }
 
 FACTS(SpiderFaceFromNo) {
-  FACT(cardFaceFromNo(0),==,L'Q');
-  FACT(cardFaceFromNo(1),==,L'A');
-  FACT(cardFaceFromNo(2),==,L'2');
-  FACT(cardFaceFromNo(3),==,L'3');
-  FACT(cardFaceFromNo(4),==,L'4');
-  FACT(cardFaceFromNo(5),==,L'5');
-  FACT(cardFaceFromNo(6),==,L'6');
-  FACT(cardFaceFromNo(7),==,L'7');
-  FACT(cardFaceFromNo(8),==,L'8');
-  FACT(cardFaceFromNo(9),==,L'9');
+  FACT(cardFaceFromNo(0),==,'Q');
+  FACT(cardFaceFromNo(1),==,'A');
+  FACT(cardFaceFromNo(2),==,'2');
+  FACT(cardFaceFromNo(3),==,'3');
+  FACT(cardFaceFromNo(4),==,'4');
+  FACT(cardFaceFromNo(5),==,'5');
+  FACT(cardFaceFromNo(6),==,'6');
+  FACT(cardFaceFromNo(7),==,'7');
+  FACT(cardFaceFromNo(8),==,'8');
+  FACT(cardFaceFromNo(9),==,'9');
 }
 
 FACTS(SpiderSuiteFromNo) {
-  const wchar_t *wc=L"♣♦♥♠";
-  
-  FACT_PRINT(cardSuiteFromNo(0),==,wc[0],"%04x"); // 0x2663); // Unicode club
-  FACT_PRINT(cardSuiteFromNo(1),==,wc[1],"%04x"); //  0x2665); // Unicdoe diamond
-  FACT_PRINT(cardSuiteFromNo(2),==,wc[2],"%04x"); // 0x2667); // Unicode heart
-  FACT_PRINT(cardSuiteFromNo(3),==,wc[3],"%04x"); // 0x2669); // Unicode spade
+  const uint32_t u32[]={0x2663,0x2666,0x2665,0x2660};
+  const char *utf8[]={u8"♣",u8"♦",u8"♥",u8"♠"};
+  for (int i=0; i<4; ++i) {
+    FACT(utf8decval(utf8[i],utf8declen(utf8[i],strlen(utf8[i]))),==,u32[i]);
+    FACT(cardSuiteFromNo(i),==,u32[i]);
+  }
 }
 
 FACTS(SpiderCardFromFaceSuiteNo) {
@@ -346,19 +356,18 @@ FACTS(SpiderCiphers) {
   }
 }
 
-int wstrlen(const
-	    wchar_t *s) {  int n=0; while (*s++ != 0) ++n; return n; }
+int wstrlen(const uint32_t *s) {  int n=0; while (*s++ != 0) ++n; return n; }
 
 FACTS(SpiderEncode) {
-  for (int i=0; i<sizeof(TEST_STRINGS)/sizeof(wchar_t*); ++i) {
-    const wchar_t *str=TEST_STRINGS[i];
+  for (int i=0; i<sizeof(UTF8_TEST_STRINGS)/sizeof(char*); ++i) {
+    const uint32_t *str=testString(i);
     int strLen = wstrlen(str);
     CIOArray plain;
     CIOArray encoded;
     CIOArray decoded;
-    CIOArrayConstWideCharInit(&plain,str,0,strLen);
+    CIOArrayConstU32Init(&plain,str,0,strLen);
     CIOArrayU8Init(&encoded,NULL,0,0,0,INT_MAX);
-    CIOArrayWideCharInit(&decoded,NULL,0,0,0,INT_MAX);    
+    CIOArrayU32Init(&decoded,NULL,0,0,0,INT_MAX);    
     encodeIO(&plain.base,&encoded.base);
 
     int encLen = CIOGetWrites(&encoded);
@@ -373,16 +382,17 @@ FACTS(SpiderEncode) {
     CIOClose(&plain);
     CIOClose(&encoded);
     CIOClose(&decoded);
+    free((void*)str);
   }
 }
 
 FACTS(SpiderEnvelope) {
-  for (int i=0; i<sizeof(TEST_STRINGS)/sizeof(const wchar_t*); ++i) {
-    const wchar_t *str=TEST_STRINGS[i];
-    int strLen = wstrlen(TEST_STRINGS[i]);
+  for (int i=0; i<sizeof(UTF8_TEST_STRINGS)/sizeof(char*); ++i) {
+    const uint32_t *str=testString(i);    
+    int strLen = wstrlen(str);
 
     CIOArray plain;
-    CIOArrayConstWideCharInit(&plain,str,0,strLen);
+    CIOArrayConstU32Init(&plain,str,0,strLen);
     CIONotRand nrcg;
     CIONotRandInit(&nrcg);
     Deck deck;
@@ -397,7 +407,7 @@ FACTS(SpiderEnvelope) {
     envelope.position = 0;
     
     CIOArray decrypted;
-    CIOArrayWideCharInit(&decrypted,NULL,0,0,0,INT_MAX);
+    CIOArrayU32Init(&decrypted,NULL,0,0,0,INT_MAX);
     deckInit(deck);
     decryptEnvelopeIO(deck,&envelope.base,NULL,&decrypted.base);
     int decLen = CIOGetWrites(&decrypted);
@@ -412,6 +422,8 @@ FACTS(SpiderEnvelope) {
     CIOClose(&envelope);
     CIOClose(&plain);
     CIOClose(&nrcg);
+
+    free((void*)str);
   }
 }
 

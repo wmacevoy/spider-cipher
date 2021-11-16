@@ -41,14 +41,14 @@ extern "C" {
   int cardSuiteNo(Card card);
 
   /* 'Q','A','1','2','3', ... '8','9' for 0,1,2,3,...,8,9 */
-  wchar_t cardFaceFromNo(int cardFaceNo);
+  uint32_t cardFaceFromNo(int cardFaceNo);
 
-  int cardFaceNoFromFace(wchar_t face);
+  int cardFaceNoFromFace(uint32_t face);
 
   /* unicode club, diamond, heart, spade from 0,1,2,3 */
-  wchar_t cardSuiteFromNo(int cardSuiteNo);
+  uint32_t cardSuiteFromNo(int cardSuiteNo);
   
-  int cardSuiteNoFromSuite(wchar_t suite);
+  int cardSuiteNoFromSuite(uint32_t suite);
 
   /* returns -1 if face or suite value are not in range */
   int cardFromFaceSuiteNo(int cardFaceNo, int cardSuiteNo);
@@ -111,12 +111,8 @@ extern "C" {
   int envelopeLen(int encodeLen);
 
   int encryptEnvelopeIO(Deck deck, CIO *in, CIO *rng, CIO *out);
-  int encryptEnvelopeArray(Deck deck, wchar_t *str, int strLen,
-			   CIO *rng, Card *cards, int capacity);
 
   int decryptEnvelopeIO(Deck deck, CIO *in, CIO *deniableOut, CIO *out);
-  int decryptEnvelopeArray(Deck deck, Card *cards, int cardLen,
-			   wchar_t *str, int strCapacity);
 
   struct CIOCardsFmtStruct;
   typedef struct CIOCardsFmtStruct CIOCardsFmt;

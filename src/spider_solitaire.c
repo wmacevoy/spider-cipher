@@ -79,28 +79,28 @@ int cardSuiteNo(Card card)
   return card/10;
 }
 
-static const wchar_t *const FACES=L"QA23456789";
+static const uint32_t FACES[] = {'Q','A','2','3','4','5','6','7','8','9'};
 
-wchar_t cardFaceFromNo(int cardFaceNo)
+uint32_t cardFaceFromNo(int cardFaceNo)
 {
   return FACES[cardFaceNo];
 }
 
-int cardFaceNoFromFace(wchar_t face) {
+int cardFaceNoFromFace(uint32_t face) {
   for (int i=0; FACES[i] != 0; ++i) {
     if (FACES[i] == face) return i;
   }
   return -1;
 }
 
-static const wchar_t *const SUITES=L"\u2663\u2666\u2665\u2660";
+static const uint32_t SUITES[] = {0x2663,0x2666,0x2665,0x2660};
 
-wchar_t cardSuiteFromNo(int cardSuiteNo)
+uint32_t cardSuiteFromNo(int cardSuiteNo)
 {
   return SUITES[cardSuiteNo];
 }
 
-int cardSuiteNoFromSuite(wchar_t suite) {
+int cardSuiteNoFromSuite(uint32_t suite) {
   for (int i=0; SUITES[i] != 0; ++i) {
     if (SUITES[i] == suite) return i;
   }
@@ -220,13 +220,34 @@ Card deckDecryptCard(Deck deck, Card cipherCard) {
 #define SHIFT_LOCK_DOWN 38
 #define SHIFT_LOCK_UP   39
 
-const wchar_t *const DOWN_CODES = L"0123456789ABCDEF@=\\~#$%^&|-+/*\n;?\'\U0001F622\U0001F604";
-const wchar_t *const     CODES = L"abcdefghijklmnopqrstuvwxyz<>() ,.\"\U0001F44E\U0001F44D";
-const wchar_t *const  UP_CODES = L"ABCDEFGHIJKLMNOPQRSTUVWXYZ{}[]_:!`\U0001F494\u2764";
-const wchar_t *const ALL_CODES[] = { DOWN_CODES, CODES, UP_CODES };
+const uint32_t DOWN_CODES[] =
+  {
+    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+    'A', 'B', 'C', 'D', 'E', 'F', '@', '=','\\', '~',
+    '#', '$', '%', '^', '&', '|', '-', '+', '/', '*',
+   '\n', ';', '?','\'', 0x1F622, 0x1F604
+  };
+
+const uint32_t CODES[] =
+  {
+    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
+    'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
+    'u', 'v', 'w', 'x', 'y', 'z', '<', '>', '(', ')',
+    ' ', ',', '.','\"',0x1F44E, 0x1F44D
+  };
+
+const uint32_t UP_CODES[] =
+  {
+    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
+    'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
+    'U', 'V', 'W', 'X', 'Y', 'Z', '{', '}', '[', ']',
+    '_', ':', '!', 0x1F494, 0x2764
+  };
+
+const uint32_t*const ALL_CODES[] = { DOWN_CODES, CODES, UP_CODES };
 
 
-static int find(const wchar_t *str, int len, int code)
+static int find(const uint32_t *str, int len, int code)
 {
   if (code >= 0) {
     for (int pos=0; pos<len; ++pos) {

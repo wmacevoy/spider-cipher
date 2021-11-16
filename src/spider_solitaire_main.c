@@ -12,8 +12,8 @@ void DeckKey(Deck deck, const char *key) {
   CIOArray u8Key;
   int keylen = strlen(key);
   CIOArrayConstU8Init(&u8Key,key,0,keylen);
-  CIOUTF8 wcKey;
-  CIOUTF8Init(&wcKey,&u8Key.base);
+  CIOUTF8 u32Key;
+  CIOUTF8Init(&u32Key,&u8Key.base);
   
   CIO null;
   CIOInit(&null);
@@ -21,23 +21,23 @@ void DeckKey(Deck deck, const char *key) {
   CIOTranslate trans;
   deckInit(deck);
   CIOTranslateInit(&trans,&null,deck,1);
-  encodeIO(&wcKey.base,&trans.base);
+  encodeIO(&u32Key.base,&trans.base);
   CIOClose(&trans);
   CIOClose(&null);  
-  CIOClose(&wcKey);
+  CIOClose(&u32Key);
   CIOClose(&u8Key);
 }
 
 int main(int argc, char *argv[]) {
   CIOFILE  cioStdin;
-  CIOUTF8  cioWCStdin;
+  CIOUTF8  cioU32Stdin;
   CIOFILE  cioStdout;
-  CIOUTF8  cioWCStdout;
+  CIOUTF8  cioU32Stdout;
 
   CIOFILEInit(&cioStdin,stdin,0);
-  CIOUTF8Init(&cioWCStdin,&cioStdin.base);
+  CIOUTF8Init(&cioU32Stdin,&cioStdin.base);
   CIOFILEInit(&cioStdout,stdout,0);
-  CIOUTF8Init(&cioWCStdout,&cioStdout.base);
+  CIOUTF8Init(&cioU32Stdout,&cioStdout.base);
 
   int mode = '#';
   const char *key = NULL;
@@ -89,13 +89,13 @@ int main(int argc, char *argv[]) {
 
 	CIOArray memPlain;
 	CIOArrayConstU8Init(&memPlain,plain,0,strlen(plain));
-	CIOUTF8 memWCPlain;
-	CIOUTF8Init(&memWCPlain,&memPlain.base);
+	CIOUTF8 memU32Plain;
+	CIOUTF8Init(&memU32Plain,&memPlain.base);
 	
 	if (strcmp(plain,"-") != 0) {
-	  wcIn=&memWCPlain.base;
+	  wcIn=&memU32Plain.base;
 	} else {
-	  wcIn=&cioWCStdin.base;
+	  wcIn=&cioU32Stdin.base;
 	}
 
 	CIORand rcg;
@@ -103,13 +103,13 @@ int main(int argc, char *argv[]) {
 
 	CIOCardsFmt cardOut;
 
-	CIOCardsFmtInit(&cardOut,&cioWCStdout.base,mode);
+	CIOCardsFmtInit(&cardOut,&cioU32Stdout.base,mode);
 	encryptEnvelopeIO(deck,wcIn, &rcg.base, &cardOut.base);
 	printf("\n");
 
 	CIOClose(&cardOut);
 	CIOClose(&rcg);
-	CIOClose(&memWCPlain);
+	CIOClose(&memU32Plain);
 	CIOClose(&memPlain);
 	deckInit(deck);
 	continue;
@@ -128,12 +128,12 @@ int main(int argc, char *argv[]) {
 
 	CIOArray memCipher;
 	CIOArrayConstU8Init(&memCipher,cipher,0,strlen(cipher));
-	CIOUTF8 memWCCipher;
-	CIOUTF8Init(&memWCCipher,&memCipher.base);
+	CIOUTF8 memU32Cipher;
+	CIOUTF8Init(&memU32Cipher,&memCipher.base);
 	if (strcmp(cipher,"-") != 0) {
-	  wcIn=&memWCCipher.base;
+	  wcIn=&memU32Cipher.base;
 	} else {
-	  wcIn=&cioWCStdin.base;
+	  wcIn=&cioU32Stdin.base;
 	}
 
 	CIOCardsFmt cardIn;
@@ -142,11 +142,11 @@ int main(int argc, char *argv[]) {
 	CIO deny;
 	CIOInit(&deny);
 
-	decryptEnvelopeIO(deck,&cardIn.base, &deny, &cioWCStdout.base);
+	decryptEnvelopeIO(deck,&cardIn.base, &deny, &cioU32Stdout.base);
 
 	CIOClose(&deny);
 	CIOClose(&cardIn);
-	CIOClose(&memWCCipher);
+	CIOClose(&memU32Cipher);
 	CIOClose(&memCipher);	
 	deckInit(deck);
 	printf("\n");
@@ -155,8 +155,8 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  CIOClose(&cioWCStdin);
-  CIOClose(&cioWCStdout);  
+  CIOClose(&cioU32Stdin);
+  CIOClose(&cioU32Stdout);  
   CIOClose(&cioStdin);
   CIOClose(&cioStdout);
   
