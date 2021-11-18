@@ -111,8 +111,6 @@ extern "C" {
   int encodeIO(CIO *in, CIO *out);
   
   int decodeIO(CIO *in, CIO *out);
-  int decodeLen(Card *cards, int cardsLen);
-  int envelopeLen(int encodeLen);
 
   int encryptEnvelopeIO(Deck deck, CIO *in, CIO *rng, CIO *out);
 
