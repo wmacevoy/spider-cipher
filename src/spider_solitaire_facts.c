@@ -28,7 +28,7 @@ const char* const UTF8_TEST_STRINGS [] =
 };
 
 const uint32_t* testString(int i) {
-  const unsigned char *utf8=UTF8_TEST_STRINGS[i];
+  const char *utf8=UTF8_TEST_STRINGS[i];
   int u32len=utf8decode(utf8, strlen(utf8), NULL, 0);
   uint32_t *u32 = (uint32_t*)malloc(sizeof(uint32_t)*(u32len+1));
   utf8decode(utf8, strlen(utf8), u32, u32len);
