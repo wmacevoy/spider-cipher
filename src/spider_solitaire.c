@@ -15,12 +15,19 @@ static int CIORandRead(CIORand *me) {
     int status = fread((char*) &x,sizeof(x),1,me->urand);
     if (status <= 0) return -1;
   } while (x >= (256-256%CARDS));
-  return x % CARDS;
+
+  Card cutCard = cardAdd(deckCutPad(me->pool),x%CARDS);
+  int cutLoc = deckFindCard(me->pool,cutCard);
+  deckCut(me->pool,cutLoc,me->tmp);
+  deckBackFrontShuffle(me->tmp,me->pool);
+  return deckCipherPad(me->pool);
 }
 
 static void CIORandClose(CIORand *me) {
   fclose(me->urand);
   me->urand=NULL;
+  deckInit(me->pool);
+  deckInit(me->tmp);
 }
 
 void CIORandInit(CIORand *me) {
@@ -30,8 +37,12 @@ void CIORandInit(CIORand *me) {
   me->base.peek=NULL;
   me->base.close=(CIOClosePtr) &CIORandClose;
   me->urand=fopen("/dev/urandom","rb");
+  deckInit(me->pool);
+  deckInit(me->tmp);
+  for (int i=0; i<PREFIX; ++i) {
+    CIORandRead(me);
+  }
 }
-
 
 #define ADD(x,y) (((x)+(y))%CARDS)
 #define SUB(x,y) (((x)+(CARDS-(y)))%CARDS)
@@ -161,6 +172,9 @@ void deckPseudoShuffle(Deck deck, int cutLoc) {
   Deck temp;
   deckCut(deck,cutLoc,temp);
   deckBackFrontShuffle(temp,deck);
+  for (int i=0; i<CARDS; ++i) {
+    temp[i]=0;
+  }
 }
 
 Card deckCutPad(Deck deck) {
@@ -221,30 +235,30 @@ Card deckDecryptCard(Deck deck, Card cipherCard) {
 #define SHIFT_LOCK_UP   39
 
 const uint32_t DOWN_CODES[] =
-  {
-    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-    'A', 'B', 'C', 'D', 'E', 'F', '@', '=','\\', '~',
-    '#', '$', '%', '^', '&', '|', '-', '+', '/', '*',
-   '\n', ';', '?','\'', 0x1F622, 0x1F604
+  {//Q    A    2    3    4    5    6    7    8    9
+    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',  // + 0 club 
+    'A', 'B', 'C', 'D', 'E', 'F', '@', '=','\\', '~',  // +10 diamond
+    '#', '$', '%', '^', '&', '|', '-', '+', '/', '*',  // +20 heart
+   '\n', ';', '?','\'', 0x1F622, 0x1F604               // +30 spade  
   };
 
 const uint32_t CODES[] =
-  {
-    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
-    'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
-    'u', 'v', 'w', 'x', 'y', 'z', '<', '>', '(', ')',
-    ' ', ',', '.','\"',0x1F44E, 0x1F44D
+  {//Q    A    2    3    4    5    6    7    8    9
+    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',  // + 0 club   
+    'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',  // +10 diamond
+    'u', 'v', 'w', 'x', 'y', 'z', '<', '>', '(', ')',  // +20 heart  
+    ' ', ',', '.','\"',0x1F44E, 0x1F44D		       // +30 spade  
   };
 
 const uint32_t UP_CODES[] =
-  {
-    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
-    'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
-    'U', 'V', 'W', 'X', 'Y', 'Z', '{', '}', '[', ']',
-    '_', ':', '!', 0x1F494, 0x2764
+  {//Q    A    2    3    4    5    6    7    8    9
+    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',  // + 0 club   
+    'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',  // +10 diamond
+    'U', 'V', 'W', 'X', 'Y', 'Z', '{', '}', '[', ']',  // +20 heart  
+    '_', ':', '!', 0x1F494, 0x2764		       // +30 spade
   };
 
-const uint32_t*const ALL_CODES[] = { DOWN_CODES, CODES, UP_CODES };
+const uint32_t *const ALL_CODES[] = { DOWN_CODES, CODES, UP_CODES };
 
 
 static int find(const uint32_t *str, int len, int code)
@@ -314,11 +328,10 @@ int encodeIO(CIO *in, CIO *out)
     // preferring nearby shift states for ties.  Ties are
     // only possible for capital letter A-F sequences, which are
     // encoded UP and DOWN as CAPS and HEX.  At most 10 (PREFIX)
-    // characters are looked at for
+    // characters are looked at before it is a tie.
 
-    // look forward only until ties are broken or end of string
     int en[4]={0,0,0,0};
-    for (int el=0; ; ++el) {
+    for (int el=0; el < PREFIX; ++el) {
       int ties = 0;
       for (int q=-1; q<3; ++q) {
 	if (en[q+1] == el && ord(q,in->peek(in,el)) >= 0) { ++en[q+1]; ++ties; }

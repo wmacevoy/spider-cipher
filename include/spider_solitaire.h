@@ -1,3 +1,4 @@
+
 #pragma once
 
 #include <stdio.h>
@@ -7,6 +8,22 @@
 extern "C" {
 #endif
 
+  /*  number of cards in deck */
+#define CARDS  40
+  
+#define PREFIX    10
+  
+  /* cut card = deck[CUT_ZTH] */
+#define CUT_ZTH 0
+  /*  0-based index of cipher mark card */
+#define MARK_ZTH 2
+  /* mark card = (deck[MARK_ZTH] + MARK_ADD) % CARDS */
+#define MARK_ADD 39
+  
+  /* 0..39 values only */
+  typedef signed char Card;
+  typedef Card Deck[CARDS];
+  
   extern const char *const BASE40;
 
   struct CIORandStruct;
@@ -14,25 +31,12 @@ extern "C" {
   struct CIORandStruct {
     CIO base;
     FILE *urand;
+    Deck pool;
+    Deck tmp;
   };
   
   void CIORandInit(CIORand *me);
   
-  /*  number of cards in deck */
-#define CARDS  40
-
-#define PREFIX    10
-
-  /* cut card = deck[CUT_ZTH] */
-#define CUT_ZTH 0
-  /*  0-based index of cipher mark card */
-#define MARK_ZTH 2
-  /* mark card = (deck[MARK_ZTH] + MARK_ADD) % CARDS */
-#define MARK_ADD 39
-
-  /* 0..39 values only */
-  typedef signed char Card;
-  typedef Card Deck[CARDS];
 
   /* 0,1,2,3 ... 8,9 for Q,A,23 ... 8,9 of any suite */
   int cardFaceNo(Card card);
