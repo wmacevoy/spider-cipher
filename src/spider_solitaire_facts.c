@@ -37,6 +37,8 @@ const uint32_t* testString(int i) {
 }
 
 #define DECK_EQ(a,b) { int i; for (i=0; i<CARDS; ++i) { FACT(a[i],==,b[i]); } }
+#define DECK_NE(a,b) { int i, ne=0; for (i=0; i<CARDS; ++i) { ne = ne || (a[i] != b[i]); }; FACT(ne,==,1); }
+
 
 struct CIONotRandStruct;
 typedef struct CIONotRandStruct CIONotRand;
@@ -173,7 +175,7 @@ Card testCipherPad(const Deck deck) {
   return deck[(markLoc + 1) % CARDS];
 }
 
-FACTS(SpiderFaceAndSuiteNo) {
+FACTS(FaceAndSuiteNo) {
   for (int suiteNo = 0; suiteNo <= 3; ++suiteNo) {
     for (int faceNo = 0; faceNo <= 9; ++faceNo) {
       Card card = 10*suiteNo+faceNo;
@@ -183,7 +185,7 @@ FACTS(SpiderFaceAndSuiteNo) {
   }
 }
 
-FACTS(SpiderFaceFromNo) {
+FACTS(FaceFromNo) {
   FACT(cardFaceFromNo(0),==,'Q');
   FACT(cardFaceFromNo(1),==,'A');
   FACT(cardFaceFromNo(2),==,'2');
@@ -196,7 +198,7 @@ FACTS(SpiderFaceFromNo) {
   FACT(cardFaceFromNo(9),==,'9');
 }
 
-FACTS(SpiderSuiteFromNo) {
+FACTS(SuiteFromNo) {
   const uint32_t u32[]={0x2663,0x2666,0x2665,0x2660};
   const char *utf8[]={u8"♣",u8"♦",u8"♥",u8"♠"};
   for (int i=0; i<4; ++i) {
@@ -205,7 +207,7 @@ FACTS(SpiderSuiteFromNo) {
   }
 }
 
-FACTS(SpiderCardFromFaceSuiteNo) {
+FACTS(CardFromFaceSuiteNo) {
   for (int suiteNo = -1; suiteNo <= 4; ++suiteNo) {
     for (int faceNo = -1; faceNo <= 10; ++faceNo) {
       int card = 10*suiteNo+faceNo;
@@ -216,7 +218,7 @@ FACTS(SpiderCardFromFaceSuiteNo) {
   }
 }
 
-FACTS(SpiderAdd) {
+FACTS(Add) {
   for (int x = 0; x <= CARDS; ++x) {
     for (int y = 0; y <= CARDS; ++y) {
       int z = x + y;
@@ -228,7 +230,7 @@ FACTS(SpiderAdd) {
   }
 }
 
-FACTS(SpiderSubtract) {
+FACTS(Subtract) {
   for (int x = 0; x <= CARDS; ++x) {
     for (int y = 0; y <= CARDS; ++y) {
       int z = x - y;
@@ -240,7 +242,7 @@ FACTS(SpiderSubtract) {
   }
 }
 
-FACTS(SpiderInit) {
+FACTS(Init) {
   Deck deck;
   deckInit(deck);
   for (int i=0; i<CARDS; ++i) {
@@ -248,7 +250,7 @@ FACTS(SpiderInit) {
   }
 }
 
-FACTS(SpiderCut) {
+FACTS(Cut) {
   for (int cutLoc = 0; cutLoc < CARDS; ++cutLoc) {
     Deck input,output,expect;
     deckInit(input);
@@ -260,7 +262,7 @@ FACTS(SpiderCut) {
   }
 }
 
-FACTS(SpiderBackFrontShuffle) {
+FACTS(BackFrontShuffle) {
   Deck input,output,expect;
   deckInit(input);
   deckInit(output);
@@ -270,7 +272,7 @@ FACTS(SpiderBackFrontShuffle) {
   DECK_EQ(output,expect);
 }
 
-FACTS(SpiderFindCard) {
+FACTS(FindCard) {
   Deck deck,shuffled;
   deckInit(deck);
   deckInit(shuffled);
@@ -281,7 +283,7 @@ FACTS(SpiderFindCard) {
   }
 }
 
-FACTS(SpiderPseudoShuffle) {
+FACTS(PseudoShuffle) {
   for (int cutLoc = 0; cutLoc < CARDS; ++cutLoc) {
     Deck input,output,tmp,expect;
     deckInit(input);
@@ -296,7 +298,7 @@ FACTS(SpiderPseudoShuffle) {
   }
 }
 
-FACTS(SpiderPads) {
+FACTS(Pads) {
   const char *testString = "spidersolitare";
   Deck testDeck,tmp,deck;
   deckInit(testDeck);
@@ -317,7 +319,7 @@ FACTS(SpiderPads) {
   }
 }
 
-FACTS(SpiderCiphers) {
+FACTS(Ciphers) {
   const char *testString = "spidersolitare";
   Deck testDeck,tmp,deck;
   deckInit(testDeck);
@@ -358,7 +360,7 @@ FACTS(SpiderCiphers) {
 
 int wstrlen(const uint32_t *s) {  int n=0; while (*s++ != 0) ++n; return n; }
 
-FACTS(SpiderEncode) {
+FACTS(Encode) {
   for (int i=0; i<sizeof(UTF8_TEST_STRINGS)/sizeof(char*); ++i) {
     const uint32_t *str=testString(i);
     int strLen = wstrlen(str);
@@ -386,7 +388,7 @@ FACTS(SpiderEncode) {
   }
 }
 
-FACTS(SpiderEnvelope) {
+FACTS(Envelope) {
   for (int i=0; i<sizeof(UTF8_TEST_STRINGS)/sizeof(char*); ++i) {
     const uint32_t *str=testString(i);    
     int strLen = wstrlen(str);
@@ -424,6 +426,339 @@ FACTS(SpiderEnvelope) {
     CIOClose(&nrcg);
 
     free((void*)str);
+  }
+}
+
+FACTS(BackFrontUnshuffle) {
+  Deck deck;
+  Deck tmp;
+  Deck id;
+  deckInit(deck);
+  deckInit(tmp);
+  deckInit(id);
+  deckBackFrontShuffle(deck,tmp);
+  for (int i=0; i<CARDS; ++i) deck[i]=0;
+  deckBackFrontUnshuffle(tmp,deck);
+  DECK_EQ(deck,id);
+}
+
+// pseudo-shuffle on cut location c
+void P(Deck deck,int c) {
+  Deck tmp;
+  deckCut(deck,c,tmp);
+  deckBackFrontShuffle(tmp,deck);
+}
+
+FACTS(P) {
+  for (int c=0; c<CARDS; ++c) {
+    Deck a;
+    Deck b;
+    deckInit(a);
+    deckInit(b);
+    deckPseudoShuffle(a,c);
+    P(b,c);
+    DECK_EQ(a,b);
+  }
+}
+
+FACTS(PReachable) {
+  for (int c=0; c<CARDS; ++c) {
+    Deck p;
+    deckInit(p);
+    P(p,c);
+    
+    Deck reach;
+    deckInit(reach);
+    deckPseudoShuffle(reach,c);
+
+    DECK_EQ(reach,p);
+  }
+}
+
+void I(Deck deck) {
+  //id;
+}
+
+FACTS(I) {
+  Deck i;
+  deckInit(i);
+  I(i);
+  for (int k=0; k<CARDS; ++k) i[k] == k;
+}
+
+FACTS(IReachable) {
+  Deck id;
+  deckInit(id);
+  I(id);
+
+  Deck reach;
+  deckInit(reach);
+  for (int k=0; k<9; ++k) {
+    P(reach,2);
+  }
+
+  DECK_EQ(reach,id);
+}
+
+// inverse pseudo-shuffle on cut location c
+void Q(Deck deck,int c) {
+  Deck tmp;
+  deckBackFrontUnshuffle(deck,tmp);
+  deckCut(tmp,CARDS-c,deck);
+}
+
+FACTS(Q) {
+  for (int c=0; c<CARDS; ++c) {
+    Deck deck;
+    Deck id;
+    deckInit(deck);
+    deckInit(id);
+    P(deck,c);
+    Q(deck,c);
+    DECK_EQ(deck,id);
+  }
+}
+
+FACTS(QReachable) {
+  for (int c=0; c<CARDS; ++c) {
+    Deck q;
+    deckInit(q);
+    Q(q,c);
+	  
+    Deck reach;
+    deckInit(reach);
+
+    for (int i=0; i<17; ++i) {
+      deckPseudoShuffle(reach,(i == 8) ? (4+(CARDS-c))%CARDS : 2);
+    }
+    printf("c=%d\n",c);
+    DECK_EQ(reach,q);
+  }
+}
+
+void T(Deck deck, int c) {
+  Deck tmp;
+  deckCut(deck,c,tmp);
+  for (int i=0; i<CARDS; ++i) {
+    deck[i]=tmp[i];
+  }
+}
+
+FACTS(T) {
+  for (int c=0; c<CARDS; ++c) {
+    Deck t;
+    deckInit(t);
+    T(t,c);
+
+    for (int i=0; i<CARDS; ++i) {
+      t[i]=(i+c) % CARDS;
+    }
+  }
+}
+
+FACTS(TReachable) {
+  for (int c=0; c<CARDS; ++c) {
+    Deck t;
+    deckInit(t);
+    T(t,c);
+
+    Deck reach;
+    deckInit(reach);
+    for (int i=0; i<9; ++i) {
+      deckPseudoShuffle(reach,(i == 0) ? (2+c)%CARDS : 2);
+    }
+    
+    DECK_EQ(reach,t);
+  }
+}
+
+// reverse deck
+void R(Deck deck) {
+  Deck tmp;
+  for (int i=0; i<CARDS; ++i) {
+    tmp[i]=deck[(CARDS-1)-i];
+  }
+  for (int i=0; i<CARDS; ++i) {
+    deck[i]=tmp[i];
+  }
+}
+
+FACTS(R) {
+  Deck r;
+  deckInit(r);
+  R(r);
+  for (int i=0; i<CARDS; ++i) {
+    FACT(r[i],==,CARDS-1 - i);
+  }
+}
+
+
+FACTS(RReachable) {
+  Deck r;
+  deckInit(r);
+  R(r);
+
+  Deck reach;
+  deckInit(reach);
+  P(reach,0);
+  T(reach,20);
+  Q(reach,0);
+
+  DECK_EQ(reach,r);
+}
+
+void X(Deck deck) {
+  Deck tmp;
+  for (int i=0; i<CARDS; i += 2) {
+    int j=i+1;
+    tmp[i]=deck[j];
+    tmp[j]=deck[i];
+  }
+  for (int i=0; i<CARDS; ++i) {
+    deck[i]=tmp[i];
+  }
+}
+
+FACTS(X) {
+  Deck x;
+  deckInit(x);
+  X(x);
+  for (int i=0; i<CARDS; ++i) {
+    FACT(x[i],==,(i % 2 == 0) ? i+1 : i-1);
+  }
+}
+
+FACTS(XReachable) {
+  Deck x;
+  deckInit(x);
+  X(x);
+
+  Deck reach;
+  deckInit(reach);
+
+  P(reach,0);
+  R(reach);
+  Q(reach,0);
+
+  DECK_EQ(reach,x);
+}
+
+void B(Deck deck, int i) {
+  int j = (i+1)%CARDS;
+  int tmp = deck[i];
+  deck[i]=deck[j];
+  deck[j]=tmp;
+}
+
+FACTS(B) {
+  for (int i=0; i<CARDS; ++i) {
+    Deck b;
+    deckInit(b);
+    B(b,i);
+    for (int k=0; k<CARDS; ++k) {
+      int j=(i+1) % CARDS;
+      if (k == i) FACT(b[k],==,j);
+      if (k == j) FACT(b[k],==,i);
+      if (k != i && k != j) FACT(b[k],==,k);
+    }
+  }
+}
+
+FACTS(BReachable) {
+  for (int i=0; i<CARDS; ++i) {
+    Deck b;
+    deckInit(b);
+    B(b,i);
+
+    Deck reach;
+    deckInit(reach);
+
+    T(reach,(i+1)%CARDS);
+    P(reach,0);
+    T(reach,21);
+    Q(reach,0);
+    R(reach);
+    X(reach);
+    T(reach,1);
+    X(reach);
+    T(reach,CARDS-1);
+    T(reach,(2*CARDS-(i+1)) % CARDS);
+    
+    DECK_EQ(reach,b);
+  }
+}
+
+void S(Deck deck, int i, int j) {
+  int tmp = deck[i];
+  deck[i]=deck[j];
+  deck[j]=tmp;
+}
+
+FACTS(S) {
+  for (int i=0; i<CARDS; ++i) {
+    for (int j=0; j<CARDS; ++j) {
+      Deck s;
+      deckInit(s);
+      S(s,i,j);
+      
+      for (int k=0; k<CARDS; ++k) {
+	if (k == i) FACT(s[k],==,j);
+	if (k == j) FACT(s[k],==,i);
+	if (k != i && k != j) FACT(s[k],==,k);
+      }
+    }
+  }
+}
+
+FACTS(SReachable) {
+  for (int i=0; i<CARDS; ++i) {
+    for (int j=0; j<CARDS; ++j) {
+      Deck s;
+      deckInit(s);
+      S(s,i,j);
+      
+      Deck reach;
+      deckInit(reach);
+
+      if (i != j) {
+	int a = (i < j) ? i : j;
+	int b = (i > j) ? i : j;
+
+	T(reach,a);	
+	for (int k=0; k<b-a; ++k) {
+	  B(reach,k);
+	}
+	for (int k=b-a-2; k>=0; --k) {
+	  B(reach,k);
+	}
+	T(reach,(CARDS-a));
+      }
+      DECK_EQ(reach,s);
+    }
+  }
+}
+
+static int CYCLE_LENGTHS [] =
+  {
+   27,  30,   9, 110,  12,  90,  99, 234, 105,  12,
+   60, 126, 115,  56,  20, 174,  12,  66, 105,  20,
+   39,  40,  39,  60,  72, 150,  60,  40,  39, 264,
+   36, 380,  75,  20,  60,  40, 182, 190, 440,  24
+  };
+
+FACTS(Cycles) {
+  for (int cutLoc = 0; cutLoc < CARDS; ++cutLoc) {
+    Deck deck;
+    Deck id;
+    deckInit(deck);
+    deckInit(id);
+    for (int i=0; i<CYCLE_LENGTHS[cutLoc]; ++i) {
+      if (i != 0) { DECK_NE(deck,id); }
+      else { DECK_EQ(deck,id); }      
+      deckPseudoShuffle(deck,cutLoc);
+      if (i != CYCLE_LENGTHS[cutLoc]-1) { DECK_NE(deck,id); }
+      else { DECK_EQ(deck,id); }
+    }
   }
 }
 

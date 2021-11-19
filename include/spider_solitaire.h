@@ -72,6 +72,10 @@ extern "C" {
   /* back-front shuffle of card deck */
   void deckBackFrontShuffle(Deck input, Deck output);
 
+  /* back-front unshuffle (undo) of card deck */
+  void deckBackFrontUnshuffle(Deck input, Deck output);
+  
+
   /* fixed time find card in deck (assumes card exists uniquely in deck) */
   int deckFindCard(Deck deck,Card card);
 

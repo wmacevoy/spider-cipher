@@ -163,6 +163,22 @@ void deckBackFrontShuffle(Deck input, Deck output)
   }
 }
 
+void deckBackFrontUnshuffle(Deck input, Deck output)
+{
+  int back = CARDS;
+  int front = -1;
+  for (int i=CARDS-1; i >= 0; --i) {
+    if (i % 2 == 0) {
+      --back;
+      output[i]=input[back];
+    } else {
+      ++front;
+      output[i]=input[front];
+    }
+  }
+}
+
+
 int deckFindCard(Deck deck,Card card)
 {
   return FIND(deck,card);
