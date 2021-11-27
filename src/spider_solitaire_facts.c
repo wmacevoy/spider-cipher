@@ -531,7 +531,6 @@ FACTS(QReachable) {
     for (int i=0; i<17; ++i) {
       deckPseudoShuffle(reach,(i == 8) ? (4+(CARDS-c))%CARDS : 2);
     }
-    printf("c=%d\n",c);
     DECK_EQ(reach,q);
   }
 }
@@ -747,20 +746,39 @@ static int CYCLE_LENGTHS [] =
   };
 
 FACTS(Cycles) {
-  for (int cutLoc = 0; cutLoc < CARDS; ++cutLoc) {
+  for (int c = 0; c < CARDS; ++c) {
     Deck deck;
     Deck id;
     deckInit(deck);
     deckInit(id);
-    for (int i=0; i<CYCLE_LENGTHS[cutLoc]; ++i) {
+    int n=CYCLE_LENGTHS[c];
+    for (int i=0; i<n; ++i) {
       if (i != 0) { DECK_NE(deck,id); }
-      else { DECK_EQ(deck,id); }      
-      deckPseudoShuffle(deck,cutLoc);
-      if (i != CYCLE_LENGTHS[cutLoc]-1) { DECK_NE(deck,id); }
+      else { DECK_EQ(deck,id); }
+      P(deck,c);
+      if (i != n-1) { DECK_NE(deck,id); }
       else { DECK_EQ(deck,id); }
     }
   }
 }
+
+FACTS(InverseCycles) {
+  for (int c = 0; c < CARDS; ++c) {
+    Deck deck;
+    Deck id;
+    deckInit(deck);
+    deckInit(id);
+    int n=CYCLE_LENGTHS[c];
+    for (int i=0; i<n; ++i) {
+      if (i != 0) { DECK_NE(deck,id); }
+      else { DECK_EQ(deck,id); }
+      Q(deck,c);
+      if (i != n-1) { DECK_NE(deck,id); }
+      else { DECK_EQ(deck,id); }
+    }
+  }
+}
+
 
 FACTS_FINISHED
 FACTS_MAIN
