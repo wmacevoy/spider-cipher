@@ -203,20 +203,34 @@ void Z(Deck deck, int64_t i) {
   }
 }
 
-FACTS(Z) {
+FACTS(ZSectioned) {
+  for (int64_t j0=0; j0<4; ++j0) {
+    for (int64_t j1=0; j1<4; ++j1) {
+	for (int64_t i0=0; i0<2*6*24; ++i0) {
+	  for (int64_t i1=0; i1<2*6*24; ++i1) {
+	    int64_t k0 = i0+pow(2*6*24,j0);
+	    int64_t k1 = i1+pow(2*6*24,j1);
+	    Deck d0,d1;
+	    deckInit(d0);
+	    deckInit(d1);
+	    Z(d0,k0);
+	    Z(d1,k1);
+	    FACT(deckComp(d0,d1)!=0,==,k0 != k1);
+	}
+      }
+    }
+  }
+}
+
+
+FACTS(ZRandom) {
   srand(1);
   int nt=10000;
   for (int t = 0; t<nt; ++t) {
     int64_t i0=0,i1 = 0;
-
-    if (t < 2*6*24) {
-      i0=t;
-      i1=t+pow(2*6*24,(t%4));
-    } else {
-      for (int j=0; j<4; ++j) {
-	i0 = (2*6*24)*i0 + rand() % (2*6*24);
-	i1 = (2*6*24)*i1 + rand() % (2*6*24);      
-      }
+    for (int j=0; j<4; ++j) {
+      i0 = (2*6*24)*i0 + rand() % (2*6*24);
+      i1 = (2*6*24)*i1 + rand() % (2*6*24);      
     }
     
     Deck d0,d1;
@@ -242,11 +256,9 @@ FACTS(Z) {
     for (int j=0; j<CARDS; ++j) {
       FACT(b0[j],==,1);
       FACT(b1[j],==,1);
-      eq = eq && (b0[j]==b1[j]);
     }
 
-    FACT(eq,==,(i0==i1));
-    
+    FACT(deckComp(d0,d1)==0,==,(i0==i1));
   }
 }
 
