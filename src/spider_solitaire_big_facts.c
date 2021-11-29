@@ -72,8 +72,13 @@ FACTS(Z) {
     for (int64_t j1=0; j1<4; ++j1) {
       for (int64_t i0=0; i0<2*6*24; ++i0) {
 	for (int64_t i1=0; i1<2*6*24; ++i1) {
-	  int64_t k0 = i0+pow(2*6*24,j0);
-	  int64_t k1 = i1+pow(2*6*24,j1);
+	  int64_t k0 = i0+((j0 > 0) ? pow(2*6*24,j0) : 0);
+	  int64_t k1 = i1+((j1 > 0) ? pow(2*6*24,j1) : 0);
+
+	  if ((k0 == k1) != (i0 == i1 && j0 == j1)) {
+	    printf("k0=%d, k1=%d i0=%d i1=%d j0=%d j1=%d\n",(int) k0,(int) k1,(int) i0,(int) i1,(int) j0,(int) j1);
+	  }
+
 	  Deck d0,d1;
 	  deckInit(d0);
 	  deckInit(d1);	    
@@ -323,6 +328,7 @@ FACTS(DeckSet) {
   for (int tmp = 0; tmp<2; ++tmp) {
     for (int pbins = 1; pbins < 4; ++pbins) {
       DeckSet *ds = (DeckSet*) malloc(sizeof(DeckSet));
+      int dups = 0;
       assert (ds != NULL);
       FILE *file = NULL;
       if (tmp) {
@@ -331,43 +337,44 @@ FACTS(DeckSet) {
       }
       DeckSetInit(ds,pbins,file);
 
-      for (int64_t j=0; j<4; ++j) {
+      for (int64_t j=0; j<1; ++j) {
 	for (int64_t i=0; i<2*6*24; ++i) {
-	  int64_t k = i+pow(2*6*24,j);
+	  int64_t k = i+((j>0) ? pow(2*6*24,j) : 0);
+
 	  if (k % 17 == 0) continue;
 	  Deck deck;
 
 	  deckInit(deck);
 	  Z(deck,k);
 	  DeckSetCount(ds,deck);
-	  if (k % 19 == 0) {
+	  if (k % 19 == 0 && j == 0 && i < 100) {
 	    DeckSetCount(ds,deck);
+	    ++dups;
 	  }
 	}
       }
 
-
       DeckSetCounted(ds);
 
-      for (int64_t j=0; j<4; ++j) {
-	for (int64_t i=0; i<2*6*24; ++i) {
-	  int64_t k = i+pow(2*6*24,j);
+      for (int64_t j=0; j<1; ++j) {
+	for (int64_t i=2*6*24-1; i>=0; --i) {
+	  int64_t k = i+((j>0) ? pow(2*6*24,j) : 0);
 	  if (k % 17 == 0) continue;
 	  Deck deck;
 	  deckInit(deck);
 	  Z(deck,k);
 	  DeckSetAdd(ds,deck);
-	  if (k % 19 == 0) {
+	  if (k % 19 == 0 && j == 0 && i < 100) {
 	    DeckSetAdd(ds,deck);
 	  }
 	}
       }
 
-      DeckSetSort(ds);
+      int dups2=DeckSetSort(ds);
 
-      for (int64_t j=0; j<4; ++j) {
+      for (int64_t j=0; j<1; ++j) {
 	for (int64_t i=0; i<2*6*24; ++i) {
-	  int64_t k = i+pow(2*6*24,j);
+	  int64_t k = i+((j>0) ? pow(2*6*24,j) : 0);
 	  Deck deck;
 	  deckInit(deck);
 	  Z(deck,k);
@@ -375,6 +382,8 @@ FACTS(DeckSet) {
 	  FACT(ans,==,k % 17 != 0);
 	}
       }
+
+      FACT(dups,==,dups2);
 
       DeckSetClose(ds);
       if (file != NULL) {
@@ -433,9 +442,9 @@ int dups(int dir, int dist) {
   return dups;
 }
 
-FACTS(Neigbors) {
-  int fdup = dups(1,5);
-  int bdup = dups(-1,5);
+FACTS(Neighborhood) {
+  int fdup = dups(1,4);
+  int bdup = dups(-1,4);
   FACT(fdup,==,0);
   FACT(bdup,==,0);
 }
