@@ -268,6 +268,9 @@ uint32_t DeckSetSort(DeckSet *me) {
   }
   
   free(cards);
+
+  return dups;
+  
 }
 
 void DeckSetClose(DeckSet *me) {
