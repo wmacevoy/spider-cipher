@@ -420,8 +420,8 @@ int dups(int dir, int dist) {
   Deck deck;
   deckInit(deck);
 
-  FILE *file = dist > 5 ? tmpfile() : NULL;
-  int pbins = dist > 5 ? 5 : 4;
+  FILE *file = tmpfile();
+  int pbins = 4;
 
   DeckSet *ds = (DeckSet*) malloc(sizeof(DeckSet));
   DeckSetInit(ds,pbins,file);
@@ -443,8 +443,8 @@ int dups(int dir, int dist) {
 }
 
 FACTS(Neighborhood) {
-  int fdup = dups(1,4);
-  int bdup = dups(-1,4);
+  int fdup = dups(1,5);
+  int bdup = dups(-1,5);
   FACT(fdup,==,0);
   FACT(bdup,==,0);
 }
