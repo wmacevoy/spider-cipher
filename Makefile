@@ -1,7 +1,7 @@
 
 CSTD?=-std=c11
 CDBG?=-g
-COPT?=
+COPT?=-O2
 CINC?=-Iinclude -I../utf8/include -I../cio/include -I../facts/include
 
 CFLAGS=$(CDBG) $(COPT) $(CSTD) $(CINC)

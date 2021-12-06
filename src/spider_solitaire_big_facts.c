@@ -321,9 +321,6 @@ int DeckSetContains(DeckSet *me, Deck deck) {
   return 0;
 }
 
-
-
-
 FACTS(DeckSet) {
   for (int tmp = 0; tmp<2; ++tmp) {
     for (int pbins = 1; pbins < 4; ++pbins) {
@@ -443,10 +440,10 @@ int dups(int dir, int dist) {
 }
 
 FACTS(Neighborhood) {
-  int fdup = dups(1,4);
-  int bdup = dups(-1,4);
+  int fdup = dups(1,5);
+  //  int bdup = dups(-1,6);
   FACT(fdup,==,0);
-  FACT(bdup,==,0);
+  //  FACT(bdup,==,0);
 }
       
 FACTS_FINISHED
