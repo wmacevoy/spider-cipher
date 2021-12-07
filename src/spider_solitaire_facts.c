@@ -2,6 +2,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <limits.h>
+
 #include "facts.h"
 
 #include "utf8.h"
@@ -65,7 +66,7 @@ void CIONotRandInit(CIONotRand *me) {
   me->state = 0;
 }
 
-FACTS(RandStats) {
+FACTS_SKIPPED(RandStats) {
   int n = 10*1000*1000;
   int counts1[CARDS];
   int counts2[CARDS][CARDS];
@@ -745,21 +746,124 @@ static int CYCLE_LENGTHS [] =
    36, 380,  75,  20,  60,  40, 182, 190, 440,  24
   };
 
+
+static int PERFECT_CYCLE_LENGTHS [] =
+  {
+  36, 465,  36, 176,  30,  39, 180, 105, 390,  48,
+ 330, 175, 140,  88,  30,  96,  60,  39,  36, 220,
+  38, 279, 380,  84,1848, 420, 780,  84, 380, 264,
+ 132, 240,1400,  30,  60,  35, 308, 145,1848, 168
+  };
+
+
+
+int deckcmp(Deck a, Deck b) {
+  int cmp = memcmp(a,b,CARDS);
+  if (cmp < 0) return -1;
+  if (cmp > 0) return  1;
+  return 0;
+}
+
+
 FACTS(Cycles) {
-  for (int c = 0; c < CARDS; ++c) {
-    Deck deck;
-    Deck id;
-    deckInit(deck);
-    deckInit(id);
-    int n=CYCLE_LENGTHS[c];
-    for (int i=0; i<n; ++i) {
-      if (i != 0) { DECK_NE(deck,id); }
-      else { DECK_EQ(deck,id); }
-      P(deck,c);
-      if (i != n-1) { DECK_NE(deck,id); }
-      else { DECK_EQ(deck,id); }
+  int ok = 1;
+  
+  Deck t[CARDS];
+  for (int c = 0; c<CARDS; ++c) {
+    deckInit(t[c]);
+    T(t[c],c);
+  }
+
+  for (int perfect = 0; perfect < 2; ++perfect) {
+    for (int c = 0; c < CARDS; ++c) {
+      Deck deck;
+      deckInit(deck);
+      int i = 0,eq=-1;
+      while (eq == -1) {
+	P(deck,c);
+	if (perfect) {
+	  S(deck,0,19);
+	}
+	++i;
+	for (int k=0; k<CARDS; ++k) {
+	  if (deckcmp(deck,t[k])==0) {
+	    eq = k;
+	  }
+	}
+      }
+      int length = perfect ? PERFECT_CYCLE_LENGTHS[c] : CYCLE_LENGTHS[c];
+
+      if (perfect) {
+	FACT(i,>=,30);
+      }
+
+      if (i != length) {
+	ok = 0;
+      }
+      //      fprintf(stderr,"%4d%s",i, (c==CARDS-1 ? "" : ","));
+      //      if (c % 10 == 9) { fprintf(stderr,"\n"); }
+      //i != CARDS-1) fprintf(stderr
+      //cycles %d = %d (not %d) eq=%d\n",
+	//	      c,i,CYCLE_LENGTHS[c],eq);
     }
   }
+  FACT(ok,==,1);
+}
+
+
+FACTS_SKIPPED(TestCycles) {
+  int ok = 1;
+  
+  Deck t[CARDS];
+  for (int c = 0; c<CARDS; ++c) {
+    deckInit(t[c]);
+    T(t[c],c);
+  }
+
+  int maxLen=-1,maxS0=0,maxS1=0;
+
+  for (int s0=0; s0<CARDS; ++s0) {
+    for (int s1=s0+1; s1<CARDS; ++s1) {
+      int minLenS = INT_MAX;
+      for (int c = 0; c < CARDS; ++c) {
+	Deck deck;
+	deckInit(deck);
+	int i = 0,eq=-1;
+	while (eq == -1) {
+	  P(deck,c);
+	  S(deck,s0,s1);
+	  //      int tmp=deck[0];
+	  //      for (int k=0; k<CARDS/2-1; ++k) {
+	  //	deck[k]=deck[k+1];
+	  //      }
+	  //      deck[CARDS/2-1]=tmp;
+	  ++i;
+	  for (int k=0; k<CARDS; ++k) {
+	    if (deckcmp(deck,t[k])==0) {
+	      eq = k;
+	    }
+	  }
+	}
+	if (i < minLenS) {
+	  minLenS=i;
+	}
+      }
+      if (minLenS > maxLen) {
+	maxLen = minLenS;
+	maxS0=s0;
+	maxS1=s1;
+      }
+    }
+  }
+  fprintf(stderr,"max len = %d s0=%d s1=%d\n",maxLen,maxS0,maxS1);
+
+    //    if (i != CYCLE_LENGTHS[c]) {
+    //      fprintf(stderr,"cycles %d = %d (not %d) eq=%d\n",
+    //	      c,i,CYCLE_LENGTHS[c],eq);
+    //      ok = 0;
+    //    }
+  //  }
+  //  FACT(ok,==,1);
 }
 
 FACTS(InverseCycles) {

@@ -321,9 +321,6 @@ int DeckSetContains(DeckSet *me, Deck deck) {
   return 0;
 }
 
-
-
-
 FACTS(DeckSet) {
   for (int tmp = 0; tmp<2; ++tmp) {
     for (int pbins = 1; pbins < 4; ++pbins) {
