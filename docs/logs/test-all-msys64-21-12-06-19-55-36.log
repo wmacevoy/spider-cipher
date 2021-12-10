@@ -1,0 +1,221 @@
+wmacevoy@MIC-006 MSYS ~/projects/spider-solitaire
+$ nice time bin/spider_solitaire_facts.exe --facts_include='*' 2>&1 | tee run.log
+src/spider_solitaire_facts.c 71: RandStats facts check started
+src/spider_solitaire_facts.c 71: RandStats facts check ended
+src/spider_solitaire_facts.c 181: FaceAndSuiteNo facts check started
+src/spider_solitaire_facts.c 181: FaceAndSuiteNo facts check ended
+src/spider_solitaire_facts.c 191: FaceFromNo facts check started
+src/spider_solitaire_facts.c 191: FaceFromNo facts check ended
+src/spider_solitaire_facts.c 204: SuiteFromNo facts check started
+src/spider_solitaire_facts.c 204: SuiteFromNo facts check ended
+src/spider_solitaire_facts.c 213: CardFromFaceSuiteNo facts check started
+src/spider_solitaire_facts.c 213: CardFromFaceSuiteNo facts check ended
+src/spider_solitaire_facts.c 224: Add facts check started
+src/spider_solitaire_facts.c 224: Add facts check ended
+src/spider_solitaire_facts.c 236: Subtract facts check started
+src/spider_solitaire_facts.c 236: Subtract facts check ended
+src/spider_solitaire_facts.c 248: Init facts check started
+src/spider_solitaire_facts.c 248: Init facts check ended
+src/spider_solitaire_facts.c 256: Cut facts check started
+src/spider_solitaire_facts.c 256: Cut facts check ended
+src/spider_solitaire_facts.c 268: BackFrontShuffle facts check started
+src/spider_solitaire_facts.c 268: BackFrontShuffle facts check ended
+src/spider_solitaire_facts.c 278: FindCard facts check started
+src/spider_solitaire_facts.c 278: FindCard facts check ended
+src/spider_solitaire_facts.c 289: PseudoShuffle facts check started
+src/spider_solitaire_facts.c 289: PseudoShuffle facts check ended
+src/spider_solitaire_facts.c 304: Pads facts check started
+src/spider_solitaire_facts.c 304: Pads facts check ended
+src/spider_solitaire_facts.c 325: Ciphers facts check started
+src/spider_solitaire_facts.c 325: Ciphers facts check ended
+src/spider_solitaire_facts.c 366: Encode facts check started
+src/spider_solitaire_facts.c 366: Encode facts check ended
+src/spider_solitaire_facts.c 394: Envelope facts check started
+src/spider_solitaire_facts.c 394: Envelope facts check ended
+src/spider_solitaire_facts.c 435: BackFrontUnshuffle facts check started
+src/spider_solitaire_facts.c 435: BackFrontUnshuffle facts check ended
+src/spider_solitaire_facts.c 455: P facts check started
+src/spider_solitaire_facts.c 455: P facts check ended
+src/spider_solitaire_facts.c 467: PReachable facts check started
+src/spider_solitaire_facts.c 467: PReachable facts check ended
+src/spider_solitaire_facts.c 485: I facts check started
+src/spider_solitaire_facts.c 485: I facts check ended
+src/spider_solitaire_facts.c 492: IReachable facts check started
+src/spider_solitaire_facts.c 492: IReachable facts check ended
+src/spider_solitaire_facts.c 513: Q facts check started
+src/spider_solitaire_facts.c 513: Q facts check ended
+src/spider_solitaire_facts.c 525: QReachable facts check started
+src/spider_solitaire_facts.c 525: QReachable facts check ended
+src/spider_solitaire_facts.c 549: T facts check started
+src/spider_solitaire_facts.c 549: T facts check ended
+src/spider_solitaire_facts.c 561: TReachable facts check started
+src/spider_solitaire_facts.c 561: TReachable facts check ended
+src/spider_solitaire_facts.c 587: R facts check started
+src/spider_solitaire_facts.c 587: R facts check ended
+src/spider_solitaire_facts.c 597: RReachable facts check started
+src/spider_solitaire_facts.c 597: RReachable facts check ended
+src/spider_solitaire_facts.c 623: X facts check started
+src/spider_solitaire_facts.c 623: X facts check ended
+src/spider_solitaire_facts.c 632: XReachable facts check started
+src/spider_solitaire_facts.c 632: XReachable facts check ended
+src/spider_solitaire_facts.c 654: B facts check started
+src/spider_solitaire_facts.c 654: B facts check ended
+src/spider_solitaire_facts.c 668: BReachable facts check started
+src/spider_solitaire_facts.c 668: BReachable facts check ended
+src/spider_solitaire_facts.c 698: S facts check started
+src/spider_solitaire_facts.c 698: S facts check ended
+src/spider_solitaire_facts.c 714: SReachable facts check started
+src/spider_solitaire_facts.c 714: SReachable facts check ended
+src/spider_solitaire_facts.c 750: Cycles facts check started
+src/spider_solitaire_facts.c 750: Cycles facts check ended
+src/spider_solitaire_facts.c 767: InverseCycles facts check started
+src/spider_solitaire_facts.c 767: InverseCycles facts check ended
+src/spider_solitaire_facts.c 843: Z facts check started
+src/spider_solitaire_facts.c 843: Z facts check ended
+src/spider_solitaire_facts.c 1097: DeckSet facts check started
+src/spider_solitaire_facts.c 1097: DeckSet facts check ended
+src/spider_solitaire_facts.c 1256: Neighborhood5 facts check started
+105025641.000000 steps.
+counting deck bins in neighborhood.
+12/06/21 19:55:36.673799276 UTC
+5.0 done.
+10.0 done.
+15.0 done.
+20.0 done.
+25.0 done.
+30.0 done.
+35.0 done.
+40.0 done.
+45.0 done.
+50.0 done.
+55.0 done.
+60.0 done.
+65.0 done.
+70.0 done.
+75.0 done.
+80.0 done.
+85.0 done.
+90.0 done.
+95.0 done.
+12/06/21 19:55:42.393092870 UTC
+counting took 5.719294 seconds
+adding decks to neighborhood.
+5.0 done.
+10.0 done.
+15.0 done.
+20.0 done.
+25.0 done.
+30.0 done.
+35.0 done.
+40.0 done.
+45.0 done.
+50.0 done.
+55.0 done.
+60.0 done.
+65.0 done.
+70.0 done.
+75.0 done.
+80.0 done.
+85.0 done.
+90.0 done.
+95.0 done.
+12/06/21 19:55:50.236568212 UTC
+adding took 7.843475 seconds
+sorting time estimate is 10.507225 seconds
+sorting took 9.468251 seconds
+12/06/21 19:55:59.704818725 UTC
+src/spider_solitaire_facts.c 1256: Neighborhood5 facts check ended
+src/spider_solitaire_facts.c 1263: Neighborhood6 facts check started
+4201025641.000000 steps.
+counting deck bins in neighborhood.
+12/06/21 19:55:59.710397720 UTC
+5.0 done.
+10.0 done.
+15.0 done.
+20.0 done.
+25.0 done.
+30.0 done.
+35.0 done.
+40.0 done.
+45.0 done.
+50.0 done.
+55.0 done.
+60.0 done.
+65.0 done.
+70.0 done.
+75.0 done.
+80.0 done.
+85.0 done.
+90.0 done.
+95.0 done.
+12/06/21 20:00:13.345041513 UTC
+counting took 253.634644 seconds
+adding decks to neighborhood.
+5.0 done.
+10.0 done.
+15.0 done.
+20.0 done.
+25.0 done.
+30.0 done.
+35.0 done.
+40.0 done.
+45.0 done.
+50.0 done.
+55.0 done.
+60.0 done.
+65.0 done.
+70.0 done.
+75.0 done.
+80.0 done.
+85.0 done.
+90.0 done.
+95.0 done.
+12/09/21 03:17:18.938981056 UTC
+adding took 199025.593940 seconds
+sorting time estimate is 213293.896831 seconds
+sorting took 3093.693998 seconds
+12/09/21 04:08:52.632978916 UTC
+src/spider_solitaire_facts.c 1263: Neighborhood6 facts check ended
+facts summary.
+facts check RandStats passed
+facts check FaceAndSuiteNo passed
+facts check FaceFromNo passed
+facts check SuiteFromNo passed
+facts check CardFromFaceSuiteNo passed
+facts check Add passed
+facts check Subtract passed
+facts check Init passed
+facts check Cut passed
+facts check BackFrontShuffle passed
+facts check FindCard passed
+facts check PseudoShuffle passed
+facts check Pads passed
+facts check Ciphers passed
+facts check Encode passed
+facts check Envelope passed
+facts check BackFrontUnshuffle passed
+facts check P passed
+facts check PReachable passed
+facts check I passed
+facts check IReachable passed
+facts check Q passed
+facts check QReachable passed
+facts check T passed
+facts check TReachable passed
+facts check R passed
+facts check RReachable passed
+facts check X passed
+facts check XReachable passed
+facts check B passed
+facts check BReachable passed
+facts check S passed
+facts check SReachable passed
+facts check Cycles passed
+facts check InverseCycles passed
+facts check Z passed
+facts check DeckSet passed
+facts check Neighborhood5 passed
+facts check Neighborhood6 passed
+320016808 (100.0%) truths and 0 (0.0%) fictions checked.
+3815.20user 89198.46system 56:13:17elapsed 45%CPU (0avgtext+0avgdata 10128maxresident)k
+0inputs+0outputs (1264047major+0minor)pagefaults 0swaps
