@@ -1266,16 +1266,28 @@ FACTS(DeckSet) {
   }
 }
 
-void Neighbors(DeckSet *ds,Deck deck, int dir, int count, int dist, double *progress, double done) {
+void Neighbors(DeckSet *ds,Deck deck, int perfect, int dir, int dist, int count, double *progress, double done) {
   if (dist > 0) {
     Deck tmp,next;
     for (int c=0; c<CARDS; ++c) {
-      Deck next;
       if (dir == 1) {
 	deckCut(deck,c,tmp);
 	deckBackFrontShuffle(tmp,next);
+	if (perfect) {
+	  int save=next[19];
+	  next[19]=next[0];
+	  next[0]=save;
+	}
       } else {
-        deckBackFrontUnshuffle(deck,tmp);
+	for (int d=0; d<CARDS; ++d) {
+	  next[d]=deck[d];
+	}
+	if (perfect) {
+	  int save=next[19];
+	  next[19]=next[0];
+	  next[0]=save;
+	}
+        deckBackFrontUnshuffle(next,tmp);
 	deckCut(tmp,CARDS-c,next);
       }
 
@@ -1290,7 +1302,7 @@ void Neighbors(DeckSet *ds,Deck deck, int dir, int count, int dist, double *prog
       } else {
 	DeckSetAdd(ds,next);
       }
-      Neighbors(ds,next,dir,count,dist-1,progress,done);
+      Neighbors(ds,next,perfect,dir,dist-1,count,progress,done);
     }
   }
 }
@@ -1301,7 +1313,6 @@ double timer() {
   return ts.tv_sec + ts.tv_nsec*1e-9;
 }
 
-
 void datetime(double timer) {
   struct timespec ts;
   ts.tv_sec = timer;
@@ -1311,7 +1322,7 @@ void datetime(double timer) {
   fprintf(stderr,"%s.%09ld UTC\n",buff,ts.tv_nsec);
 }
 
-int dups(int dir, int dist) {
+int dups(int perfect, int dir, int dist) {
   Deck deck;
   deckInit(deck);
 
@@ -1329,7 +1340,7 @@ int dups(int dir, int dist) {
   fprintf(stderr,"counting deck bins in neighborhood.\n");
   double t0=timer();
   datetime(t0);
-  Neighbors(ds,deck,dir,count,dist,&progress,done);
+  Neighbors(ds,deck,perfect,dir,dist,count,&progress,done);
   DeckSetCounted(ds);
   double t1=timer();
   datetime(t1);
@@ -1338,7 +1349,7 @@ int dups(int dir, int dist) {
   count = 0;
   progress = 0;
   fprintf(stderr,"adding decks to neighborhood.\n");
-  Neighbors(ds,deck,dir,count,dist,&progress,done);
+  Neighbors(ds,deck,perfect,dir,dist,count,&progress,done);
   double t2=timer();
   datetime(t2);
   fprintf(stderr,"adding took %f seconds\n",t2-t1);
@@ -1357,17 +1368,38 @@ int dups(int dir, int dist) {
 }
 
 FACTS(Neighborhood5) {
+  int perfect = 0;
   int n = 5;
-  int collisions = dups(1,n);
+  int collisions = dups(perfect,1,n);
+  FACT(collisions,==,0);
+}
+
+FACTS(PerfectNeighborhood5) {
+  int perfect = 1;
+  int dir = 1;
+  int dist = 5;
+  int collisions = dups(perfect,dir,dist);
   FACT(collisions,==,0);
 }
 
 // About 200GB disk space, 10GB RAM, and a WEEK of runtime...
 FACTS_SKIPPED(Neighborhood6) {
-  int n = 6;
-  int collisions = dups(1,n);
+  int perfect = 0;
+  int dir = 1;
+  int dist = 6;
+  int collisions = dups(perfect,dir,dist);
   FACT(collisions,==,0);
 }
+
+// About 200GB disk space, 10GB RAM, and a WEEK of runtime...
+FACTS_SKIPPED(PerfectNeighborhood6) {
+  int perfect = 1;
+  int dir = 1;
+  int dist = 6;
+  int collisions = dups(perfect,dir,dist);
+  FACT(collisions,==,0);
+}
+
 
 FACTS_FINISHED
 FACTS_MAIN
