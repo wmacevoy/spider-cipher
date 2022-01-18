@@ -68,7 +68,7 @@ void CIONotRandInit(CIONotRand *me) {
   me->state = 0;
 }
 
-FACTS_SKIPPED(RandStats) {
+FACTS_EXCLUDE(RandStats) {
   int n = 10*1000*1000;
   int counts1[CARDS];
   int counts2[CARDS][CARDS];
@@ -812,7 +812,7 @@ FACTS(Cycles) {
 }
 
 
-FACTS_SKIPPED(TestCycles) {
+FACTS_EXCLUDE(TestCycles) {
   int ok = 1;
   
   Deck t[CARDS];
@@ -1383,7 +1383,7 @@ FACTS(PerfectNeighborhood5) {
 }
 
 // About 200GB disk space, 10GB RAM, and a WEEK of runtime...
-FACTS_SKIPPED(Neighborhood6) {
+FACTS_EXCLUDE(Neighborhood6) {
   int perfect = 0;
   int dir = 1;
   int dist = 6;
@@ -1392,7 +1392,7 @@ FACTS_SKIPPED(Neighborhood6) {
 }
 
 // About 200GB disk space, 10GB RAM, and a WEEK of runtime...
-FACTS_SKIPPED(PerfectNeighborhood6) {
+FACTS_EXCLUDE(PerfectNeighborhood6) {
   int perfect = 1;
   int dir = 1;
   int dist = 6;

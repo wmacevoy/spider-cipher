@@ -1,6 +1,4 @@
-
-
-CSTD?=-std=c11
+CSTD?=-std=c11  -D_POSIX_C_SOURCE=199309L
 CDBG?=-g
 COPT?=-O2
 CINC?=-Iinclude -I../utf8/include -I../cio/include -I../facts/include
