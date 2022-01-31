@@ -1400,4 +1400,50 @@ FACTS_EXCLUDE(PerfectNeighborhood6) {
   FACT(collisions,==,0);
 }
 
-FACTS_FAST
+FACTS_REGISTER_ALL() {
+    FACTS_REGISTER(RandStats);
+    FACTS_REGISTER(FaceAndSuitNo);
+    FACTS_REGISTER(FaceFromNo);
+    FACTS_REGISTER(SuitFromNo);
+    FACTS_REGISTER(CardFromFaceSuitNo);
+    FACTS_REGISTER(Add);
+    FACTS_REGISTER(Subtract);
+    FACTS_REGISTER(Init);
+    FACTS_REGISTER(Cut);
+    FACTS_REGISTER(BackFrontShuffle);
+    FACTS_REGISTER(FindCard);
+    FACTS_REGISTER(PseudoShuffle);
+    FACTS_REGISTER(Pads);
+    FACTS_REGISTER(Ciphers);
+    FACTS_REGISTER(Encode);
+    FACTS_REGISTER(Envelope);
+    FACTS_REGISTER(BackFrontUnshuffle);
+    FACTS_REGISTER(P);
+    FACTS_REGISTER(PReachable);
+    FACTS_REGISTER(I);
+    FACTS_REGISTER(IReachable);
+    FACTS_REGISTER(Q);
+    FACTS_REGISTER(QReachable);
+    FACTS_REGISTER(T);
+    FACTS_REGISTER(TReachable);
+    FACTS_REGISTER(R);
+    FACTS_REGISTER(RReachable);
+    FACTS_REGISTER(X);
+    FACTS_REGISTER(XReachable);
+    FACTS_REGISTER(B);
+    FACTS_REGISTER(BReachable);
+    FACTS_REGISTER(S);
+    FACTS_REGISTER(SReachable);
+    FACTS_REGISTER(Cycles);
+    FACTS_REGISTER(TestCycles);
+    FACTS_REGISTER(InverseCycles);
+    FACTS_REGISTER(Z);
+    FACTS_REGISTER(DeckSet);
+    FACTS_REGISTER(Neighborhood5);
+    FACTS_REGISTER(PerfectNeighborhood5);
+    FACTS_REGISTER(Neighborhood6);
+    FACTS_REGISTER(PerfectNeighborhood6);
+}
+
+FACTS_MAIN
+
