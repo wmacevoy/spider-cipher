@@ -486,7 +486,7 @@ FACTS(I) {
   Deck i;
   deckInit(i);
   I(i);
-  for (int k=0; k<CARDS; ++k) i[k] == k;
+  for (int k=0; k<CARDS; ++k) FACT(i[k],==,k);
 }
 
 FACTS(IReachable) {
@@ -1400,6 +1400,4 @@ FACTS_EXCLUDE(PerfectNeighborhood6) {
   FACT(collisions,==,0);
 }
 
-
-FACTS_FINISHED
-FACTS_MAIN
+FACTS_FAST
