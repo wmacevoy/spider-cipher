@@ -178,12 +178,12 @@ Card testCipherPad(const Deck deck) {
   return deck[(markLoc + 1) % CARDS];
 }
 
-FACTS(FaceAndSuiteNo) {
-  for (int suiteNo = 0; suiteNo <= 3; ++suiteNo) {
+FACTS(FaceAndSuitNo) {
+  for (int suitNo = 0; suitNo <= 3; ++suitNo) {
     for (int faceNo = 0; faceNo <= 9; ++faceNo) {
-      Card card = 10*suiteNo+faceNo;
+      Card card = 10*suitNo+faceNo;
       FACT(cardFaceNo(card),==,faceNo);
-      FACT(cardSuiteNo(card),==,suiteNo);
+      FACT(cardSuitNo(card),==,suitNo);
     }
   }
 }
@@ -201,22 +201,22 @@ FACTS(FaceFromNo) {
   FACT(cardFaceFromNo(9),==,'9');
 }
 
-FACTS(SuiteFromNo) {
+FACTS(SuitFromNo) {
   const uint32_t u32[]={0x2663,0x2666,0x2665,0x2660};
   const char *utf8[]={u8"♣",u8"♦",u8"♥",u8"♠"};
   for (int i=0; i<4; ++i) {
     FACT(utf8decval(utf8[i],utf8declen(utf8[i],strlen(utf8[i]))),==,u32[i]);
-    FACT(cardSuiteFromNo(i),==,u32[i]);
+    FACT(cardSuitFromNo(i),==,u32[i]);
   }
 }
 
-FACTS(CardFromFaceSuiteNo) {
-  for (int suiteNo = -1; suiteNo <= 4; ++suiteNo) {
+FACTS(CardFromFaceSuitNo) {
+  for (int suitNo = -1; suitNo <= 4; ++suitNo) {
     for (int faceNo = -1; faceNo <= 10; ++faceNo) {
-      int card = 10*suiteNo+faceNo;
-      if (suiteNo < 0 || suiteNo >= 4) { card = -1; }
+      int card = 10*suitNo+faceNo;
+      if (suitNo < 0 || suitNo >= 4) { card = -1; }
       if (faceNo < 0 || faceNo >= 10) { card = -1; }      
-      FACT(cardFromFaceSuiteNo(faceNo,suiteNo),==,card);
+      FACT(cardFromFaceSuitNo(faceNo,suitNo),==,card);
     }
   }
 }

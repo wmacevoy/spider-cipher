@@ -85,7 +85,7 @@ int cardFaceNo(Card card)
   return card%10;
 }
 
-int cardSuiteNo(Card card)
+int cardSuitNo(Card card)
 {
   return card/10;
 }
@@ -104,25 +104,25 @@ int cardFaceNoFromFace(uint32_t face) {
   return -1;
 }
 
-static const uint32_t SUITES[] = {0x2663,0x2666,0x2665,0x2660};
+static const uint32_t SUITS[] = {0x2663,0x2666,0x2665,0x2660};
 
-uint32_t cardSuiteFromNo(int cardSuiteNo)
+uint32_t cardSuitFromNo(int cardSuitNo)
 {
-  return SUITES[cardSuiteNo];
+  return SUITS[cardSuitNo];
 }
 
-int cardSuiteNoFromSuite(uint32_t suite) {
-  for (int i=0; SUITES[i] != 0; ++i) {
-    if (SUITES[i] == suite) return i;
+int cardSuitNoFromSuit(uint32_t suit) {
+  for (int i=0; SUITS[i] != 0; ++i) {
+    if (SUITS[i] == suit) return i;
   }
   return -1;
 }
 
 
-int cardFromFaceSuiteNo(int cardFaceNo, int cardSuiteNo) {
+int cardFromFaceSuitNo(int cardFaceNo, int cardSuitNo) {
   if (0 <= cardFaceNo && cardFaceNo < 10 &&
-      0 <= cardSuiteNo && cardSuiteNo < 4) {
-    return 10*cardSuiteNo+cardFaceNo;
+      0 <= cardSuitNo && cardSuitNo < 4) {
+    return 10*cardSuitNo+cardFaceNo;
   } else {
     return -1;
   }
@@ -606,7 +606,7 @@ static int CIOCardsFmtWrite(CIOCardsFmt *me, int card) {
     ws[p++]=0;
   } else if (me->mode == 'c') {
     ws[p++]=cardFaceFromNo(cardFaceNo(card));
-    ws[p++]=cardSuiteFromNo(cardSuiteNo(card));
+    ws[p++]=cardSuitFromNo(cardSuitNo(card));
     ws[p++]=0;
   } else {
     return -1;
@@ -642,17 +642,17 @@ static int CIOCardsFmtRead(CIOCardsFmt *me) {
   if (face == '1' || face == 'a') face = 'A';
   int faceNo=cardFaceNoFromFace(face);
   if (faceNo != -1) {
-    int suite = CIOPeek(me->io,1);
-    if (suite == 'C' || suite == 'c') suite=cardSuiteFromNo(0);
-    if (suite == 'D' || suite == 'd') suite=cardSuiteFromNo(1);
-    if (suite == 'H' || suite == 'h') suite=cardSuiteFromNo(2);
-    if (suite == 'S' || suite == 's') suite=cardSuiteFromNo(3);    
+    int suit = CIOPeek(me->io,1);
+    if (suit == 'C' || suit == 'c') suit=cardSuitFromNo(0);
+    if (suit == 'D' || suit == 'd') suit=cardSuitFromNo(1);
+    if (suit == 'H' || suit == 'h') suit=cardSuitFromNo(2);
+    if (suit == 'S' || suit == 's') suit=cardSuitFromNo(3);    
 
-    int suiteNo=cardSuiteNoFromSuite(suite);
-    if (suiteNo != -1) {
+    int suitNo=cardSuitNoFromSuit(suit);
+    if (suitNo != -1) {
       CIORead(me->io);
       CIORead(me->io);	
-      return cardFromFaceSuiteNo(faceNo,suiteNo);
+      return cardFromFaceSuitNo(faceNo,suitNo);
     }
   }
   

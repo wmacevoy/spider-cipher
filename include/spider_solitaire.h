@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <stdio.h>
@@ -38,11 +37,11 @@ extern "C" {
   void CIORandInit(CIORand *me);
   
 
-  /* 0,1,2,3 ... 8,9 for Q,A,23 ... 8,9 of any suite */
+  /* 0,1,2,3 ... 8,9 for Q,A,23 ... 8,9 of any suit */
   int cardFaceNo(Card card);
 
   /* 0,1,2,3 for club, diamond, heart, spade of any face */
-  int cardSuiteNo(Card card);
+  int cardSuitNo(Card card);
 
   /* 'Q','A','1','2','3', ... '8','9' for 0,1,2,3,...,8,9 */
   uint32_t cardFaceFromNo(int cardFaceNo);
@@ -50,12 +49,12 @@ extern "C" {
   int cardFaceNoFromFace(uint32_t face);
 
   /* unicode club, diamond, heart, spade from 0,1,2,3 */
-  uint32_t cardSuiteFromNo(int cardSuiteNo);
+  uint32_t cardSuitFromNo(int cardSuitNo);
   
-  int cardSuiteNoFromSuite(uint32_t suite);
+  int cardSuitNoFromSuit(uint32_t suit);
 
-  /* returns -1 if face or suite value are not in range */
-  int cardFromFaceSuiteNo(int cardFaceNo, int cardSuiteNo);
+  /* returns -1 if face or suit value are not in range */
+  int cardFromFaceSuitNo(int cardFaceNo, int cardSuitNo);
 
   /* modular 40 add */
   Card cardAdd(Card x, Card y);
