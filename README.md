@@ -1,17 +1,29 @@
-# spider-solitaire
+# spider-solitaire-cipher
 
-# Run Test
+visible cipher
 
-## all tests (week of runtime, 16 GB ram, 200 GB disk space)
+# Command line
 
-```bash
-make all && nice time bin/spider_solitaire_facts.exe --facts_include='*' 2>&1 | tee "run-$(date).log"
+bin/spider-solitaire [--decimal|--base40|--cards] --key='key message' --encrypt='plain' --decrypt='cipher'
+
+# BUILD
+
+```sh
+make all
+```
+
+# TEST
+
+## All tests (week of runtime, 16 GB ram, 200 GB disk space)
+
+```sh
+make all && nice time bin/spider_solitaire_facts --facts_include='*' 2>&1 | tee "run-$(date).log"
  ```
 
-## most tests (hour of runtime, 4 GB ram, no disk space):
+## Most tests (few minutes of runtime, 4 GB ram, no disk space):
 
-```bash
-make all && nice time bin/spider_solitaire_facts.exe 2>&1 | tee "run-$(date).log"
+```sh
+make all && nice time bin/spider_solitaire_facts 2>&1 | tee "run-$(date).log"
  ```
 
 
