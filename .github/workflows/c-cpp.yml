@@ -1,0 +1,48 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout main
+      uses: actions/checkout@v2
+      with:
+        path: main
+
+    - name: Checkout facts
+      uses: actions/checkout@v2
+      with:
+        repository: wmacevoy/facts
+        path: facts
+
+    - name: Checkout utf8
+      uses: actions/checkout@v2
+      with:
+        repository: wmacevoy/utf8
+        path: utf8
+
+    - name: Checkout cio
+      uses: actions/checkout@v2
+      with:
+        repository: wmacevoy/cio
+        path: cio
+
+    - name: make plain check
+      run: make -B CDBG="" COPT="" -C "main" check
+
+    - name: make debug check
+      run: make -B CDBG="-g" COPT="" -C "main" check
+
+    - name: make optimized check
+      run: make -B CDBG="" COPT="-O2" -C "main" check
+
+    - name: make debug optimized check
+      run: make -B CDBG="-g" COPT="-O2" -C "main" check
