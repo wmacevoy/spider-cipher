@@ -42,5 +42,17 @@ bin/spider_solitaire : tmp/spider_solitaire_main.o tmp/spider_solitaire.o tmp/ci
 	mkdir -p bin
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LDLIBS)
 
-
+.PHONY: all
 all : bin/spider_solitaire bin/spider_solitaire_facts
+
+.PHONY: check
+check : all
+	bin/spider_solitaire_facts | diff - expected/spider_solitaire_facts.out
+	bin/spider_solitaire --decimal --key='secret' --encrypt='message' | bin/spider_solitaire --key='secret' --decrypt=- | diff - expected/message.out
+	bin/spider_solitaire --base40 --key='secret' --encrypt='message' | bin/spider_solitaire --key='secret' --decrypt=- | diff - expected/message.out
+	bin/spider_solitaire --cards --key='secret' --encrypt='message' | bin/spider_solitaire --key='secret' --decrypt=- | diff - expected/message.out
+
+.PHONY: expected
+expected : all
+	bin/spider_solitaire_facts >expected/spider_solitaire_facts.out
+	echo "message" >expected/message.out

@@ -98,7 +98,7 @@ uint32_t cardFaceFromNo(int cardFaceNo)
 }
 
 int cardFaceNoFromFace(uint32_t face) {
-  for (int i=0; FACES[i] != 0; ++i) {
+  for (int i=0; i<10; ++i) {
     if (FACES[i] == face) return i;
   }
   return -1;
@@ -112,10 +112,11 @@ uint32_t cardSuitFromNo(int cardSuitNo)
 }
 
 int cardSuitNoFromSuit(uint32_t suit) {
-  for (int i=0; SUITS[i] != 0; ++i) {
+  for (int i=0; i<4; ++i) {
     if (SUITS[i] == suit) return i;
   }
   return -1;
+  
 }
 
 

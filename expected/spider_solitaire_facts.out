@@ -1,0 +1,122 @@
+src/spider_solitaire_facts.c 71: RandStats facts check [1;31mexcluded[0m.
+src/spider_solitaire_facts.c 181: FaceAndSuitNo facts check started
+src/spider_solitaire_facts.c 181: FaceAndSuitNo facts check ended
+src/spider_solitaire_facts.c 191: FaceFromNo facts check started
+src/spider_solitaire_facts.c 191: FaceFromNo facts check ended
+src/spider_solitaire_facts.c 204: SuitFromNo facts check started
+src/spider_solitaire_facts.c 204: SuitFromNo facts check ended
+src/spider_solitaire_facts.c 213: CardFromFaceSuitNo facts check started
+src/spider_solitaire_facts.c 213: CardFromFaceSuitNo facts check ended
+src/spider_solitaire_facts.c 224: Add facts check started
+src/spider_solitaire_facts.c 224: Add facts check ended
+src/spider_solitaire_facts.c 236: Subtract facts check started
+src/spider_solitaire_facts.c 236: Subtract facts check ended
+src/spider_solitaire_facts.c 248: Init facts check started
+src/spider_solitaire_facts.c 248: Init facts check ended
+src/spider_solitaire_facts.c 256: Cut facts check started
+src/spider_solitaire_facts.c 256: Cut facts check ended
+src/spider_solitaire_facts.c 268: BackFrontShuffle facts check started
+src/spider_solitaire_facts.c 268: BackFrontShuffle facts check ended
+src/spider_solitaire_facts.c 278: FindCard facts check started
+src/spider_solitaire_facts.c 278: FindCard facts check ended
+src/spider_solitaire_facts.c 289: PseudoShuffle facts check started
+src/spider_solitaire_facts.c 289: PseudoShuffle facts check ended
+src/spider_solitaire_facts.c 304: Pads facts check started
+src/spider_solitaire_facts.c 304: Pads facts check ended
+src/spider_solitaire_facts.c 325: Ciphers facts check started
+src/spider_solitaire_facts.c 325: Ciphers facts check ended
+src/spider_solitaire_facts.c 366: Encode facts check started
+src/spider_solitaire_facts.c 366: Encode facts check ended
+src/spider_solitaire_facts.c 394: Envelope facts check started
+src/spider_solitaire_facts.c 394: Envelope facts check ended
+src/spider_solitaire_facts.c 435: BackFrontUnshuffle facts check started
+src/spider_solitaire_facts.c 435: BackFrontUnshuffle facts check ended
+src/spider_solitaire_facts.c 455: P facts check started
+src/spider_solitaire_facts.c 455: P facts check ended
+src/spider_solitaire_facts.c 467: PReachable facts check started
+src/spider_solitaire_facts.c 467: PReachable facts check ended
+src/spider_solitaire_facts.c 485: I facts check started
+src/spider_solitaire_facts.c 485: I facts check ended
+src/spider_solitaire_facts.c 492: IReachable facts check started
+src/spider_solitaire_facts.c 492: IReachable facts check ended
+src/spider_solitaire_facts.c 513: Q facts check started
+src/spider_solitaire_facts.c 513: Q facts check ended
+src/spider_solitaire_facts.c 525: QReachable facts check started
+src/spider_solitaire_facts.c 525: QReachable facts check ended
+src/spider_solitaire_facts.c 549: T facts check started
+src/spider_solitaire_facts.c 549: T facts check ended
+src/spider_solitaire_facts.c 561: TReachable facts check started
+src/spider_solitaire_facts.c 561: TReachable facts check ended
+src/spider_solitaire_facts.c 587: R facts check started
+src/spider_solitaire_facts.c 587: R facts check ended
+src/spider_solitaire_facts.c 597: RReachable facts check started
+src/spider_solitaire_facts.c 597: RReachable facts check ended
+src/spider_solitaire_facts.c 623: X facts check started
+src/spider_solitaire_facts.c 623: X facts check ended
+src/spider_solitaire_facts.c 632: XReachable facts check started
+src/spider_solitaire_facts.c 632: XReachable facts check ended
+src/spider_solitaire_facts.c 654: B facts check started
+src/spider_solitaire_facts.c 654: B facts check ended
+src/spider_solitaire_facts.c 668: BReachable facts check started
+src/spider_solitaire_facts.c 668: BReachable facts check ended
+src/spider_solitaire_facts.c 698: S facts check started
+src/spider_solitaire_facts.c 698: S facts check ended
+src/spider_solitaire_facts.c 714: SReachable facts check started
+src/spider_solitaire_facts.c 714: SReachable facts check ended
+src/spider_solitaire_facts.c 769: Cycles facts check started
+src/spider_solitaire_facts.c 769: Cycles facts check ended
+src/spider_solitaire_facts.c 809: InverseCycles facts check started
+src/spider_solitaire_facts.c 809: InverseCycles facts check ended
+src/spider_solitaire_facts.c 885: Z facts check started
+src/spider_solitaire_facts.c 885: Z facts check ended
+src/spider_solitaire_facts.c 1139: DeckSet facts check started
+src/spider_solitaire_facts.c 1139: DeckSet facts check ended
+src/spider_solitaire_facts.c 1309: Neighborhood4 facts check started
+src/spider_solitaire_facts.c 1309: Neighborhood4 facts check ended
+src/spider_solitaire_facts.c 1316: PerfectNeighborhood4 facts check started
+src/spider_solitaire_facts.c 1316: PerfectNeighborhood4 facts check ended
+src/spider_solitaire_facts.c 1325: Neighborhood6 facts check [1;31mexcluded[0m.
+src/spider_solitaire_facts.c 1334: PerfectNeighborhood6 facts check [1;31mexcluded[0m.
+facts summary.
+facts check FaceAndSuitNo [1;32mpassed[0m
+facts check FaceFromNo [1;32mpassed[0m
+facts check SuitFromNo [1;32mpassed[0m
+facts check CardFromFaceSuitNo [1;32mpassed[0m
+facts check Add [1;32mpassed[0m
+facts check Subtract [1;32mpassed[0m
+facts check Init [1;32mpassed[0m
+facts check Cut [1;32mpassed[0m
+facts check BackFrontShuffle [1;32mpassed[0m
+facts check FindCard [1;32mpassed[0m
+facts check PseudoShuffle [1;32mpassed[0m
+facts check Pads [1;32mpassed[0m
+facts check Ciphers [1;32mpassed[0m
+facts check Encode [1;32mpassed[0m
+facts check Envelope [1;32mpassed[0m
+facts check BackFrontUnshuffle [1;32mpassed[0m
+facts check P [1;32mpassed[0m
+facts check PReachable [1;32mpassed[0m
+facts check I [1;32mpassed[0m
+facts check IReachable [1;32mpassed[0m
+facts check Q [1;32mpassed[0m
+facts check QReachable [1;32mpassed[0m
+facts check T [1;32mpassed[0m
+facts check TReachable [1;32mpassed[0m
+facts check R [1;32mpassed[0m
+facts check RReachable [1;32mpassed[0m
+facts check X [1;32mpassed[0m
+facts check XReachable [1;32mpassed[0m
+facts check B [1;32mpassed[0m
+facts check BReachable [1;32mpassed[0m
+facts check S [1;32mpassed[0m
+facts check SReachable [1;32mpassed[0m
+facts check Cycles [1;32mpassed[0m
+facts check InverseCycles [1;32mpassed[0m
+facts check Z [1;32mpassed[0m
+facts check DeckSet [1;32mpassed[0m
+facts check Neighborhood4 [1;32mpassed[0m
+facts check PerfectNeighborhood4 [1;32mpassed[0m
+facts check RandStats [1;31mexcluded[0m
+facts check Neighborhood6 [1;31mexcluded[0m
+facts check PerfectNeighborhood6 [1;31mexcluded[0m
+320004663 (100.0%) truths and 0 (0.0%) fictions checked.
