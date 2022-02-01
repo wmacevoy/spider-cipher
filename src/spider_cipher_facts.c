@@ -8,7 +8,7 @@
 
 #include "facts.h"
 #include "utf8.h"
-#include "spider_solitaire.h"
+#include "spider_cipher.h"
 
 const char* const UTF8_TEST_STRINGS [] =
   {

@@ -4,7 +4,7 @@
 #include <limits.h>
 
 
-#include "spider_solitaire.h"
+#include "spider_cipher.h"
 #include "utf8.h"
 #include "cio.h"
 

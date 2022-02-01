@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <limits.h>
-#include "spider_solitaire.h"
+#include "spider_cipher.h"
 
 const char *const BASE40 = "BCDEFGHLMNPRSTUVWXYZbcdefghimnprstuvwxyz";  
 
