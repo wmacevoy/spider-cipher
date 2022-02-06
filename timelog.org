@@ -17,6 +17,3 @@
 | # | Total   |            600 | 8100 by end of semester        |                   |
 | # | Average |      46.153846 | (ideal: >72)                   |                   |
 #+TBLFM: @>>$3=vsum(@2$3..@>>>$3)::@>$3=vmean(@2$3..@>>>$3)
-
-don't worry about this stuff at the very bottom
-org-mode just wants a place to store formulas
