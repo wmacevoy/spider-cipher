@@ -1,0 +1,22 @@
+|   | Date    | Minutes Logged | Description of Activities      | Learning Outcomes |
+|---+---------+----------------+--------------------------------+-------------------|
+|   | 01/24   |              0 |                                |                   |
+|   | 01/25   |              0 |                                |                   |
+|   | 01/26   |              0 | [still setting things up]      |                   |
+|   | 01/27   |              0 |                                |                   |
+|   | 01/28   |              0 |                                |                   |
+|   | 01/29   |            200 | Reading existing cipher code   | 4, 5              |
+|   | 01/30   |            160 | More code reading              | 4, 5              |
+|   | 01/31   |             40 | Meeting w/MacEvoy              | 5, 6              |
+|   | 02/01   |              0 |                                |                   |
+|   | 02/02   |              0 | [during this period, busy      |                   |
+|   | 02/03   |              0 | dealing with other classes]    |                   |
+|   | 02/04   |              0 |                                |                   |
+|   | 02/05   |            200 | Researching [Schneier, mostly] | 2, 3              |
+|---+---------+----------------+--------------------------------+-------------------|
+| # | Total   |            600 | 8100 by end of semester        |                   |
+| # | Average |      46.153846 | (ideal: >72)                   |                   |
+#+TBLFM: @>>$3=vsum(@2$3..@>>>$3)::@>$3=vmean(@2$3..@>>>$3)
+
+don't worry about this stuff at the very bottom
+org-mode just wants a place to store formulas
