@@ -8,7 +8,7 @@
 
 #include "facts.h"
 #include "utf8.h"
-#include "spider_solitaire.h"
+#include "spider_cipher.h"
 
 const char* const UTF8_TEST_STRINGS [] =
   {
@@ -801,70 +801,9 @@ FACTS(Cycles) {
       if (i != length) {
 	ok = 0;
       }
-      //      fprintf(stderr,"%4d%s",i, (c==CARDS-1 ? "" : ","));
-      //      if (c % 10 == 9) { fprintf(stderr,"\n"); }
-      //i != CARDS-1) fprintf(stderr
-      //cycles %d = %d (not %d) eq=%d\n",
-	//	      c,i,CYCLE_LENGTHS[c],eq);
     }
   }
   FACT(ok,==,1);
-}
-
-
-FACTS_EXCLUDE(TestCycles) {
-  int ok = 1;
-  
-  Deck t[CARDS];
-  for (int c = 0; c<CARDS; ++c) {
-    deckInit(t[c]);
-    T(t[c],c);
-  }
-
-  int maxLen=-1,maxS0=0,maxS1=0;
-
-  for (int s0=0; s0<CARDS; ++s0) {
-    for (int s1=s0+1; s1<CARDS; ++s1) {
-      int minLenS = INT_MAX;
-      for (int c = 0; c < CARDS; ++c) {
-	Deck deck;
-	deckInit(deck);
-	int i = 0,eq=-1;
-	while (eq == -1) {
-	  P(deck,c);
-	  S(deck,s0,s1);
-	  //      int tmp=deck[0];
-	  //      for (int k=0; k<CARDS/2-1; ++k) {
-	  //	deck[k]=deck[k+1];
-	  //      }
-	  //      deck[CARDS/2-1]=tmp;
-	  ++i;
-	  for (int k=0; k<CARDS; ++k) {
-	    if (deckcmp(deck,t[k])==0) {
-	      eq = k;
-	    }
-	  }
-	}
-	if (i < minLenS) {
-	  minLenS=i;
-	}
-      }
-      if (minLenS > maxLen) {
-	maxLen = minLenS;
-	maxS0=s0;
-	maxS1=s1;
-      }
-    }
-  }
-  fprintf(stderr,"max len = %d s0=%d s1=%d\n",maxLen,maxS0,maxS1);
-
-    //    if (i != CYCLE_LENGTHS[c]) {
-    //      fprintf(stderr,"cycles %d = %d (not %d) eq=%d\n",
-    //	      c,i,CYCLE_LENGTHS[c],eq);
-    //      ok = 0;
-    //    }
-  //  }
-  //  FACT(ok,==,1);
 }
 
 FACTS(InverseCycles) {
@@ -1358,7 +1297,7 @@ int dups(int perfect, int dir, int dist) {
   fprintf(stderr,"sorting time estimate is %f seconds\n",est);  
   int dups = DeckSetSort(ds);
   DeckSetClose(ds);
-  fclose(file);
+  if (file != NULL) fclose(file);
   free(ds);
 
   double t3=timer();
@@ -1367,17 +1306,17 @@ int dups(int perfect, int dir, int dist) {
   return dups;
 }
 
-FACTS(Neighborhood5) {
+FACTS(Neighborhood4) {
   int perfect = 0;
-  int n = 5;
+  int n = 4;
   int collisions = dups(perfect,1,n);
   FACT(collisions,==,0);
 }
 
-FACTS(PerfectNeighborhood5) {
+FACTS(PerfectNeighborhood4) {
   int perfect = 1;
   int dir = 1;
-  int dist = 5;
+  int dist = 4;
   int collisions = dups(perfect,dir,dist);
   FACT(collisions,==,0);
 }
@@ -1435,12 +1374,11 @@ FACTS_REGISTER_ALL() {
     FACTS_REGISTER(S);
     FACTS_REGISTER(SReachable);
     FACTS_REGISTER(Cycles);
-    FACTS_REGISTER(TestCycles);
     FACTS_REGISTER(InverseCycles);
     FACTS_REGISTER(Z);
     FACTS_REGISTER(DeckSet);
-    FACTS_REGISTER(Neighborhood5);
-    FACTS_REGISTER(PerfectNeighborhood5);
+    FACTS_REGISTER(Neighborhood4);
+    FACTS_REGISTER(PerfectNeighborhood4);
     FACTS_REGISTER(Neighborhood6);
     FACTS_REGISTER(PerfectNeighborhood6);
 }
