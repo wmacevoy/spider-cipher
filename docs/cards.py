@@ -1,6 +1,6 @@
 UPS=[('A','ALPHA'),  ('B','BRAVO'), ('C','CHARLIE'),('D','DELTA'), ('E','ECHO'),('F','FOXTROT'),('G','GOLF'),('H','HOTEL'),('I','INDIA'),('J','JULIETT'),
      ('K','KILO'),    ('L','LIMA'),  ('M','MIKE'),   ('N','NOVEMBER'), ('O','OSCAR'), ('P','PAPA'), ('Q','QUEBEC'),('R','ROMEO'),('S','SIERRA'),('T','TANGO'),
-     ('U','UNIFORM'),('V','VICTOR'),('W','WHISKEY'),('X','XRAY'),('Y','YANKEE'),('Z','ZULU'),('{','curly'),('}','curly'),('[','bracket'),(']','bracket'),
+     ('U','UNIFORM'),('V','VICTOR'),('W','WHISKEY'),('X','XRAY'),('Y','YANKEE'),('Z','ZULU'),('{','{curly}'),('}','curly'),('[','[bracket]'),(']','[bracket]'),
      ('_','under'),  (':','colon'), ('!','bank'),   ('&#96;','&#96;back&#96;'),('heart-broken',''),('heart-full',''),('',''),('',''),('',''),('','')]
 
 
@@ -11,7 +11,7 @@ DOWNS=[('0','zero'),('1','one'),('2','two'),('3','three'),('4','four'),('5','fiv
 
 PLAINS=[('a','alpha'),('b','bravo'),('c','charlie'),('d','delta'),('e','echo'),('f','foxtrot'),('g','golf'),('h','hotel'),('i','india'),('j','juliett'),
         ('k','kilo'),('l','lima'),('m','mike'),('n','november'),('o','oscar'),('p','papa'),('q','quebec'),('r','romeo'),('s','sierra'),('t','tango'),
-        ('u','uniform'),('v','victor'),('w','whiskey'),('x','xray'),('y','yankee'),('z','zulu'),('&lt;','less'),('&gt;','more'),('(','open'),(')','close'),
+        ('u','uniform'),('v','victor'),('w','whiskey'),('x','xray'),('y','yankee'),('z','zulu'),('&lt;','less'),('&gt;','more'),('(','(paren)'),(')','(paren)'),
         ('␣','space'),(',','comma'),('.','period'),('&#34;','&#34;double&#34;'),('thumb-down',''),('thumb-up',''),('↓',''),('↑',''),('⇊',''),('⇈','')]
 
 SUITS=['suit-club','suit-diamond','suit-heart','suit-spade']

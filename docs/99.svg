@@ -60,6 +60,13 @@
           d="m 5.29,1.75 -8,-12 8,-5 8,5 z"
           id="diamond"
           sodipodi:nodetypes="ccccc" />
+
+          <path
+          transform="matrix(0.2,0,0,0.2,-2.5,-15)"
+          style="fill:#555555;fill-opacity:1;stroke:#000000;stroke-width:2.5px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="M 13.11245,27.125959 C -17.909819,53.625012 12.262291,72.924921 36.790147,60.273007 36.664549,66.669865 30.803298,72.89278 27.038568,78.719014 H 53.521299 C 49.644115,73.056394 42.910723,66.688991 42.933293,60.273007 67.975387,72.300766 94.607423,51.326226 66.82064,27.125959 52.331625,13.835263 43.274784,3.4940827 39.861402,-0.02114467 36.747892,3.4063017 28.453788,13.484673 13.111822,27.125959 Z"
+      id="spade"
+     sodipodi:nodetypes="ccccccccc" />
   </defs>
   <g
      inkscape:label="Layer 1"
@@ -97,7 +104,7 @@
 	<use
 	    x="0"
 	    y="0"
-	    xlink:href="#heart"
+	    xlink:href="#spade"
 	    id="suit"
 	    width="100%"
 	    height="100%" />
@@ -122,6 +129,6 @@
        id="use29757"
        transform="rotate(180,31.75,44.45)"
        width="100%"
-       height="100%" /> 
+       height="100%" />
         </g>
 </svg>
