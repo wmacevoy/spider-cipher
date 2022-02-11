@@ -1,20 +1,20 @@
 UPS=[('A','ALPHA'),  ('B','BRAVO'), ('C','CHARLIE'),('D','DELTA'), ('E','ECHO'),('F','FOXTROT'),('G','GOLF'),('H','HOTEL'),('I','INDIA'),('J','JULIETT'),
      ('K','KILO'),    ('L','LIMA'),  ('M','MIKE'),   ('N','NOVEMBER'), ('O','OSCAR'), ('P','PAPA'), ('Q','QUEBEC'),('R','ROMEO'),('S','SIERRA'),('T','TANGO'),
-     ('U','UNIFORM'),('V','VICTOR'),('W','WHISKEY'),('X','XRAY'),('Y','YANKEE'),('Z','ZULU'),('{','{curly}'),('}','curly'),('[','[bracket]'),(']','[bracket]'),
-     ('_','under'),  (':','colon'), ('!','bank'),   ('&#96;','&#96;back&#96;'),('heart-broken',''),('heart-full',''),('',''),('',''),('',''),('','')]
-
+     ('U','UNIFORM'),('V','VICTOR'),('W','WHISKEY'),('X','XRAY'),('Y','YANKEE'),('Z','ZULU'),('{','{curly'),('}','curly}'),('[','[bracket'),(']','bracket]'),
+     ('_','under'),  (':','colon'), ('!','bang!'),   ('&#96;','&#96;back&#96;'),('heart-broken',''),('heart-full',''),('','↓aA'),('',''),('','⇊ab⇈AB'),('','')]
 
 DOWNS=[('0','zero'),('1','one'),('2','two'),('3','three'),('4','four'),('5','five'),('6','six'),('7','seven'),('8','eight'),('9','nine'),
        ('A','ALPHA'),('B','BRAVO'),('C','CHARLIE'),('D','DELTA'),('E','ECHO'),('F','FOXTROT'),('@','at'),('=','equal'),('\\','backslash'),('~','tilde'),
-       ('#','pound'),('$','dollar'),('%','percent'),('^','carat'),('&amp;','and'),('|','pipe'),('-','dash'),('+','plus'),('/','slash'),('*','astrisk'),
-       ('↩','newline'),(';','semicolon'),('?','question'),('&#39;','&#39;single&#39;'),('sad',''),('happy',''),('',''),('',''),('',''),('','')]
+       ('#','pound'),('$','dollar'),('%','percent'),('^','carat'),('&amp;','and'),('|','pipe'),('-','dash'),('+','plus'),('/','slash'),('*','astrisk*'),
+       ('↩','newline'),(';','semicolon'),('?','question'),('&#39;','&#39;single&#39;'),('sad',''),('happy',''),('',''),('','↑a1'),('',''),('','⇈ab⇊12')]
 
 PLAINS=[('a','alpha'),('b','bravo'),('c','charlie'),('d','delta'),('e','echo'),('f','foxtrot'),('g','golf'),('h','hotel'),('i','india'),('j','juliett'),
         ('k','kilo'),('l','lima'),('m','mike'),('n','november'),('o','oscar'),('p','papa'),('q','quebec'),('r','romeo'),('s','sierra'),('t','tango'),
-        ('u','uniform'),('v','victor'),('w','whiskey'),('x','xray'),('y','yankee'),('z','zulu'),('&lt;','less'),('&gt;','more'),('(','(paren)'),(')','(paren)'),
-        ('␣','space'),(',','comma'),('.','period'),('&#34;','&#34;double&#34;'),('thumb-down',''),('thumb-up',''),('↓',''),('↑',''),('⇊',''),('⇈','')]
+        ('u','uniform'),('v','victor'),('w','whiskey'),('x','xray'),('y','yankee'),('z','zulu'),('&lt;','less'),('&gt;','more'),('(','(paren'),(')','paren)'),
+        ('␣','space'),(',','comma'),('.','period'),('&#34;','&#34;double&#34;'),('thumb-down',''),('thumb-up',''),('','↓1a'),('','↑Aa'),('','⇊12⇈ab'),('','⇈AB⇊ab')]
 
 SUITS=['suit-club','suit-diamond','suit-heart','suit-spade']
+ARROWS=['↓','↑','⇊','⇈']
 
 with open("card-template.svg") as f:
     svg = f.read()
@@ -29,6 +29,10 @@ def card(number):
     plain = PLAINS[number][0]
     hint_plain = PLAINS[number][1]
     translate_type = "translate-text" if number != 34 and number != 35 else "translate-pics"
+    formats="formats" if number < 36 else "formats-dark"
+
+    arrow="↓↑" if number < 36 else ARROWS[number-36]
+
     tmp = svg
     tmp = tmp.replace("${suit}",SUITS[suit])
     tmp = tmp.replace("${number}",str(suit)+str(face))
@@ -39,6 +43,8 @@ def card(number):
     tmp = tmp.replace("${hint_down}",hint_down)
     tmp = tmp.replace("${hint_up}",hint_up)
     tmp = tmp.replace("${hint_plain}",hint_plain)
+    tmp = tmp.replace("${formats}",formats)
+    tmp = tmp.replace("${arrow}",arrow)    
     return tmp
 
 for number in range(40):

@@ -152,6 +152,11 @@
       <path style="fill:none;stroke:#ffffff;stroke-width:0.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:0.75, 0.25;stroke-dashoffset:0;stroke-opacity:1" d="m 1,7 12,0" id="path957-2-2-2" />
       <path style="fill:none;stroke:#ffffff;stroke-width:0.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" d="m 0,14 14,0" id="path957-2-99" />
     </g>
+    <g id="lines-dark">
+      <path style="fill:none;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" d="m 0,0 14,0" id="path957-3" />
+<!--      <path style="fill:none;stroke:#000000;stroke-width:0.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:0.75, 0.25;stroke-dashoffset:0;stroke-opacity:1" d="m 1,7 12,0" id="path957-2-2-2" />      -->
+      <path style="fill:none;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" d="m 0,14 14,0" id="path957-2-99" />
+    </g>
 
     <g id="translate-text">
       <text xml:space="preserve" style="font-size:19.05px;line-height:1;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" x="37.45" y="34.25" text-anchor="middle" id="translate">${translate_plain}</text>
@@ -163,34 +168,50 @@
       <use x="51" y="20.25" xlink:href="#${translate_up}" id="pic-up" />
       <use x="51" y="48.25" xlink:href="#${translate_down}" id="pic-down" />
     </g>
+    <g id="formats">
+      <g id="formats-up" transform="translate(44.45,6.35)">
+        <use xlink:href="#lines" id="lines-up" />
+        <text transform="rotate(-90) translate(-7,-1)" xml:space="preserve" text-anchor="middle" style="font-size:3px;line-height:1;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">${hint_up}</text>
+      </g>
+        <g id="formats-plain" transform="translate(30.45,20.35)">
+          <use xlink:href="#lines" id="lines-plain" />
+          <text transform="rotate(-90) translate(-7,-1)" xml:space="preserve" text-anchor="middle" style="font-size:3px;line-height:1;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">${hint_plain}</text>
+        </g>
+        <g id="formats-down" transform="translate(44.45,34.35)">
+          <use xlink:href="#lines" id="lines-down" />
+          <text transform="rotate(-90) translate(-7,-1)" xml:space="preserve" text-anchor="middle" style="font-size:3px;line-height:1;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">${hint_down}</text>
+	</g>	  	  
+        <text xml:space="preserve" text-anchor="middle" style="font-size:7px;line-height:1;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" x="51.45" y="28.50" >${arrow}</text>
+    </g>
+
+    <g id="formats-dark">
+      <g id="formats-dark-up" transform="translate(44.45,6.35)">
+        <use xlink:href="#lines-dark" id="lines-dark-up" />
+        <text transform="translate(16,9)" xml:space="preserve" text-anchor="end" style="font-size:7px;line-height:1;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">${hint_up}</text>
+      </g>
+      <g id="formats-dark-plain" transform="translate(30.45,20.35)">
+        <use xlink:href="#lines-dark" id="lines-dark-plain" />
+        <text transform="translate(16,9)" xml:space="preserve" text-anchor="end" style="font-size:7px;line-height:1;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">${hint_plain}</text>
+      </g>
+      <g id="formats-dark-down" transform="translate(44.45,34.35)">
+        <use xlink:href="#lines-dark" id="lines-dark-down" />
+        <text transform="translate(16,9)" xml:space="preserve" text-anchor="end" style="font-size:7px;line-height:1;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">${hint_down}</text>
+      </g>
+      <text xml:space="preserve" text-anchor="middle" style="font-size:25.4px;line-height:1;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" x="51.45" y="36" >${arrow}</text>
+    </g>
   </defs>
   <g inkscape:label="Layer 1" inkscape:groupmode="layer" id="layer1">
     <path id="border" d="m 6.35,0 h 50.8 a 6.35,6.35 45 0 1 6.35,6.35 v 76.2 a 6.35,6.35 135 0 1 -6.35,6.35 H 6.35 A 6.35,6.35 45 0 1 0,82.55 V 6.35 A 6.35,6.35 135 0 1 6.35,0 Z" style="fill:#e0e0e0;fill-opacity:1;stroke:#000000;stroke-width:0.5;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
     <path style="fill:none;stroke:#000000;stroke-width:0.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" d="M 0,25.4 C 0,40.4 63.5,48.5 63.5,63.5" id="separator" sodipodi:nodetypes="cc" />
     <g id="upward">
-      <g id="formats">
-         <g id="formats-up" transform="translate(44.45,6.35)">
-            <use xlink:href="#lines" id="lines-up" />
-            <text transform="rotate(-90) translate(-7,0)" xml:space="preserve" text-anchor="middle" style="font-size:3px;line-height:1;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">${hint_up}</text>
-         </g>
-        <g id="formats-plain" transform="translate(30.45,20.35)">
-        <use xlink:href="#lines" id="lines-plain" />
-        <text transform="rotate(-90) translate(-7,0)" xml:space="preserve" text-anchor="middle" style="font-size:3px;line-height:1;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">${hint_plain}</text>
-        </g>
-        <g id="formats-down" transform="translate(44.45,34.35)">
-        <use xlink:href="#lines" id="lines-down" />
-        <text transform="rotate(-90) translate(-7,0)" xml:space="preserve" text-anchor="middle" style="font-size:3px;line-height:1;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">${hint_down}</text>
-      </g>	  	  
-        <text xml:space="preserve" text-anchor="middle" style="font-size:7.05556px;line-height:1;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" x="51.45" y="28.50" id="translate-6">↑↓</text>
-      </g>
-      
+      <use xlink:href="#${formats}" />      
       <g id="suite-number" transform="translate(6.35,19.05)">
-        <use x="0" y="12.7" xlink:href="#${suit}" id="suit" width="100%" height="100%" />
+        <use x="0" y="12.7" xlink:href="#${suit}" id="suit" />
 	
-        <text xml:space="preserve" style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:19.05px;line-height:1.25;font-family:'Helvetica Neue';-inkscape-font-specification:'Helvetica Neue';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" x="0" y="0" id="number">${number}</text>
+        <text xml:space="preserve" style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:19.05px;line-height:1.25;font-family:'Helvetica Neue';-inkscape-font-specification:'Helvetica Neue';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" id="number">${number}</text>
       </g>
-      <use x="0" y="0" xlink:href="#${translate_type}" />
+      <use xlink:href="#${translate_type}" />
     </g>
-    <use x="0" y="0" xlink:href="#upward" transform="rotate(180,31.75,44.45)" />
+    <use xlink:href="#upward" transform="rotate(180,31.75,44.45)" />
   </g>
 </svg>
