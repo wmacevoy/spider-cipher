@@ -1,0 +1,144 @@
+* Spider Cipher
+** Background on stream ciphers
+*** explanation of the idea behind stream ciphers
+*** advantages and disadvantages compared to block ciphers
+**** better for continuous flow of bits
+**** not susceptible to some common attacks
+***** differential cryptanalysis
+***** TODO find the name of the one where you build a library of known blocks
+**** weird stream ciphers are hard to cryptanalyze, but have hard-to-prove properties
+*** common vulnerabilities
+**** bit-flipping
+**** TODO find the other ones
+** A surprisingly empty niche in a very paranoid discipline: a way to trust nobody
+*** Modern cryptographic systems have paid little attention to the prospect of being verifiable by hand
+*** this makes sense, since it's a real pain 
+*** but for some sensitive applications, you always have to ask the question "Do you trust <x>?"
+*** The answer will sometimes always be no
+**** do not trust hardware
+**** do not trust software
+**** do not trust your own operating system
+**** do not trust a server
+*** There is good reason to be this paranoid in real situations
+**** Russian government rootkits devices
+**** US government runs MITM attacks constantly
+**** Chinese government places intentional backdoors in hardware they manufacture // ? Wait, is this what you meant by "China easter-eggs what they make"?
+*** When this is the case, people are left making sacrifices, having to either trust somebody or use an insecure self-baked protocol
+**** as such, research into this area is highly warranted
+** Other non-trivial advantages to this approach
+*** Working with an intuitive cipher directly allows the user to understand what's going on and, for the most part, understand proper implementation 
+**** Not always true; for example, consider key reuse - the existence of this attack may not be immediately obvious
+**** however, a huge proportion of successful attacks aren't cryptanalysis, but rather simply failures of basic implementation, when cryptographic systems are treated like black boxes
+***** An illustrative quote from WCF (Why Cryptosystems Fail) about users writing down the security of a cryptosystem as the security of the entire system when evaluating safety
+**** A more recent source than WCF may be useful here
+*** At the least, a cool learning tool
+**** working by hand with a cipher strong enough to keep away more than your kid sister is a valuable experience for the amateur cryptographer
+**** allows direct understanding of some basic cryptographic concepts, and can be used as an introduction point to more complex ones
+** Design goals
+*** Should be practically hand-verifiable
+*** Should still be usable with a computer
+*** Trust should have to be placed with nobody but the recipient
+*** Should hold up to the security specifications of a traditional cipher
+**** i.e. known-plaintext attack is still deeply computationally infeasible
+*** Speed is highly preferable, but not completely necessary
+** Description of Spider
+*** Note: most design decisions were ultimately made by Dr. MacEvoy before the initiation of this project
+*** Steps
+**** There's a lot of build-up, but the actual algorithm is quite easy to follow
+**** 40 card deck
+***** Use only a subset of cards
+****** queens for 0 (Q looks like 0)
+****** ace for 1
+****** 2-9 for... 2-9
+***** set the rest to the side
+**** each remaining card is assigned a value from 0 to 39
+***** the second digit is read as above
+***** the first digit (0, 1, 2, 3) is defined by the suit
+***** alphabetical order
+****** clubs: 0
+****** diamonds: 1
+****** hearts: 2
+****** spades: 3
+***** may be helpful to take some of the face cards you set to the side and order their suits like this so you don't have to remember which is which
+**** shuffle it completely
+***** no, really, completely; multiple kinds of shuffle, including just spreading cards around on a table and mixing them up
+**** once shuffled, create a copy of the deck
+**** share one of these decks with the recipient; the permutation of these cards is the cryptographic key
+**** during encryption and decryption, the deck is oriented with the cards face-up
+**** some terminology which will be in use throughout
+***** add/subtract: addition and subtraction will always be performed mod 40
+***** tag: the value of the third card from the top, minus 1
+***** seal: the card which comes after (is below) the card with the same value as the tag
+***** precut: the card on top // ? Wait, why do we need a special term for this? What's wrong with just referring to it as the top card?
+***** cut: for a defined cut card, move all cards above that card below it
+****** Think of the deck as consisting of two blocks
+******* Block 1: the cut card and all the cards below it 
+******* Blcok 2: all the cards above the cut card
+****** A cut should preserve order within these blocks
+****** Before a cut, block 1 is below block 2. All a cut does is move block 2 below block 1. It's pretty much identical to what one thinks of intuitively as cutting a deck
+******* (assuming one has any experience with cards, which may not always be true)
+***** back-front shuffle
+****** easy to do, slightly tricky to describe
+****** 1. place the deck in hand 1
+****** 2. move the top card to hand 2
+****** 3. repeat this process until you're out of cards:
+******* 3a. move the top card in hand 1 to hand 2, placing it above all the cards in hand 2
+******* 3b. move the top card in hand 1 to hand 2, placing it below all the cards in hand 2
+****** this process can be easily remembered by thinking of the very first movement (step 2) as "back" and then the next as "front," then repeating
+******* back, front, back, front, back, front...
+**** Shifting
+***** In order to facilitate more than 40 characters, a system known as shifting may be used
+***** When decrypting a message, certain cards (6-9 of spades, or 36-39, the final four) are always interpreted as shifts
+****** // ? How are shifts interpreted when already shifted? Does shift lock down when shift locked up go back to normal? Does it wrap? I should ask
+****** 36: Shift once down - Shift the next character down one from the current mode
+****** 37: Shift once up -  the next character up one from the current mode
+****** 38: Shift lock down - Move down a shift mode
+****** 39. Shift lock up - Move up a shift mode
+***** Character set is roughly ascii-compatible with a few flourishes 
+***** should be possible to adapt to any language, but may be difficult for some, involving a lot of shifting
+***** TODO Check that this is still up-to-date later
+***** Unshifted character set (the space is a literal space in this):
+****** abcdefghijklmnopqrstuvwxyz<>() ,."
+****** the last two are thumbs down and thumbs up emoji
+***** Shifted down (note the redundancy for the sake of encoding hex comfortably):
+****** 0123456789ABCDEF@=\~#$%^&|-+/*
+****** these four are broken up because of the fact that the queen of spades is a return
+****** the other three in this section are ;?'
+****** the last two are a crying emoji and a smiling emoji
+***** Shifted up:
+****** ABCDEFGHIJKLMNOPQRSTUVWXYZ{}[]_:!`
+****** the last two are broken_heart and heart emoji
+**** Preparing the plaintext
+***** Place five 9 of spades cards (39, shift lock up) marking the end
+***** Insert a random card before each card in the message // ? How do you get "random" cards by hand, here? Is it enough to just pick some from a shuffled deck, or not?
+***** Put 10 random cards at the start
+***** Add additional random cards at the end until the envelope length is a multiple of 10
+**** Generating a character of ciphertext from plaintext, or vice versa
+***** To generate a character of ciphertext, add the seal to the current character of prepared plaintext
+***** To generate a character of plaintext, subtract the seal from the first character of ciphertext
+***** The cut card is the card which has a value equal to the sum of:
+****** the value of the top card, and
+****** the value of the current character of prepared plaintext
+***** Cut the deck at the cut card, of course
+***** Perform a back-front shuffle
+** Justification of design decisions
+*** TODO justify 
+** Comparison of Spider to existing ciphers
+*** Note in advance: The design goals of other ciphers are quite different from those of Spider, and so in some cases, a direct comparison may be inapt. We'll see how that goes
+*** Plaintext feedback
+**** + extremely chaotic
+**** + less vulnerable to bit flipping even given a known plaintext, since preventing garbling is very difficult without knowing both the plaintext and the key
+**** + difficult to cryptanalyze
+**** - Encryption and decryption can only be parallelized by interlacing streams
+***** Can this be done safely by using multiple shifted decks? I have no idea
+***** TODO find out
+*** TODO Figure out more pros and cons and comparisons
+*** RC4 is the most similar cipher I could find preliminarily, but it uses ciphertext feedback rather than plaintext feedback
+*** TODO try to find another plaintext feedback cipher which has known vulnerabilities and see if those might apply here
+**** // ? Do you happen to know of any other such cipher?
+** Analysis of security
+*** log base 2 of 40! gives ~209 bits of entropy, which is a ton - completely intractable to brute-force // ? Is this the right way to do this?
+*** TODO try to work out a way to estimate the period // ? Have you already done this?
+*** TODO Check how random the output is, according to statistical tests // ? You've probably already done this one
+*** TODO Look at the properties of ciphertexts encrypted with the same key to see how bad key reuse is for this
+*** TODO Think about whether there's some clever way bit flipping might still be useful given various situations
