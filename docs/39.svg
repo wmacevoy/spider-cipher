@@ -2,140 +2,98 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg width="2.5in" height="3.5in" viewBox="0 0 63.5 88.9" version="1.1" id="svg1547" inkscape:version="1.1.2 (b8e25be8, 2022-02-05)" sodipodi:docname="99.svg" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
-  <sodipodi:namedview id="namedview1549" pagecolor="#ffffff" bordercolor="#666666" borderopacity="1.0" inkscape:pageshadow="2" inkscape:pageopacity="0.0" inkscape:pagecheckerboard="0" inkscape:document-units="mm" showgrid="false" units="in" inkscape:zoom="2.0170388" inkscape:cx="87.008738" inkscape:cy="153.44276" inkscape:window-width="1312" inkscape:window-height="855" inkscape:window-x="386" inkscape:window-y="35" inkscape:window-maximized="0" inkscape:current-layer="layer1" />
-  <defs id="defs1544">
-    <g id="heart-full" transform="translate(-7,-14)">
+  <!-- <sodipodi:namedview id="namedview1549" pagecolor="#ffffff" bordercolor="#666666" borderopacity="1.0" inkscape:pageshadow="2" inkscape:pageopacity="0.0" inkscape:pagecheckerboard="0" inkscape:document-units="mm" showgrid="false" units="in" inkscape:zoom="2.0170388" inkscape:cx="87.008738" inkscape:cy="153.44276" inkscape:window-width="1312" inkscape:window-height="855" inkscape:window-x="386" inkscape:window-y="35" inkscape:window-maximized="0" inkscape:current-layer="layer1" /> -->
+  <style>
+   text { font-family:'Helvetica Neue'; font-size:19.05; line-height:1; fill:#000000;fill-opacity:1;stroke:none; }
+   g.emoji path, g.emoji ellipse, g.emoji circle  { fill:none;stroke:#000000;stroke-width:1.0;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1 }
+   text.number { fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.5; }
+   g#formats-dark text { font-size:7px;fill:#ffffff; }
+   g#thumb-up text, g#thumb-down text { font-size:7px; }
+   path  { fill:none;stroke:#000000;stroke-width:1.0;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1; }
+   path.suit { fill:#808080;stroke:#000000;stroke-width:0.5; }
+   g#border path  { fill:#e0e0e0;fill-opacity:1;stroke:#000000;stroke-width:0.5;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none; }
+   g#lines path { fill:none;stroke:#ffffff;stroke-width:0.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1 }
+   g#lines-dark path { fill:none;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1; }
+   g#lines path.lines-center { stroke-dasharray:0.25, 0.75;}
+  </style>
+  <defs>
+    <g id="heart-full" class="emoji" transform="translate(-7,-14)">
     <path
-       style="fill:none;stroke:#000000;stroke-width:1.0;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="M 7,14 C -5.5,3.5 2,-3 7,2 12,-3 19.5,3.5 7,14 Z" />
     </g>
-    <g id="heart-broken" transform="translate(-7,-14)">
+    <g id="heart-broken" class="emoji" transform="translate(-7,-14)">
     <path
-       style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="M 3.1192613,0.91816809 C -0.51575331,1.1343295 -2.3043291,6.5459524 6.5727643,13.572239 L 10.055526,6.1948296 5.8047553,7.7606133 6.7629245,2.3188525 C 5.5460584,1.2839481 4.244462,0.85125639 3.1192613,0.91816809 Z"
-       sodipodi:nodetypes="sccccs" />
+       d="M 3.1192613,0.91816809 C -0.51575331,1.1343295 -2.3043291,6.5459524 6.5727643,13.572239 
+          L 10.055526,6.1948296 5.8047553,7.7606133 6.7629245,2.3188525 
+          C 5.5460584,1.2839481 4.244462,0.85125639 3.1192613,0.91816809 Z" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="M 11.5983,-0.03055905 C 10.626785,-0.0873111 9.5242056,0.22914926 8.4585571,0.98296888 L 6.9371668,5.7541131 12.359724,4.4696249 6.6548634,12.991543 c 0.14833,0.145957 0.2983343,0.292314 0.4533994,0.44009 C 17.163309,6.0077897 15.370964,0.189818 11.5983,-0.03055905 Z"
-       sodipodi:nodetypes="ccccccc" />
+       d="M 11.5983,-0.03055905 C 10.626785,-0.0873111 9.5242056,0.22914926 8.4585571,0.98296888 
+          L 6.9371668,5.7541131 12.359724,4.4696249 6.6548634,12.991543 
+          c 0.14833,0.145957 0.2983343,0.292314 0.4533994,0.44009 
+          C 17.163309,6.0077897 15.370964,0.189818 11.5983,-0.03055905 Z" />
     </g>
     
-    <g id="thumb">
+    <g id="thumb" class="emoji" >
       <path
-      style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
-      d="m 0.25,6 h 4 C 3.761351,3.4259714 2.2612357,0.33083438 6.0945404,0.46375698 9.00476,0.56467093 8.2142203,3.27992 7.75,6 c 3,0 7,1 4,3 1,1 1,1 0,2 2,1 2,3 -11.5,2 z"
-      id="thumb-hand"
-      sodipodi:nodetypes="ccsccccc" />
+      d="m 0.25,6 h 4 C 3.761351,3.4259714 2.2612357,0.33083438 6.0945404,0.46375698 
+         9.00476,0.56467093 8.2142203,3.27992 7.75,6 c 3,0 7,1 4,3 1,1 1,1 0,2 2,1 2,3 -11.5,2 z"
+      id="thumb-hand" />
    <path
-      style="fill:none;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
-      d="m 4.7220858,1.807218 c 0,0 0.1746936,2.3787345 1.0299202,2.3513267 0.8335591,-0.026714 0.8550277,-2.3513266 0.8550277,-2.3513266 z"
-      id="thumb-nail"
-      sodipodi:nodetypes="cacc" />
+      style="stroke-width:0.5"
+      d="m 4.7220858,1.807218 c 0,0 0.1746936,2.3787345 1.0299202,2.3513267 
+         0.8335591,-0.026714 0.8550277,-2.3513266 0.8550277,-2.3513266 z"
+      id="thumb-nail" />
    </g>
 
-   <g id="thumb-up" transform="translate(-7,-14)">
-      <use x="0" y="0" xlink:href="#thumb" />
-    <text
-       xml:space="preserve"
-       text-anchor="middle"
-       style="font-size:7px;line-height:1;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       x="6"
-       y="12">+1</text>
+   <g id="thumb-up" class="emoji" transform="translate(-7,-14)">
+      <use xlink:href="#thumb" />
+      <text text-anchor="middle" x="6" y="12">+1</text>
     </g>
-    <g id="thumb-down" transform="translate(-7,-14)">
-      <use x="0" y="0" transform="matrix(1,0,0,-1,0,14)" xlink:href="#thumb" />
-    <text
-    xml:space="preserve"
-    text-anchor="middle"
-    style="font-size:7px;line-height:1;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-    x="7"
-       y="7">-1</text>
+    <g id="thumb-down" class="emoji" transform="translate(-7,-14)">
+      <use transform="matrix(1,0,0,-1,0,14)" xlink:href="#thumb" />
+      <text text-anchor="middle" x="7" y="7">-1</text>
     </g>
     
-    <g id="sad" transform="translate(-7,-14)">
-      <ellipse
-	  style="fill:none;stroke:#000000;stroke-width:1.0;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:3.46667;stroke-opacity:1"
-	  id="sad-right-eye"
-	  cx="9.5"
-	  cy="4"
-	  rx="0.25"
-	  ry="0.75" />
-      <ellipse
-	  style="fill:none;stroke:#000000;stroke-width:1.0;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:3.46667;stroke-opacity:1"
-	  id="sad-left-eye"
-	  cx="4.5"
-	  cy="4"
-	  rx="0.25"
-	  ry="0.75" />
+    <g id="sad" class="emoji" transform="translate(-7,-14)">
+      <ellipse id="sad-right-eye" cx="9.5" cy="4" rx="0.25" ry="0.75" />
+      <ellipse id="sad-left-eye" cx="4.5" cy="4" rx="0.25" ry="0.75" />
       
-      <circle
-	  style="fill:none;stroke:#000000;stroke-width:1.0;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:3.46667;stroke-opacity:1"
-	  id="sad-face"
-	  cx="7"
-	  cy="7"
-	  r="7" />
-      <path
-	  style="fill:none;stroke:#000000;stroke-width:1.0;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-	  d="m 3,10 c 1.5,-3 6,-3 8,0"
-	  id="sad-frown"
-	  sodipodi:nodetypes="csc" />
+      <circle id="sad-face" cx="7" cy="7" r="7" />
+      <path d="m 3,10 c 1.5,-3 6,-3 8,0" id="sad-frown" />
     </g>
     
-    <g id="happy" transform="translate(-7,-14)">
-      <ellipse
-	  style="fill:none;stroke:#000000;stroke-width:1.0;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:3.46667;stroke-opacity:1"
-	  id="happy-right-eye"
-	  cx="9.5"
-	  cy="4"
-	  rx="0.25"
-	  ry="0.75" />
-      <ellipse
-	  style="fill:none;stroke:#000000;stroke-width:1.0;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:3.46667;stroke-opacity:1"
-	  id="happy-left-eye"
-	  cx="4.5"
-	  cy="4"
-	  rx="0.25"
-	  ry="0.75" />
-      
-      <circle
-	  style="fill:none;stroke:#000000;stroke-width:1.0;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:3.46667;stroke-opacity:1"
-	  id="happy-face"
-	  cx="7"
-	  cy="7"
-	  r="7" />
-      <path
-	  style="fill:none;stroke:#000000;stroke-width:1.0;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-	  d="m 3,8 c 1.5,4 6,4 8,0"
-	  id="happy-smile"
-	  sodipodi:nodetypes="csc" />
+    <g id="happy" class="emoji" transform="translate(-7,-14)">
+      <ellipse id="happy-right-eye" cx="9.5" cy="4" rx="0.25" ry="0.75" />
+      <ellipse id="happy-left-eye" cx="4.5" cy="4" rx="0.25" ry="0.75" /> 
+      <circle id="happy-face" cx="7" cy="7" r="7" />
+      <path d="m 3,8 c 1.5,4 6,4 8,0" id="happy-smile" />
     </g>
     
     <!-- <path transform="translate(-4.5,-16)" id="suit-heart" style="fill:#ff5555;fill-opacity:1;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" d="M 2,6 A 4,4 0,0,1 10,6 A 4,4 0,0,1 18,6 Q 18,12 10,18 Q 2,12 2,6 z" /> -->
-    <path id="suit-heart" transform="translate(-2.5,-14)"
-    style="fill:#ff5555;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-    d="M 7,14 C -5.5,3.5 2,-3 7,2 12,-3 19.5,3.5 7,14 Z" />
+    <path id="suit-heart" class="suit" style="fill:#ff5555" transform="translate(-2.5,-14)" 
+          d="M 7,14 C -5.5,3.5 2,-3 7,2 12,-3 19.5,3.5 7,14 Z" />
 
-    <path id="suit-club" transform="translate(1,0) scale(0.80)" d="m 7.5,-8 c 0,0 2.375,-1.9 2.375,-4.534 
+    <path id="suit-club" class="suit" style="fill:#55ff55" transform="translate(1,0) scale(0.80)" d="m 7.5,-8 c 0,0 2.375,-1.9 2.375,-4.534 
 							      0,-1.542 -1.369,-4.102 -4.534,-4.102 -3.165,0 -4.534,2.561 
 							      -4.534,4.102 0,2.634 2.375,4.534 2.375,4.534 
 							      -2.638,-2.055 -7.341,-0.652 -7.341,3.455 0,2.056 1.68,4.318 
 							      4.318,4.318 3.165,0 4.534,-3.455 4.534,-3.455 0,0 0.402,3.938 
 							      -1.943,6.046 h 5.182 c -2.345,-2.107 -1.943,-6.046 -1.943,-6.046 0,0 
 							      1.369,3.455 4.534,3.455 2.639,0 4.318,-2.263 4.318,-4.318 0,-4.107 
-							      -4.703,-5.51 -7.341,-3.455 z" inkscape:connector-curvature="0" style="fill:#55ff55;fill-opacity:1;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+							      -4.703,-5.51 -7.341,-3.455 z" />
 
-    <path style="fill:#5555ff;fill-opacity:1;stroke:#000000;stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="m 5.29,1.75 -8,-12 8,-5 8,5 z" id="suit-diamond" sodipodi:nodetypes="ccccc" />
+    <path id="suit-diamond" class="suit" style="fill:#5555ff" d="m 5.29,1.75 -8,-12 8,-5 8,5 z" />
 
-    <path transform="matrix(0.2,0,0,0.2,-2.5,-15)" style="fill:#555555;fill-opacity:1;stroke:#000000;stroke-width:2.5px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="M 13.11245,27.125959 C -17.909819,53.625012 12.262291,72.924921 36.790147,60.273007 36.664549,66.669865 30.803298,72.89278 27.038568,78.719014 H 53.521299 C 49.644115,73.056394 42.910723,66.688991 42.933293,60.273007 67.975387,72.300766 94.607423,51.326226 66.82064,27.125959 52.331625,13.835263 43.274784,3.4940827 39.861402,-0.02114467 36.747892,3.4063017 28.453788,13.484673 13.111822,27.125959 Z" id="suit-spade" sodipodi:nodetypes="ccccccccc" />
+    <path id="suit-spade" class="suit" style="fill:#555555; stroke-width: 2.5;" transform="matrix(0.2,0,0,0.2,-2.5,-15)" d="M 13.11245,27.125959 C -17.909819,53.625012 12.262291,72.924921 36.790147,60.273007 36.664549,66.669865 30.803298,72.89278 27.038568,78.719014 H 53.521299 C 49.644115,73.056394 42.910723,66.688991 42.933293,60.273007 67.975387,72.300766 94.607423,51.326226 66.82064,27.125959 52.331625,13.835263 43.274784,3.4940827 39.861402,-0.02114467 36.747892,3.4063017 28.453788,13.484673 13.111822,27.125959 Z"  sodipodi:nodetypes="ccccccccc" />
     <g id="lines">
-      <path style="fill:none;stroke:#ffffff;stroke-width:0.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" d="m 0,0 14,0" id="path957-3" />
-      <path style="fill:none;stroke:#ffffff;stroke-width:0.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:0.75, 0.25;stroke-dashoffset:0;stroke-opacity:1" d="m 1,7 12,0" id="path957-2-2-2" />
-      <path style="fill:none;stroke:#ffffff;stroke-width:0.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" d="m 0,14 14,0" id="path957-2-99" />
+      <path d="m 0,0 14,0"/>
+      <path class="lines-center"  d="m 1,7 12,0" />
+      <path d="m 0,14 14,0" />
     </g>
     <g id="lines-dark">
-      <path style="fill:none;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" d="m 0,0 14,0" id="path957-3" />
-<!--      <path style="fill:none;stroke:#000000;stroke-width:0.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:0.75, 0.25;stroke-dashoffset:0;stroke-opacity:1" d="m 1,7 12,0" id="path957-2-2-2" />      -->
-      <path style="fill:none;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" d="m 0,14 14,0" id="path957-2-99" />
+      <path d="m 0,0 14,0" id="path957-3" />
+      <!-- <path class="lines-center"  d="m 1,7 12,0" /> -->
+      <path d="m 0,14 14,0" />
     </g>
 
     <g id="translate-text">
@@ -155,40 +113,41 @@
       </g>
         <g id="formats-plain" transform="translate(30.45,20.35)">
           <use xlink:href="#lines" id="lines-plain" />
-          <text transform="rotate(-90) translate(-7,-1)" xml:space="preserve" text-anchor="middle" style="font-size:3px;line-height:1;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">⇈AB⇊ab</text>
+          <text transform="rotate(-90) translate(-7,-1)" xml:space="preserve" text-anchor="middle" style="font-size:3px;line-height:1;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">⇞ABC⇟a</text>
         </g>
         <g id="formats-down" transform="translate(44.45,34.35)">
           <use xlink:href="#lines" id="lines-down" />
-          <text transform="rotate(-90) translate(-7,-1)" xml:space="preserve" text-anchor="middle" style="font-size:3px;line-height:1;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">⇈ab⇊12</text>
+          <text transform="rotate(-90) translate(-7,-1)" xml:space="preserve" text-anchor="middle" style="font-size:3px;line-height:1;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">⇞abc⇟1</text>
 	</g>	  	  
-        <text xml:space="preserve" text-anchor="middle" style="font-size:7px;line-height:1;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" x="51.45" y="28.50" >⇈</text>
+        <text xml:space="preserve" text-anchor="middle" style="font-size:7px;line-height:1;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" x="51.45" y="28.50" >⇞</text>
     </g>
 
     <g id="formats-dark">
       <g id="formats-dark-up" transform="translate(44.45,6.35)">
         <use xlink:href="#lines-dark" id="lines-dark-up" />
-        <text transform="translate(16,9)" xml:space="preserve" text-anchor="end" style="font-size:7px;line-height:1;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"></text>
+        <text transform="translate(16,9)" xml:space="preserve" text-anchor="end" ></text>
       </g>
       <g id="formats-dark-plain" transform="translate(30.45,20.35)">
         <use xlink:href="#lines-dark" id="lines-dark-plain" />
-        <text transform="translate(16,9)" xml:space="preserve" text-anchor="end" style="font-size:7px;line-height:1;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">⇈AB⇊ab</text>
+        <text transform="translate(16,9)" xml:space="preserve" text-anchor="end" >⇞ABC⇟a</text>
       </g>
       <g id="formats-dark-down" transform="translate(44.45,34.35)">
         <use xlink:href="#lines-dark" id="lines-dark-down" />
-        <text transform="translate(16,9)" xml:space="preserve" text-anchor="end" style="font-size:7px;line-height:1;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">⇈ab⇊12</text>
+        <text transform="translate(16,9)" xml:space="preserve" text-anchor="end" >⇞abc⇟1</text>
       </g>
-      <text xml:space="preserve" text-anchor="middle" style="font-size:25.4px;line-height:1;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" x="51.45" y="36" >⇈</text>
+      <text xml:space="preserve" text-anchor="middle" style="fill:#000000;font-size:150%" x="51.45" y="36" >⇞</text>
     </g>
   </defs>
   <g inkscape:label="Layer 1" inkscape:groupmode="layer" id="layer1">
-    <path id="border" d="m 6.35,0 h 50.8 a 6.35,6.35 45 0 1 6.35,6.35 v 76.2 a 6.35,6.35 135 0 1 -6.35,6.35 H 6.35 A 6.35,6.35 45 0 1 0,82.55 V 6.35 A 6.35,6.35 135 0 1 6.35,0 Z" style="fill:#e0e0e0;fill-opacity:1;stroke:#000000;stroke-width:0.5;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
-    <path style="fill:none;stroke:#000000;stroke-width:0.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" d="M 0,25.4 C 0,40.4 63.5,48.5 63.5,63.5" id="separator" sodipodi:nodetypes="cc" />
+    <g id="border">
+      <path id="border-card" d="m 6.35,0 h 50.8 a 6.35,6.35 45 0 1 6.35,6.35 v 76.2 a 6.35,6.35 135 0 1 -6.35,6.35 H 6.35 A 6.35,6.35 45 0 1 0,82.55 V 6.35 A 6.35,6.35 135 0 1 6.35,0 Z" />
+      <path id="border-separator" d="M 0,25.4 C 0,40.4 63.5,48.5 63.5,63.5" />
+    </g>
     <g id="upward">
       <use xlink:href="#formats-dark" />      
       <g id="suite-number" transform="translate(6.35,19.05)">
         <use x="0" y="12.7" xlink:href="#suit-spade" id="suit" />
-	
-        <text xml:space="preserve" style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:19.05;line-height:1.25;font-family:'Helvetica Neue';-inkscape-font-specification:'Helvetica Neue';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" id="number">39</text>
+        <text class="number">39</text>
       </g>
       <use xlink:href="#translate-text" />
     </g>
