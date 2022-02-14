@@ -135,6 +135,7 @@
 *** TODO Figure out more pros and cons and comparisons
 *** RC4 is the most similar cipher I could find preliminarily, but it uses ciphertext feedback rather than plaintext feedback
 *** TODO try to find another plaintext feedback cipher which has known vulnerabilities and see if those might apply here
+**** // ? Do you happen to know of any other such cipher?
 ** Analysis of security
 *** log base 2 of 40! gives ~209 bits of entropy, which is a ton - completely intractable to brute-force // ? Is this the right way to do this?
 *** TODO try to work out a way to estimate the period // ? Have you already done this?
