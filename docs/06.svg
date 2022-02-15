@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
-<svg width="2.5in" height="3.5in" viewBox="0 0 63.5 88.9" version="1.1" id="svg1547" inkscape:version="1.1.2 (b8e25be8, 2022-02-05)" sodipodi:docname="99.svg" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+<svg width="2.56in" height="3.56in" viewBox="-0.75 -0.75 65 90.4" version="1.1" id="svg1547" inkscape:version="1.1.2 (b8e25be8, 2022-02-05)" sodipodi:docname="99.svg" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
   <!-- <sodipodi:namedview id="namedview1549" pagecolor="#ffffff" bordercolor="#666666" borderopacity="1.0" inkscape:pageshadow="2" inkscape:pageopacity="0.0" inkscape:pagecheckerboard="0" inkscape:document-units="mm" showgrid="false" units="in" inkscape:zoom="2.0170388" inkscape:cx="87.008738" inkscape:cy="153.44276" inkscape:window-width="1312" inkscape:window-height="855" inkscape:window-x="386" inkscape:window-y="35" inkscape:window-maximized="0" inkscape:current-layer="layer1" /> -->
   <style>
    text { font-family:AtkinsonHyperlegibleRegular; font-size:19.05; line-height:1; fill:#000000;fill-opacity:1;stroke:none; }
@@ -9,7 +9,7 @@
      font-size:19.05px;line-height:1;font-family:AtkinsonHyperlegibleRegular;fill:#000000;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;
    }
    g.emoji path, g.emoji ellipse, g.emoji circle  { fill:none;stroke:#000000;stroke-width:1.0;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1 }
-   text.number { fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.5; }
+   text.number { font-family:AtkinsonHyperlegibleBold; font-size: 150%; fill:#000000;fill-opacity:1;stroke:none; }
    g#formats-dark text { font-size:7px;fill:#ffffff; }
    g#thumb-up text, g#thumb-down text { font-size:7px; }
    path  { fill:none;stroke:#000000;stroke-width:1.0;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1; }
@@ -148,16 +148,16 @@
       <path visibility="hidden" transform="translate(0,-1.0)" id="border-separator-minus" d="M 0,25.4 C 0,40.4 63.5,48.5 63.5,63.5" />      
       <path visibility="hidden" transform="translate(-0.43,0.17)" id="border-separator-plus" d="M 0,25.4 C 0,40.4 63.5,48.5 63.5,63.5" />
       <text style="fill:#ffffff; font-size: 3px; font-family: monospace;" text-anchor="middle">
-	<textPath startOffset="45%" href="#border-separator-minus">↓#⇞SPIDER⇟ ↑Cipher.</textPath>
+	<textPath startOffset="30%" href="#border-separator-minus">↓#⇞SPIDER⇟ ↑Cipher.</textPath>
       </text>
       <text style="fill:#ffffff;fill-opacity:1;font-size: 1px;font-family: monospace;" text-anchor="middle">
-	<textPath startOffset="45%" href="#border-separator-plus">36 20 39 18 15 08 03 04 17 38 30 37 02 08 15 07 04 17 32</textPath>
+	<textPath startOffset="29.5%" href="#border-separator-plus">36 20 39 18 15 08 03 04 17 38 30 37 02 08 15 07 04 17 32</textPath>
       </text>
     </g>
     <g id="upward">
       <use xlink:href="#formats" />      
       <g id="suite-number" transform="translate(6.35,19.05)">
-        <use x="0" y="12.7" xlink:href="#suit-club" id="suit" />
+        <use x="-1" y="8" xlink:href="#suit-club" id="suit" />
         <text class="number">06</text>
       </g>
       <use xlink:href="#translate-text" />
