@@ -123,18 +123,18 @@
     </g>
 
     <g id="formats-dark">
-      <g id="formats-dark-up" transform="translate(44.45,6.35)">
+      <g id="formats-up" transform="translate(44.45,6.35)">
         <use xlink:href="#lines-dark" id="lines-dark-up" />
-        <text transform="translate(16,9)" xml:space="preserve" text-anchor="end" >TANGO</text>
+        <text transform="rotate(-90) translate(-7,-1)" xml:space="preserve" text-anchor="middle" style="font-size:3px;line-height:1;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">TANGO</text>
       </g>
-      <g id="formats-dark-plain" transform="translate(30.45,20.35)">
-        <use xlink:href="#lines-dark" id="lines-dark-plain" />
-        <text transform="translate(16,9)" xml:space="preserve" text-anchor="end" >tango</text>
-      </g>
-      <g id="formats-dark-down" transform="translate(44.45,34.35)">
-        <use xlink:href="#lines-dark" id="lines-dark-down" />
-        <text transform="translate(16,9)" xml:space="preserve" text-anchor="end" >tilde</text>
-      </g>
+        <g id="formats-plain" transform="translate(30.45,20.35)">
+          <use xlink:href="#lines-dark" id="lines-dark-plain" />
+          <text transform="rotate(-90) translate(-7,13)" xml:space="preserve" text-anchor="middle" style="font-size:4px;line-height:1;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">tango</text>
+        </g>
+        <g id="formats-down" transform="translate(44.45,34.35)">
+          <use xlink:href="#lines-dark" id="lines-dark-down" />
+          <text transform="rotate(-90) translate(-7,-1)" xml:space="preserve" text-anchor="middle" style="font-size:3px;line-height:1;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">tilde</text>
+	</g>	  	  
       <text xml:space="preserve" text-anchor="middle" style="fill:#000000;font-size:150%" x="51.45" y="36" ></text>
     </g>
   </defs>
@@ -143,12 +143,12 @@
       <path id="border-card" d="m 6.35,0 h 50.8 a 6.35,6.35 45 0 1 6.35,6.35 v 76.2 a 6.35,6.35 135 0 1 -6.35,6.35 H 6.35 A 6.35,6.35 45 0 1 0,82.55 V 6.35 A 6.35,6.35 135 0 1 6.35,0 Z" />
       <path style="stroke-width: 1.5px" id="border-separator" d="M 0,25.4 C 0,40.4 63.5,48.5 63.5,63.5" />
       <path visibility="hidden" transform="translate(0,-1.0)" id="border-separator-minus" d="M 0,25.4 C 0,40.4 63.5,48.5 63.5,63.5" />      
-      <path visibility="hidden" transform="translate(-0.62,0.08)" id="border-separator-plus" d="M 0,25.4 C 0,40.4 63.5,48.5 63.5,63.5" />
+      <path visibility="hidden" transform="translate(-0.43,0.17)" id="border-separator-plus" d="M 0,25.4 C 0,40.4 63.5,48.5 63.5,63.5" />
       <text style="fill:#ffffff; font-size: 3px; font-family: monospace;" text-anchor="middle">
-	<textPath startOffset="42.5%" href="#border-separator-minus">↓#⇞SPIDER⇟ ↑Cipher.</textPath>
+	<textPath startOffset="45%" href="#border-separator-minus">↓#⇞SPIDER⇟ ↑Cipher.</textPath>
       </text>
       <text style="fill:#ffffff;fill-opacity:1;font-size: 1px;font-family: monospace;" text-anchor="middle">
-	<textPath startOffset="42.5%" href="#border-separator-plus">36 20 39 18 15 08 03 04 17 38 30 37 02 08 15 07 04 17 32</textPath>
+	<textPath startOffset="45%" href="#border-separator-plus">36 20 39 18 15 08 03 04 17 38 30 37 02 08 15 07 04 17 32</textPath>
       </text>
     </g>
     <g id="upward">
