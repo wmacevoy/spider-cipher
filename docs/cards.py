@@ -8,12 +8,16 @@ UPS=[('A','ALPHA'),  ('B','BRAVO'), ('C','CHARLIE'),('D','DELTA'), ('E','ECHO'),
 DOWNS=[('0','zero'),('1','one'),('2','two'),('3','three'),('4','four'),('5','five'),('6','six'),('7','seven'),('8','eight'),('9','nine'),
        ('A','ALPHA'),('B','BRAVO'),('C','CHARLIE'),('D','DELTA'),('E','ECHO'),('F','FOXTROT'),('@','at'),('=','equal'),('\\','backslash'),('~','tilde'),
        ('#','pound'),('$','dollar'),('%','percent'),('^','carat'),('&amp;','and'),('|','pipe'),('-','dash'),('+','plus'),('/','slash'),('*','astrisk*'),
-       ('↩',"\"<tspan dy=\"-4\" x=\"0\">end↩</tspan><tspan x=\"0\" dy=\"3\">line↩</tspan>"),(';','semicolon;'),('?','question?'),('&#39;','&#39;single&#39;'),('sad',''),('happy',''),('',''),('',''),('',''),('','')]
+       ('↩',"<tspan dy=\"-4\" x=\"0\">end↩</tspan><tspan x=\"0\" dy=\"3\">line↩</tspan>"),(';','semicolon;'),('?','question?'),('&#39;','&#39;single&#39;'),('sad',''),('happy',''),('',''),('',''),('',''),('','')]
 
 PLAINS=[('a','alpha'),('b','bravo'),('c','charlie'),('d','delta'),('e','echo'),('f','foxtrot'),('g','golf'),('h','hotel'),('i','india'),('j','juliett'),
         ('k','kilo'),('l','lima'),('m','mike'),('n','november'),('o','oscar'),('p','papa'),('q','quebec'),('r','romeo'),('s','sierra'),('t','tango'),
         ('u','uniform'),('v','victor'),('w','whiskey'),('x','xray'),('y','yankee'),('z','zulu'),('&lt;','less'),('&gt;','more'),('(','(paren'),(')','paren)'),
-        ('␣','s p a c e'),(',','comma,'),('.','period.'),('&#34;','&#34;double&#34;'),('thumb-down',''),('thumb-up',''),('',"Shift"),('',"Shift"),('',"SHIFT"),('',"SHIFT")]
+        ('␣','s p a c e'),(',','comma,'),('.','period.'),('&#34;','&#34;double&#34;'),('thumb-down',''),('thumb-up',''),
+        ('',"<tspan dy=\"-7\" x=\"0\">-- Shift --</tspan><tspan x=\"0\" dy=\"3.5\">once</tspan>"),
+        ('',"<tspan dy=\"-7\" x=\"0\">++ Shift ++</tspan><tspan x=\"0\" dy=\"3.5\">once</tspan>"),
+        ('',"<tspan dy=\"-7\" x=\"0\">-- SHIFT --</tspan><tspan x=\"0\" dy=\"3.5\">LOCK</tspan>"),
+        ('',"<tspan dy=\"-7\" x=\"0\">++ SHIFT ++</tspan><tspan x=\"0\" dy=\"3.5\">LOCK</tspan>")]
 
 SUITS=['suit-club','suit-diamond','suit-heart','suit-spade']
 ARROWS=['↓','↑','⇟','⇞']

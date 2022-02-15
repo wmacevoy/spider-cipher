@@ -14,7 +14,7 @@
    g#thumb-up text, g#thumb-down text { font-size:7px; }
    path  { fill:none;stroke:#000000;stroke-width:1.0;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1; }
    path.suit { fill:#808080;stroke:#000000;stroke-width:0.5; }
-   g#border path  { fill:#e0e0e0;fill-opacity:1;stroke:#000000;stroke-width:1.5;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none; }
+   g#border path  { fill:#c0c0c0;fill-opacity:1;stroke:#000000;stroke-width:1.5;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none; }
    g#lines path { fill:none;stroke:#ffffff;stroke-width:0.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1 }
    g#lines-dark path { fill:none;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1; }
    g#lines path.lines-center { stroke-dasharray:0.25, 0.75;}
@@ -132,7 +132,7 @@
       </g>
         <g id="formats-plain" transform="translate(30.45,20.35)">
           <use xlink:href="#lines-dark" id="lines-dark-plain" />
-          <text transform="rotate(-90) translate(-7,13)" xml:space="preserve" text-anchor="middle" style="font-size:4px;line-height:1;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">mike</text>
+          <text transform="rotate(-90) translate(-7,18.5)" xml:space="preserve" text-anchor="middle" style="font-size:4px;line-height:1;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">mike</text>
         </g>
         <g id="formats-down" transform="translate(44.45,34.35)">
           <use xlink:href="#lines-dark" id="lines-dark-down" />
