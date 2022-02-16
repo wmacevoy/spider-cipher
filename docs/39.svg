@@ -14,7 +14,7 @@
    g#thumb-up text, g#thumb-down text { font-size:7px; }
    path  { fill:none;stroke:#000000;stroke-width:1.0;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1; }
    path.suit { fill:#808080;stroke:#000000;stroke-width:0.5; }
-   g#border path  { fill:#c0c0c0;fill-opacity:1;stroke:#000000;stroke-width:1.5;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none; }
+   g#border path  { fill:#d0d0d0;fill-opacity:1;stroke:#000000;stroke-width:1.5;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none; }
    g#lines path { fill:none;stroke:#ffffff;stroke-width:0.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1 }
    g#lines-dark path { fill:none;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1; }
    g#lines path.lines-center { stroke-dasharray:0.25, 0.75;}
@@ -116,7 +116,7 @@
       </g>
         <g id="formats-plain" transform="translate(30.45,20.35)">
           <use xlink:href="#lines" id="lines-plain" />
-          <text transform="rotate(-90) translate(-7,-1)" xml:space="preserve" text-anchor="middle" style="font-size:3px;line-height:1;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"><tspan dy="-7" x="0">++ SHIFT ++</tspan><tspan x="0" dy="3.5">LOCK</tspan></text>
+          <text transform="rotate(-90) translate(-7,-1)" xml:space="preserve" text-anchor="middle" style="font-size:3px;line-height:1;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"><tspan dy="-7" x="0">+ SHIFT +</tspan><tspan x="0" dy="3.5">LOCK</tspan></text>
         </g>
         <g id="formats-down" transform="translate(44.45,34.35)">
           <use xlink:href="#lines" id="lines-down" />
@@ -132,7 +132,7 @@
       </g>
         <g id="formats-plain" transform="translate(30.45,20.35)">
           <use xlink:href="#lines-dark" id="lines-dark-plain" />
-          <text transform="rotate(-90) translate(-7,18.5)" xml:space="preserve" text-anchor="middle" style="font-size:4px;line-height:1;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"><tspan dy="-7" x="0">++ SHIFT ++</tspan><tspan x="0" dy="3.5">LOCK</tspan></text>
+          <text transform="rotate(-90) translate(-7,18.5)" xml:space="preserve" text-anchor="middle" style="font-size:4px;line-height:1;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"><tspan dy="-7" x="0">+ SHIFT +</tspan><tspan x="0" dy="3.5">LOCK</tspan></text>
         </g>
         <g id="formats-down" transform="translate(44.45,34.35)">
           <use xlink:href="#lines-dark" id="lines-dark-down" />
@@ -146,12 +146,12 @@
       <path id="border-card" d="m 6.35,0 h 50.8 a 6.35,6.35 45 0 1 6.35,6.35 v 76.2 a 6.35,6.35 135 0 1 -6.35,6.35 H 6.35 A 6.35,6.35 45 0 1 0,82.55 V 6.35 A 6.35,6.35 135 0 1 6.35,0 Z" />
       <path style="stroke-width: 1.5px" id="border-separator" d="M 0,25.4 C 0,40.4 63.5,48.5 63.5,63.5" />
       <path visibility="hidden" transform="translate(0,-1.0)" id="border-separator-minus" d="M 0,25.4 C 0,40.4 63.5,48.5 63.5,63.5" />      
-      <path visibility="hidden" transform="translate(-0.43,0.17)" id="border-separator-plus" d="M 0,25.4 C 0,40.4 63.5,48.5 63.5,63.5" />
-      <text style="fill:#ffffff; font-size: 3px; font-family: monospace;" text-anchor="middle">
-	<textPath startOffset="30%" href="#border-separator-minus">↓#⇞SPIDER⇟ ↑Cipher.</textPath>
+      <path visibility="hidden" transform="translate(-0.50,0.50)" id="border-separator-plus" d="M 0,25.4 C 0,40.4 63.5,48.5 63.5,63.5" />
+      <text style="fill:#ffffff; font-size: 6px; font-family: monospace;" text-anchor="middle">
+	<textPath startOffset="30%" href="#border-separator-minus">⇟123⇞ ↑Abc</textPath>
       </text>
-      <text style="fill:#ffffff;fill-opacity:1;font-size: 1px;font-family: monospace;" text-anchor="middle">
-	<textPath startOffset="29.5%" href="#border-separator-plus">36 20 39 18 15 08 03 04 17 38 30 37 02 08 15 07 04 17 32</textPath>
+      <text style="fill:#ffffff;fill-opacity:1;font-size: 2px;font-family: monospace;" text-anchor="middle">
+	<textPath startOffset="30%" href="#border-separator-plus">38 01 02 03 39 30 37 00 01 02</textPath>
       </text>
     </g>
     <g id="upward">
