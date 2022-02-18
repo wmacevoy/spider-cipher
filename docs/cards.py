@@ -1,5 +1,49 @@
 #!/usr/bin/env python3
 
+import math
+
+r=4.0
+R=13.0
+delta=15.0
+h=7.0
+w=3.0
+
+def x(r,deg): return r*math.cos((2.0*math.pi/360.0)*deg)
+def y(r,deg): return -r*math.sin((2.0*math.pi/360.0)*deg)
+def p(r,deg): return str(x(r,deg))+","+str(y(r,deg))
+
+def id(params,suffix=""): return (" id=\"" + params['id'] + suffix + "\" ") if 'id' in params else " "
+def style(params): return (" style=\"" + params['style'] + "\" ") if 'style' in params else " "
+
+def clover(params={}):
+    r=params['r'] if 'r' in params else 4.0
+    R=params['R'] if 'R' in params else 13.0
+    delta=params['delta'] if 'delta' in params else 15.0
+    h=params['h'] if 'h' in params else 7.0
+    w=params['w'] if 'w' in params else 3.0
+
+    a=[270,270+120,270+240]
+
+    return f"""
+<g {id(params)}>
+  <path {id(params,"-flower")} {style(params)}
+    d="
+    M {p(r,a[0])} 
+    C {p(R,a[0]+delta)} {p(R,a[1]-delta)} {p(r,a[1])} 
+    C {p(R,a[1]+delta)} {p(R,a[2]-delta)} {p(r,a[2])} 
+    C {p(R,a[2]+delta)} {p(R,a[0]-delta)} {p(r,a[0])} 
+    Z
+    " />
+  <path {id(params,"-stem")} {style(params)}
+    d="
+    m 0,{h} 
+    h -{w/2} 
+    c {w/2},{-w/2} {w/2},{-h} {w/2},{-h} 
+    c 0,0 {0},{h-w/2} {w/2},{h} 
+    z" />
+</g>
+"""
+
 UPS=[('A','ALFA'),  ('B','BRAVO'), ('C','CHARLIE'),('D','DELTA'), ('E','ECHO'),('F','FOXTROT'),('G','GOLF'),('H','HOTEL'),('I','INDIA'),('J','JULIETT'),
      ('K','KILO'),    ('L','LIMA'),  ('M','MIKE'),   ('N','NOVEMBER'), ('O','OSCAR'), ('P','PAPA'), ('Q','QUEBEC'),('R','ROMEO'),('S','SIERRA'),('T','TANGO'),
      ('U','UNIFORM'),('V','VICTOR'),('W','WHISKEY'),('X','XRAY'),('Y','YANKEE'),('Z','ZULU'),('{','{curly'),('}','curly}'),('[','[bracket'),(']','bracket]'),

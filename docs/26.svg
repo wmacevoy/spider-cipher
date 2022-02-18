@@ -2,15 +2,7 @@
 
 <svg width="2.56in" height="3.56in" viewBox="-0.75 -0.75 65 90.4" version="1.1" id="card-26" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
   <style>
-    @font-face {
-      font-family: Card26AtkinsonHyperlegibleRegular;
-      src: url(Atkinson-Hyperlegible-Regular-102.ttf);
-    }
-    @font-face {
-      font-family: Card26AtkinsonHyperlegibleBold;
-      src: url(Atkinson-Hyperlegible-Bold-102.ttf);
-    }
-   text { font-family:Card26AtkinsonHyperlegibleRegular; font-size:19.05px; line-height:1; fill:#000000;fill-opacity:1;stroke:none; }
+    text { font-family:Helvetica; font-size:19.04px; line-height:1; fill:#000000;fill-opacity:1;stroke:none; }
    
    g.emoji path, g.emoji ellipse, g.emoji circle  { fill:none;stroke:#000000;stroke-width:1.0;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1 }
    g#card-26-formats-dark text { font-size:7px;fill:#ffffff; }
@@ -74,10 +66,10 @@
     </g>
     
     <!-- <path transform="translate(-4.5,-16)" id="suit-heart" style="fill:#ff5555;fill-opacity:1;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" d="M 2,6 A 4,4 0,0,1 10,6 A 4,4 0,0,1 18,6 Q 18,12 10,18 Q 2,12 2,6 z" /> -->
-    <path id="card-26-suit-heart" class="suit" style="fill:#ff5555" transform="translate(-2.5,-14)" 
+    <path id="card-26-suit-heart" class="suit" style="fill:#ff5555" 
           d="M 7,14 C -5.5,3.5 2,-3 7,2 12,-3 19.5,3.5 7,14 Z" />
 
-    <path id="card-26-suit-club" class="suit" style="fill:#55ff55" transform="translate(1,0) scale(0.80)" d="m 7.5,-8 c 0,0 2.375,-1.9 2.375,-4.534 
+    <path id="card-26-suit-club" class="suit" style="fill:#55ff55" d="m 0,14 c 0,0 2.375,-1.9 2.375,-4.534 
 							      0,-1.542 -1.369,-4.102 -4.534,-4.102 -3.165,0 -4.534,2.561 
 							      -4.534,4.102 0,2.634 2.375,4.534 2.375,4.534 
 							      -2.638,-2.055 -7.341,-0.652 -7.341,3.455 0,2.056 1.68,4.318 
@@ -86,7 +78,7 @@
 							      1.369,3.455 4.534,3.455 2.639,0 4.318,-2.263 4.318,-4.318 0,-4.107 
 							      -4.703,-5.51 -7.341,-3.455 z" />
 
-    <path id="card-26-suit-diamond" class="suit" style="fill:#5555ff" d="m 5.29,1.75 -8,-12 8,-5 8,5 z" />
+    <path id="card-26-suit-diamond" class="suit" style="fill:#5555ff" d="m 7,14 -7,-10 7,-4 7,4 z" />
 
     <path id="card-26-suit-spade" class="suit" style="fill:#555555; stroke-width: 2.5;" transform="matrix(0.2,0,0,0.2,-2.5,-15)" d="M 13.11245,27.125959 C -17.909819,53.625012 12.262291,72.924921 36.790147,60.273007 36.664549,66.669865 30.803298,72.89278 27.038568,78.719014 H 53.521299 C 49.644115,73.056394 42.910723,66.688991 42.933293,60.273007 67.975387,72.300766 94.607423,51.326226 66.82064,27.125959 52.331625,13.835263 43.274784,3.4940827 39.861402,-0.02114467 36.747892,3.4063017 28.453788,13.484673 13.111822,27.125959 Z" />
     <g id="card-26-lines">
@@ -113,56 +105,72 @@
     <g id="card-26-formats">
       <g id="formats-up" transform="translate(44.45,6.35)">
         <use xlink:href="#card-26-lines" />
-        <text transform="rotate(-90) translate(-7,-1)" xml:space="preserve" text-anchor="middle" style="font-size:3px;line-height:1;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">{curly</text>
+        <text transform="rotate(-90) translate(-7,-1)" xml:space="preserve" text-anchor="middle" style="font-size:3px;line-height:1;font-family:Courier;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">{curly</text>
       </g>
         <g id="card-26-formats-plain" transform="translate(30.45,20.35)">
           <use xlink:href="#card-26-lines" />
-          <text transform="rotate(-90) translate(-7,-1)" xml:space="preserve" text-anchor="middle" style="font-size:3px;line-height:1;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">less</text>
+          <text transform="rotate(-90) translate(-7,-1)" xml:space="preserve" text-anchor="middle" style="font-size:3px;line-height:1;font-family:Courier;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">less</text>
         </g>
         <g id="card-26-formats-down" transform="translate(44.45,34.35)">
           <use xlink:href="#card-26-lines" />
-          <text transform="rotate(-90) translate(-7,-1)" xml:space="preserve" text-anchor="middle" style="font-size:3px;line-height:1;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">dash</text>
+          <text transform="rotate(-90) translate(-7,-1)" xml:space="preserve" text-anchor="middle" style="font-size:3px;line-height:1;font-family:Courier;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">dash</text>
 	</g>	  	  
-        <text xml:space="preserve" text-anchor="middle" style="font-size:7px;line-height:1;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" x="51.45" y="28.50" ></text>
+        <text xml:space="preserve" text-anchor="middle" style="font-size:7px;line-height:1;font-family:Courier;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" x="51.45" y="28.50" ></text>
     </g>
 
     <g id="card-26-formats-dark">
       <g id="card-26-formats-up" transform="translate(44.45,6.35)">
         <use xlink:href="#card-26-lines-dark" />
-        <text transform="rotate(-90) translate(-7,-1)" xml:space="preserve" text-anchor="middle" style="font-size:3px;line-height:1;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">{curly</text>
+        <text transform="rotate(-90) translate(-7,-1)" xml:space="preserve" text-anchor="middle" style="font-size:3px;line-height:1;font-family:Courier;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">{curly</text>
       </g>
         <g id="card-26-formats-plain" transform="translate(30.45,20.35)">
           <use xlink:href="#card-26-lines-dark" />
-          <text transform="rotate(-90) translate(-7,18.5)" xml:space="preserve" text-anchor="middle" style="font-size:4px;line-height:1;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">less</text>
+          <text transform="rotate(-90) translate(-7,18.5)" xml:space="preserve" text-anchor="middle" style="font-size:4px;line-height:1;font-family:Courier;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">less</text>
         </g>
         <g id="card-26-formats-down" transform="translate(44.45,34.35)">
           <use xlink:href="#card-26-lines-dark" />
-          <text transform="rotate(-90) translate(-7,-1)" xml:space="preserve" text-anchor="middle" style="font-size:3px;line-height:1;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">dash</text>
+          <text transform="rotate(-90) translate(-7,-1)" xml:space="preserve" text-anchor="middle" style="font-size:3px;line-height:1;font-family:Courier;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">dash</text>
 	</g>	  	  
       <text xml:space="preserve" text-anchor="middle" style="fill:#000000;font-size:150%" x="51.45" y="36" ></text>
     </g>
   </defs>
-  <g id="card-26-main-layer">
-    <g id="card-26-border">
-      <path id="card-26-border-card" d="m 6.35,0 h 50.8 a 6.35,6.35 45 0 1 6.35,6.35 v 76.2 a 6.35,6.35 135 0 1 -6.35,6.35 H 6.35 A 6.35,6.35 45 0 1 0,82.55 V 6.35 A 6.35,6.35 135 0 1 6.35,0 Z" />
-      <path id="card-26-border-separator" style="stroke-width: 1.5px" d="M 0,25.4 C 0,40.4 63.5,48.5 63.5,63.5" />
-      <path id="card-26-border-separator-minus" visibility="hidden" transform="translate(0,-1.0)" d="M 0,25.4 C 0,40.4 63.5,48.5 63.5,63.5" />      
-      <path id="card-26-border-separator-plus" visibility="hidden" transform="translate(-0.50,0.50)" d="M 0,25.4 C 0,40.4 63.5,48.5 63.5,63.5" />
-      <text style="fill:#ffffff; font-size: 6px; font-family: monospace;" text-anchor="middle">
-	<textPath startOffset="30%" href="#card-26-border-separator-minus">⇟123⇞ ↑Abc</textPath>
-      </text>
-      <text style="fill:#ffffff;fill-opacity:1;font-size: 2px;font-family: monospace;" text-anchor="middle">
-	<textPath startOffset="30%" href="#card-26-border-separator-plus">38 01 02 03 39 30 37 00 01 02</textPath>
+  <g id="card-26-main-layer" transform="translate(19.05,19.05)">
+    <path style="stroke-width:1px;stroke-fill:#000;" d="M 0 0 14 0 14 14 0 14 Z" />
+    <g opacity="0.75">
+      <use xlink:href="#card-26-suit-club" />
+      <use xlink:href="#card-26-suit-diamond" />
+      <use xlink:href="#card-26-suit-heart" />
+      <use xlink:href="#card-26-suit-spade" />
+    </g>
+    <g opacity="0.5" transform="matrix(-1,0,0,1,14,0)">
+      <use xlink:href="#card-26-suit-club" />
+      <use xlink:href="#card-26-suit-diamond" />
+      <use xlink:href="#card-26-suit-heart" /> 
+      <use xlink:href="#card-26-suit-spade" /> 
+    </g>
+    
+<!--    <g id="card-26-border">
+      <path id="card-26-border-card" d="m 6.35,0 h 50.8 a 6.35,6.35 45 0 1 6.35,6.35 v 76.2 a 6.35,6.35 135 0 1 -6.35,6.35 H 6.35 A 6.35,6.35 45 0 1 0,82.55 V 6.35 A 6.35,6.35 135 0 1 6.35,0" />
+      <path id="card-26-border-separator" style="stroke-width: 1.5px; fill: none;" d="M 0,25.4 C 0,40.4 63.5,48.5 63.5,63.5" />
+	<text xml:space="preserve" style="fill:#ffffff; font-size:6px;font-family:Courier;" text-anchor="middle"><textPath startOffset="30%" xlink:href="#card-26-border-separator" baseline-shift="20%"> 123   Abc</textPath></text>
+	<text xml:space="preserve" style="fill:#ffffff; font-size:6px;font-family:Courier;" text-anchor="middle"><textPath startOffset="9%" xlink:href="#card-26-border-separator" baseline-shift="20%">⇟</textPath></text>
+	<text xml:space="preserve" style="fill:#ffffff; font-size:6px;font-family:Courier;" text-anchor="middle"><textPath startOffset="28%" xlink:href="#card-26-border-separator" baseline-shift="20%">⇞</textPath></text>
+	<text xml:space="preserve" style="fill:#ffffff; font-size:6px;font-family:Courier;" text-anchor="middle"><textPath startOffset="37%" xlink:href="#card-26-border-separator" baseline-shift="30%">↑</textPath></text>	
+      <text xml:space="preserve" style="fill:#ffffff; font-size:2px;font-family:Courier;" text-anchor="middle"><textPath startOffset="30%" xlink:href="#card-26-border-separator" baseline-shift="-32%">38 01 02 03 39 30 37 00 01 02</textPath></text>	
+      <text style="fill:#ffffff;fill-opacity:1;font-size:2px;font-family:Courier;" text-anchor="middle">
+	<textPath startOffset="40%" xlink:href="#card-26-border-separator" baseline-shift="-32%"></textPath>
       </text>
     </g>
     <g id="card-26-upward">
       <use xlink:href="#card-26-formats" />      
-      <g transform="translate(6.35,19.05)">
-        <use x="-1" y="8" xlink:href="#card-26-suit-heart" />
-        <text style="font-size: 150%;">26</text>
+      <g> transform="translate(0,0)">
+        <use transform="matrix(3,0,0,3,-21,40)"  xlink:href="#card-26-suit-heart" />
+        <text style="font-family:Helvetica;font-size:25.4px;"><tspan baseline-shift="-75%">26</tspan></text>
       </g>
       <use xlink:href="#card-26-translate-text" />
     </g>
     <use xlink:href="#card-26-upward" transform="rotate(180,31.75,44.45)" />
+  -->
   </g>
+
 </svg>
