@@ -22,7 +22,7 @@
 *** There is good reason to be this paranoid in real situations
 **** Russian government rootkits devices
 **** US government runs MITM attacks constantly
-**** Chinese government places intentional backdoors in hardware they manufacture // ? Wait, is this what you meant by "China easter-eggs what they make"?
+**** Chinese government places intentional backdoors in hardware they manufacture
 *** When this is the case, people are left making sacrifices, having to either trust somebody or use an insecure self-baked protocol
 **** as such, research into this area is highly warranted
 ** Other non-trivial advantages to this approach
@@ -69,7 +69,7 @@
 ***** add/subtract: addition and subtraction will always be performed mod 40
 ***** tag: the value of the third card from the top, minus 1
 ***** seal: the card which comes after (is below) the card with the same value as the tag
-***** precut: the card on top // ? Wait, why do we need a special term for this? What's wrong with just referring to it as the top card?
+***** precut: the card on top 
 ***** cut: for a defined cut card, move all cards above that card below it
 ****** Think of the deck as consisting of two blocks
 ******* Block 1: the cut card and all the cards below it 
@@ -89,7 +89,6 @@
 **** Shifting
 ***** In order to facilitate more than 40 characters, a system known as shifting may be used
 ***** When decrypting a message, certain cards (6-9 of spades, or 36-39, the final four) are always interpreted as shifts
-****** // ? How are shifts interpreted when already shifted? Does shift lock down when shift locked up go back to normal? Does it wrap? I should ask
 ****** 36: Shift once down - Shift the next character down one from the current mode
 ****** 37: Shift once up -  the next character up one from the current mode
 ****** 38: Shift lock down - Move down a shift mode
@@ -110,7 +109,8 @@
 ****** the last two are broken_heart and heart emoji
 **** Preparing the plaintext
 ***** Place five 9 of spades cards (39, shift lock up) marking the end
-***** Insert a random card before each card in the message // ? How do you get "random" cards by hand, here? Is it enough to just pick some from a shuffled deck, or not?
+***** Insert a random card before each card in the message 
+****** can use another deck for this
 ***** Put 10 random cards at the start
 ***** Add additional random cards at the end until the envelope length is a multiple of 10
 **** Generating a character of ciphertext from plaintext, or vice versa
@@ -135,10 +135,14 @@
 *** TODO Figure out more pros and cons and comparisons
 *** RC4 is the most similar cipher I could find preliminarily, but it uses ciphertext feedback rather than plaintext feedback
 *** TODO try to find another plaintext feedback cipher which has known vulnerabilities and see if those might apply here
-**** // ? Do you happen to know of any other such cipher?
 ** Analysis of security
-*** log base 2 of 40! gives ~209 bits of entropy, which is a ton - completely intractable to brute-force // ? Is this the right way to do this?
-*** TODO try to work out a way to estimate the period // ? Have you already done this?
+*** log base 2 of 40! gives ~159 bits of entropy, which is quite a lot
+*** periods are possibly quite short without feedback
+**** the insertion of randomness in-between, though very demanding for generation of randomness, guarantees these periods don't show up
 *** TODO Check how random the output is, according to statistical tests // ? You've probably already done this one
 *** TODO Look at the properties of ciphertexts encrypted with the same key to see how bad key reuse is for this
 *** TODO Think about whether there's some clever way bit flipping might still be useful given various situations
+* plaintext reveals no info about the deck?
+** all decks are compatible with all plaintexts (known plaintext attack impossible)
+log base b of x = log base d of x / log base d of b
+log base 2 of 40! = log base 10 of 40! / log base 10 of 2
