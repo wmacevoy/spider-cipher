@@ -91,9 +91,10 @@
 ***** When decrypting a message, certain cards (6-9 of spades, or 36-39, the final four) are always interpreted as shifts
 ****** 36: Shift once down - Shift the next character down one from the current mode
 ****** 37: Shift once up -  the next character up one from the current mode
-****** 38: Shift lock down - Move down a shift mode
-****** 39. Shift lock up - Move up a shift mode
-***** Character set is roughly ascii-compatible with a few flourishes 
+****** 38: Shift lock down - Move down a shift mode (undo with 39)  up -> plain -> down
+****** 39. Shift lock up - Move up a shift mode (undo with 38)  down -> plain -> up
+***** Character set is roughly ascii-compatible with a few flourishes (I worked off a US mac keyboard, everything you can type except TAB is available,
+***** and a few popular emoji)
 ***** should be possible to adapt to any language, but may be difficult for some, involving a lot of shifting
 ***** TODO Check that this is still up-to-date later
 ***** Unshifted character set (the space is a literal space in this):
@@ -110,7 +111,6 @@
 **** Preparing the plaintext
 ***** Place five 9 of spades cards (39, shift lock up) marking the end
 ***** Insert a random card before each card in the message 
-****** can use another deck for this
 ***** Put 10 random cards at the start
 ***** Add additional random cards at the end until the envelope length is a multiple of 10
 **** Generating a character of ciphertext from plaintext, or vice versa
@@ -130,7 +130,7 @@
 **** + less vulnerable to bit flipping even given a known plaintext, since preventing garbling is very difficult without knowing both the plaintext and the key
 **** + difficult to cryptanalyze
 **** - Encryption and decryption can only be parallelized by interlacing streams
-***** Can this be done safely by using multiple shifted decks? I have no idea
+***** Can this be done safely by using multiple shifted decks? Probably not, but I have no idea for sure
 ***** TODO find out
 *** TODO Figure out more pros and cons and comparisons
 *** RC4 is the most similar cipher I could find preliminarily, but it uses ciphertext feedback rather than plaintext feedback
@@ -139,10 +139,17 @@
 *** log base 2 of 40! gives ~159 bits of entropy, which is quite a lot
 *** periods are possibly quite short without feedback
 **** the insertion of randomness in-between, though very demanding for generation of randomness, guarantees these periods don't show up
-*** TODO Check how random the output is, according to statistical tests // ? You've probably already done this one
+*** TODO Check how random the output is, according to statistical tests
 *** TODO Look at the properties of ciphertexts encrypted with the same key to see how bad key reuse is for this
 *** TODO Think about whether there's some clever way bit flipping might still be useful given various situations
 * plaintext reveals no info about the deck?
 ** all decks are compatible with all plaintexts (known plaintext attack impossible)
 log base b of x = log base d of x / log base d of b
 log base 2 of 40! = log base 10 of 40! / log base 10 of 2
+*** log base 2 of 40! gives 159.159 bits of entropy, which is a ton - fairly intractable to brute-force
+*** Yes - there are actually short cycles in this cipher.  The envelope makes them not matter.
+*** TODO Check how random the output is, according to statistical tests.  Some - the reference tests is about binary RNGS so comparing is hard.  The math is solid though. 
+*** TODO Look at the properties of ciphertexts encrypted with the same key to see how bad key reuse is for this.  Yes this is worth thinking about.
+*** TODO Think about whether there's some clever way bit flipping might still be useful given various situations.
+* Research avenues
+** 
