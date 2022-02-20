@@ -22,8 +22,7 @@
 *** There is good reason to be this paranoid in real situations
 **** Russian government rootkits devices
 **** US government runs MITM attacks constantly
-**** Chinese government places intentional backdoors in hardware they manufacture 
-/// Yes: ? Wait, is this what you meant by "China easter-eggs what they make"?
+**** Chinese government places intentional backdoors in hardware they manufacture
 *** When this is the case, people are left making sacrifices, having to either trust somebody or use an insecure self-baked protocol
 **** as such, research into this area is highly warranted
 ** Other non-trivial advantages to this approach
@@ -70,9 +69,7 @@
 ***** add/subtract: addition and subtraction will always be performed mod 40
 ***** tag: the value of the third card from the top, minus 1
 ***** seal: the card which comes after (is below) the card with the same value as the tag
-***** precut: the card on top // ? Wait, why do we need a special term for this? What's wrong with just referring to it as the top card?
-// this is more about the meaning of the card: it is what you add to the envelope text to get the cut card, hence "precut" I was trying to pick names
-// so you can remember thier purpose.  It so happens to be the first card in the deck (there was a lot of stats done to figure that out).
+***** precut: the card on top 
 ***** cut: for a defined cut card, move all cards above that card below it
 ****** Think of the deck as consisting of two blocks
 ******* Block 1: the cut card and all the cards below it 
@@ -92,9 +89,6 @@
 **** Shifting
 ***** In order to facilitate more than 40 characters, a system known as shifting may be used
 ***** When decrypting a message, certain cards (6-9 of spades, or 36-39, the final four) are always interpreted as shifts
-****** // ? How are shifts interpreted when already shifted? Does shift lock down when shift locked up go back to normal? Does it wrap? I should ask
-****** // additioanl shifts are redundant. I think of the shift state as -1, 0, or +1, and the shift-lock adjust this value by +/- 1.  This is not a good way
-****** // to explain it, I think.  Shift lock up is shift lock up.  Extra ones are pointless and harmless except for more work to encipher/decipher.
 ****** 36: Shift once down - Shift the next character down one from the current mode
 ****** 37: Shift once up -  the next character up one from the current mode
 ****** 38: Shift lock down - Move down a shift mode (undo with 39)  up -> plain -> down
@@ -116,9 +110,7 @@
 ****** the last two are broken_heart and heart emoji
 **** Preparing the plaintext
 ***** Place five 9 of spades cards (39, shift lock up) marking the end
-***** Insert a random card before each card in the message // ? How do you get "random" cards by hand, here? Is it enough to just pick some from a shuffled deck, or not?
-**** 128+ bit randomness is harder.  We can talk about this; but the same puzzle actually works to get them.  You can roll dice to make a pretty good random choice.
-
+***** Insert a random card before each card in the message 
 ***** Put 10 random cards at the start
 ***** Add additional random cards at the end until the envelope length is a multiple of 10
 **** Generating a character of ciphertext from plaintext, or vice versa
@@ -138,15 +130,26 @@
 **** + less vulnerable to bit flipping even given a known plaintext, since preventing garbling is very difficult without knowing both the plaintext and the key
 **** + difficult to cryptanalyze
 **** - Encryption and decryption can only be parallelized by interlacing streams
-***** Can this be done safely by using multiple shifted decks? I have no idea
+***** Can this be done safely by using multiple shifted decks? Probably not, but I have no idea for sure
 ***** TODO find out
 *** TODO Figure out more pros and cons and comparisons
 *** RC4 is the most similar cipher I could find preliminarily, but it uses ciphertext feedback rather than plaintext feedback
 *** TODO try to find another plaintext feedback cipher which has known vulnerabilities and see if those might apply here
-**** // ? Do you happen to know of any other such cipher?
 ** Analysis of security
-*** log base 2 of 40! gives 159.159 bits of entropy, which is a ton - completely intractable to brute-force // yes, though I think is 159.
-*** TODO try to work out a way to estimate the period.  Yes - there are actually short cycles in this cipher.  The envelope makes them not matter. // ? Have you already done this?
-*** TODO Check how random the output is, according to statistical tests.  Some - the reference tests is about binary RNGS so comparing is hard.  The math is solid though. // ? You've probably already done this one
+*** log base 2 of 40! gives ~159 bits of entropy, which is quite a lot
+*** periods are possibly quite short without feedback
+**** the insertion of randomness in-between, though very demanding for generation of randomness, guarantees these periods don't show up
+*** TODO Check how random the output is, according to statistical tests
+*** TODO Look at the properties of ciphertexts encrypted with the same key to see how bad key reuse is for this
+*** TODO Think about whether there's some clever way bit flipping might still be useful given various situations
+* plaintext reveals no info about the deck?
+** all decks are compatible with all plaintexts (known plaintext attack impossible)
+log base b of x = log base d of x / log base d of b
+log base 2 of 40! = log base 10 of 40! / log base 10 of 2
+*** log base 2 of 40! gives 159.159 bits of entropy, which is a ton - fairly intractable to brute-force
+*** Yes - there are actually short cycles in this cipher.  The envelope makes them not matter.
+*** TODO Check how random the output is, according to statistical tests.  Some - the reference tests is about binary RNGS so comparing is hard.  The math is solid though. 
 *** TODO Look at the properties of ciphertexts encrypted with the same key to see how bad key reuse is for this.  Yes this is worth thinking about.
-*** TODO Think about whether there's some clever way bit flipping might still be useful given various situations.  Not sure what you're thinking here.  Talk tomorrow about it?
+*** TODO Think about whether there's some clever way bit flipping might still be useful given various situations.
+* Research avenues
+** 
