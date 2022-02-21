@@ -24,8 +24,7 @@
 **** US government runs MITM attacks constantly
 **** Chinese government places intentional backdoors in hardware they manufacture
 *** When this is the case, people are left making sacrifices, having to either trust somebody or use an insecure self-baked protocol
-**** as such, research into this area is highly warranted
-** Other non-trivial advantages to this approach
+**** as such, research into this area is highly warranted** Other non-trivial advantages to this approach
 *** Working with an intuitive cipher directly allows the user to understand what's going on and, for the most part, understand proper implementation 
 **** Not always true; for example, consider key reuse - the existence of this attack may not be immediately obvious
 **** however, a huge proportion of successful attacks aren't cryptanalysis, but rather simply failures of basic implementation, when cryptographic systems are treated like black boxes
@@ -150,6 +149,89 @@ log base 2 of 40! = log base 10 of 40! / log base 10 of 2
 *** Yes - there are actually short cycles in this cipher.  The envelope makes them not matter.
 *** TODO Check how random the output is, according to statistical tests.  Some - the reference tests is about binary RNGS so comparing is hard.  The math is solid though. 
 *** TODO Look at the properties of ciphertexts encrypted with the same key to see how bad key reuse is for this.  Yes this is worth thinking about.
-*** TODO Think about whether there's some clever way bit flipping might still be useful given various situations.
-* Research avenues
-** 
+*** TODO Think about whether there's some clever way bit flipping might still be useful given various situations. 
+* Research Notes and Sources
+** Inserting garbage into a feedback cipher: already tried before? How'd it go?
+*** // ? as it happens, questions of the form "does this thing exist" are hard to answer with search engines
+*** // ? do you have any idea?
+** Determine where the state of the art is with stream ciphers
+** Find more theory on stream cipher design
+** Comparison of block ciphers and stream ciphers for context?
+** From Schneier: Something like that cipher design is a combination of analyzability and confusion
+*** find original source, admit that this one might be all confusion all the way down
+** misc. sources
+*** certain difference-based ciphers, LSFRs, etc. can be cryptanalyzed successfully using a generic technique
+*** stream ciphers book
+* Lit Review Outline (the rest hasn't been very lit-review-y, it's been more like, the rest of the paper)
+** There are two main kinds of problem with a cipher: mathematical, and practical; spider cipher offers some possible solutions
+** Mathematical
+*** spider cipher is deeply different from any current cipher I could find
+**** plaintext feedback has unique properties but is uncommon
+**** cut and front-back shuffle have no existing basis for cryptanalysis
+**** inserting a huge amount of random data into the plaintext seems surprisingly novel
+*** the ideal is the one-time pad
+**** can't be broken without knowing a random stream of information as long as the message
+*** generating and communicating that much info is extremely unwieldly and impractical
+*** next best thing is making a brute force of the key the most efficient cryptanalysis
+*** many problems end up being very common across different ciphers which attempt this ideal
+**** distinguishing attack
+**** ciphertext-only attack
+**** known plaintext attack
+**** chosen plaintext attack
+**** differential cryptanalysis
+**** many, many more
+**** TODO add some good examples of each of these
+** Practical: A surprisingly empty niche in a very paranoid discipline: a way to trust nobody
+*** Modern cryptographic systems have paid little attention to the prospect of being verifiable by hand
+*** this makes sense, since it's a real pain 
+*** but for some sensitive applications, you always have to ask the question "Do you trust <x>?"
+*** The answer will sometimes always be no
+**** do not trust hardware
+**** do not trust software
+**** do not trust your own operating system
+**** do not trust a server
+*** There is good reason to be this paranoid in real situations
+**** Russian government rootkits devices
+***** https://www.fbi.gov/news/pressrel/press-releases/nsa-and-fbi-expose-russian-previously-undisclosed-malware-drovorub-in-cybersecurity-advisory
+**** US government runs MITM attacks constantly
+***** https://thehackernews.com/2017/05/cia-mitm-hacking-tool.html
+**** Chinese government places intentional backdoors in hardware they manufacture
+***** https://www.bloomberg.com/news/features/2018-10-04/the-big-hack-how-china-used-a-tiny-chip-to-infiltrate-america-s-top-companies
+*** When this is the case, people are left making sacrifices, having to either trust somebody or use an insecure self-baked protocol
+**** as such, research into this area is highly warranted
+*** existing manual cryptography
+**** http://david.carybros.com/html/hand_cipher.html lays out design principles for hand ciphers
+***** good error tolerance is desirable
+***** should be fast, to reduce the time between writing plaintext down and destroying that writing
+**** Chaocipher
+***** http://www.chaocipher.com/chaocipher-current-state-of-research.htm
+***** surprisingly resilient, but somewhat well-studied
+***** broken when one key is used with many message
+***** implemented with playing cards here https://aarontoponce.org/wiki/crypto/card-ciphers/chaocipher
+**** wartime
+***** https://en.wikipedia.org/wiki/Reservehandverfahren
+****** broken at the time
+***** https://en.wikipedia.org/wiki/VIC_cipher
+****** not broken at the time, but not very hard to brute force today
+****** resisted cryptanalysis by the NSA for years
+****** I could find no evidence of real breaks; only brute forcing
+****** very complex - many steps and not easy to understand
+** transition to overview of how spider cipher solves some of these problems
+* side note: consider the much simpler cipher
+** start with a deck, with the cards 0-9 and a-z on it (36 cards) whose numeric values go in that order
+** shuffle it
+** add a random 0-z char before each char of plaintext
+** start at top card (index 0)
+** to encrypt, add value of card at index to plaintext; then, advance index by plaintext
+** first value is random, so no information at all
+** second is also random because of first
+** chosen-plaintext?
+*** what about all zeroes?
+**** I'd want to write a program to be sure, but I'm pretty sure this already breaks this
+**** I think this is an indication that I don't fully understand the principle of operation
+** in essence, the key is unreconstructable except by brute force
+** // ? This seems almost too simple and secure to be possible. I'm nervous. 
+** // ? I feel like there's a critical flaw right around the corner. 
+** // ? Has this only not been done because it's an unprecedented entropy hog? 
+** // ? But this is still OTP levels of security but for the key rather than the text itself. I guess that has to be possible.
+** // ? Still feels somehow too good to be true
