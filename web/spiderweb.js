@@ -1,5 +1,9 @@
 "use strict";
 
+// If you're looking at this while this comment is still here, you're looking at an intermediate verison.
+// ...Unless I forgot to remove this.
+// If you see something really weird, it's probably a change I made just to test a simpler version of a thing.
+
 var translationTable = [
     //Q    A    2    3    4    5    6    7    8    9
     'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',  // + 0 club   
