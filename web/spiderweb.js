@@ -94,6 +94,7 @@ function deckBackFrontUnshuffle(inputDeck) {
 }
 
 // slight modification to work with differently working cutting and shuffling
+// ? Wait, why does the actual code use pseudo shuffle?
 function deckPseudoShuffle(deck, cutLoc) {
     var temp;
     temp = deckCut(deck,cutLoc);
@@ -103,6 +104,8 @@ function deckPseudoShuffle(deck, cutLoc) {
     }
 }
 
+// Some translation was needed; emoji are encoded slightly different here.
+// ? You missed UP_CODE 33, '`'. This is an accident right?
 var DOWN_CODES = [
     //Q    A    2    3    4    5    6    7    8    9
     '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',  // + 0 club 
@@ -127,11 +130,11 @@ var UP_CODES = [
     '_', ':', '!', '`', '\u{1F494}', '\u{2764}'	       // +30 spade
 ];
 
-var CODES = [DOWN_CODES, CODES, UP_CODES];
+var ALL_CODES = [DOWN_CODES, CODES, UP_CODES];
 
 function showEmoji() {
     var s = "";
-    CODES.map((x) => s += `${x[34]}${x[35]}`);
+    ALL_CODES.map((x) => s += `${x[34]}${x[35]}`);
     console.log(s);
 }
 
@@ -140,33 +143,85 @@ if(LOUD) {
     showEmoji();
 }
 
-function parseDeck(deck) {
+// ? why is ord called ord in your code?
+// ? and why does it return -1 when you use it with a shift state other than a normal one and it finds the code in the normal ones?
+// ? Why does it perform this search at all in this case? Why not just return the code?
+// I'm rewriting this to be significantly different. I just want to get the thing working for now.
+// TODO: fix halt and catch fire
+// ? TODO: implement this with a hash map?
+// ? Your code is much harder to read than this, though more performant. Priorities for this version?
+function translateChar(ch, shift) {
+    for(var searchShift = 0; searchShift < 3; searchShift++) {
+        for(var index = 0; index < 36; index++) {
+            if(ALL_CODES[searchShift][index] == ch) {
+                // this approach is probably kinda slow but it's very readable compared to other options I could think of
+                var ret = new Object();
+                ret.shift = searchShift;
+                ret.ch = index;
+                return ret;
+            }
+        }
+    }
+    throw "couldn't find character; halt and catch fire";
+}
+
+function detranslateChar(ch, shift) {
+    return ALL_CODES[shift][ch];
+}
+
+function readDeckString(deck) {
     return deck.split(",").map((x) => parseInt(x));
 }
 
-function encodeMsg(msg) {
-    var encoded = [];        
-    for(var i = 0; i < msg.length; i++) encoded.push(translationTable.findIndex((x) => msg[i] == x));
-    return encoded;
+// TODO: look into it
+function translateString(str) {
+    var letters = str.split("");
+    var shift = 0;
+    var translated = [];
+    for(var i = 0; i < letters.length; i++) {
+        var charInfo = translateChar(letters[i], shift);
+        if(shift < charInfo.shift) for(; shift < charInfo.shift; shift++) translated.push(39); // shift up
+        if(shift > charInfo.shift) for(; shift > charInfo.shift; shift--) translated.push(38); // shift down
+        translated.push(charInfo.ch);
+    }
+    return translated;
 }
 
-function decodeMsg(msg) {
-    var decoded = "";
-    for(var i = 0; i < msg.length; i++) decoded += translationTable[msg[i]];
-    return decoded;
+function detranslate(arr) {
+    var shift = 0;
+    var detranslated = "";
+    for(var i = 0; i < arr.length; i++) {
+        if(arr[i] == 38) shift--;
+        else if(arr[i] == 39) shift++;
+        else detranslated += detranslateChar(arr[i], shift);
+    }
+    return detranslated;
 }
 
-function crypt(msg, deck, f) {
-    deck = parseDeck(deck);
-    msg = encodeMsg(msg);
-    var cryptedMsg = [];
-    for(var i = 0; i < msg.length; i++) cryptedMsg.push(f(msg[i], deck[i % 40]));
-    var finalMsg = decodeMsg(cryptedMsg);
-    document.getElementById("msg").value = finalMsg;
+// this could use refactoring, but advanceDeck was pretty hard to read - still thinking about how best to do it
+function scramble(rawMsg, deckString) {
+    var deck = readDeckString(deckString);
+    var msg = translateString(rawMsg);
+    var scrambled = [];
+    for(var i = 0; i < msg.length; i++) {
+        scrambled.push(add(msg[i], noise(deck)));
+        deck = deckCut(deck, deckFindCard(msg[i]));
+        // deck = deckBackFrontShuffle(deck);
+    }
+    document.getElementById("msg").value = detranslate(scrambled);
 }
 
-function scramble(msg, deck) { crypt(msg, deck, add); }
-function unscramble(msg, deck) { crypt(msg, deck, sub); }
+function unscramble(msg, deck) {
+    var deck = readDeckString(deckString);
+    var msg = translateString(rawMsg);
+    var unscrambled = [];
+    for(var i = 0; i < msg.length; i++) {
+        scrambled.push(subtract(msg[i], noise(deck)));
+        deck = deckCut(deck, deckFindCard(unscrambled[i]));
+        // deck = deckBackFrontShuffle(deck);
+    }
+    document.getElementById("msg").value = detranslate(unscrambled);
+}
 
 // messy binary decoder I threw together to see values for debugging
 function bin(n) {
@@ -187,6 +242,10 @@ function bin(n) {
     }
 }
 
+// It probably would be good to move this to a module or something. Unfortuantely, not all browsers
+// (which can usually, and also in this case, be read as "all but IE") support them.
+// ? Should I care about supporting IE? Will *anyone* - literally a single person - mind if I don't?
+//
 // correct is the function used to compare expected to result to determine if it's acceptable
 class TestCase {
     constructor(msg, expected, func, args, check) {
@@ -227,6 +286,7 @@ function decksAreEqual(a, b) {
     return true;
 }
 
+// This is a weird function mostly here to help with testing, its name isn't even very descriptive
 function deckToIndices(deck) {
     var indices = [];
     for(var i = 0; i < CARDS; i++) indices.push(deckFindCard(deck, i));
