@@ -6,7 +6,7 @@
 
 // javascript's const implementation is... screwy, but even just marking it as such is useful
 const CARDS = 40;
-const LOUD = true;
+const LOUD = false;
 
 // Macros are used in your code, which avoids making stack frames, which has several advantages.
 // Javascript is not so kind. This is slower, but as far as I can tell shouldn't introduce any security issues.
@@ -135,7 +135,10 @@ function showEmoji() {
     console.log(s);
 }
 
-if(LOUD) console.log("Emoji test:"); showEmoji();
+if(LOUD) {
+    console.log("Emoji test:");
+    showEmoji();
+}
 
 function parseDeck(deck) {
     return deck.split(",").map((x) => parseInt(x));
@@ -165,24 +168,6 @@ function crypt(msg, deck, f) {
 function scramble(msg, deck) { crypt(msg, deck, add); }
 function unscramble(msg, deck) { crypt(msg, deck, sub); }
 
-// TODO: this is dumb, make it not dumb
-// maybe make a list with items like so:
-// expected
-// actual
-// function pointer
-// arg list
-function assertEq(msg, expected, actual) {
-    if(LOUD) console.log(`Testing ${msg}`);
-    if(expected == actual) {
-        if(LOUD) console.log("Passed");
-    } else {
-        if(!LOUD) console.log(`Testing ${msg}`);
-        console.log(`!!!!Error, expected ${expected}, got ${actual}`);
-        return false;
-    }
-    return true;
-}
-
 // messy binary decoder I threw together to see values for debugging
 function bin(n) {
     if(n<=0) return "0 or less";
@@ -202,15 +187,94 @@ function bin(n) {
     }
 }
 
-var testDeck = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39];
-var testDeckShifted = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39, 0];
-var cutTestDeck = [20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19];
+// correct is the function used to compare expected to result to determine if it's acceptable
+class TestCase {
+    constructor(msg, expected, func, args, check) {
+        this.msg = msg;
+        this.expected = expected;
+        this.func = func;        
+        this.args = args;
+        this.check = check;
+    }
 
-var correct = true;
-for(var i = 0; i < CARDS; i++) {
-    correct = correct && assertEq(`find ${i} in testDeck`, i, deckFindCard(testDeck, i));
-    correct = correct && assertEq(`find ${i} in testDeckShifted`, sub(i, 1), deckFindCard(testDeckShifted, i));    
+    runTest(loud) {
+        if(loud) console.log(`Testing ${this.msg}...`);
+        // To pass a list as arguments, there's this cool thing called spread syntax. Unfortunately, IE doesn't support it.
+        // So... apply() it is.
+        var actual = this.func.apply(null, this.args);
+        var ret = this.check(this.expected, actual);
+        if(loud && ret) console.log("Passed!");
+        if(!ret) console.log(`!!!Failed test; expected: ${this.expected}, actual: ${actual}`);
+        return ret;
+    }
 }
-correct = correct && assertEq(`find 23 in cutTestDeck`, 3, deckFindCard(cutTestDeck, 23));
-correct = correct && assertEq(`find 15 in cutTestDeck`, 35, deckFindCard(cutTestDeck, 15));
-if(correct) console.log("Passed all tests!");
+
+class EqTestCase extends TestCase {
+    constructor(msg, expected, func, args) {
+        super(msg, expected, func, args, (a, b) => { return a == b; } );
+    }
+}
+
+class BoolTestCase extends TestCase {
+    // really just a degenerate case which ultimately checks if the function is true
+    constructor(msg, func, args) {
+        super(msg, true, func, args, (a, b) => { return a == b; } );
+    }
+}
+
+function decksAreEqual(a, b) {
+    for(var i = 0; i < CARDS; i++) if(a[i] != b[i]) return false;
+    return true;
+}
+
+function deckToIndices(deck) {
+    var indices = [];
+    for(var i = 0; i < CARDS; i++) indices.push(deckFindCard(deck, i));
+    return indices;    
+}
+
+var testDeck = [];
+for(var i = 0; i < CARDS; i++) testDeck.push(i);
+var testDeckShifted = [];
+for(var i = 0; i < CARDS; i++) testDeckShifted.push((i + 1) % CARDS);
+var cutTestDeck = [];
+for(var i = 0; i < CARDS; i++) cutTestDeck.push((i + 20) % CARDS);
+
+var tests = [
+    new TestCase(
+        "finding cards in testDeck",
+        testDeck,
+        deckToIndices,
+        [testDeck],
+        decksAreEqual
+    ),
+    new TestCase(
+        "finding cards in testDeckShifted",
+        testDeck.map((x) => sub(x, 1)),
+        deckToIndices,
+        [testDeckShifted],
+        decksAreEqual
+    ),
+    new EqTestCase(
+        'finding 23 in cutTestDeck',
+        3,
+        deckFindCard,
+        [cutTestDeck, 23]
+    ),
+    new EqTestCase(
+        'finding 23 in cutTestDeck',
+        35,
+        deckFindCard,
+        [cutTestDeck, 15]
+    ),   
+];
+
+function runTests() {
+    var passed = true;
+    tests.map((test) => {
+        if(!test.runTest(LOUD)) passed = false;
+    });
+    if(passed) console.log("Passed all tests!");
+}
+
+runTests();
