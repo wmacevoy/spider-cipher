@@ -17,31 +17,125 @@ function sub(a, b) { return ((a + CARDS) - b) % CARDS; }
 // I'm gonna just leave it out unless there's a reason to re-include it.
 // The mark is similarly used only once, in finding the tag. Seems like you just completely removed that terminology from the slides.
 // I agree with this decision. I was thinking about making a note to suggest it already.
-function deckCipherPad(deck) {
+function noise(deck) {
     var tagVal = add(39, deck[2]); // same as subtracting 1
     var tagIndex = deckFindCard(deck, tagVal);
     return deck[add(tagIndex, 1)];
 }
 
 function deckFindCard(deck, card) {
-    // Huh, gotta figure out how to do this O(1) in JS... alright
-    // Seems like just testing equality to get an index doesn't actually work. I'll have to come up with something else.
-    // TODO: test this code for browser differences
-    // temp TODO: debug this lol
+    // TODO: test on more browsers
+    // Works on: ([Y]es, [N]o, [P]ending testing)
+    // Y Firefox
+    // Y Chromium (so probably Chrome)
+    // P Edge
+    // P Opera
+    // P Various mobile browsers
     // ? Wait, why didn't you do it this way before?
+    //
+    // Explanation:
+    // The first part of this is quite similar to the C version.
+    // ~0 is all 1's in binary, and in this case I don't need to worry about the truthiness of that. So a mask is selected based
+    // on whether the current index is correct or not. It's anded with the index, which gives either the i & 0 (0) or i & 1 (i).
+    // Since you've got 39 zeroes with (hopefully) an i in there, if you just or the pile together, the result is i or 0 or 0
+    // or 0 ......... or 0. Which is still just i, and remains so in any order for any i. The difference here is that you should
+    // be able to accumulate as you go without problems. As far as I can tell, this is constant time, constant space. There is an
+    // implicit "if" here in the loop, but it runs the same every time. The only thing that changes between runs is which deck[i]
+    // is the same as the card and therefore which entry is selected in the mask.
+    //
+    // Note that this is a pretty funny solution - the algorithm is O(N), but N is constant and we always take the worse case.
+    // So it always takes the same amount of time to run for our purposes. You can definitely do better. I might try to.
     var acc = 0;
-    var mask = {false: ~0, true: 0};
-    for(var i = 0; i < CARDS; i++) acc = acc ^ (i & mask[deck[i]==card]);
+    // Seems like just testing equality to get an index doesn't actually work in js, I had to do something slightly different    
+    var mask = {false: 0, true: ~0};
+    for(var i = 0; i < CARDS; i++) acc = acc | (i & mask[deck[i]==card]);
     return acc;
 }
 
-var translationTable = [
+// basically just pasted the code and changed some names
+// with the exception that the output works differently
+function deckCut(inputDeck, cutLoc) {
+    var outputDeck = inputDeck.splice(0); // just a deep copy
+    for (var i=0; i<CARDS; ++i) {
+        outputDeck[i]=inputDeck[(i+cutLoc) % CARDS];
+    }
+    return outputDeck;
+}
+
+// same here
+function deckBackFrontShuffle(inputDeck) {
+    var outputDeck = inputDeck.splice(0); // just a deep copy    
+    var back = CARDS/2;
+    var front = CARDS/2-1;
+    for (var i=0; i<CARDS; i += 2) {
+        outputDeck[back]=inputDeck[i];
+        outputDeck[front]=inputDeck[i+1];
+        ++back;
+        --front;
+    }
+    return outputDeck;    
+}
+
+// ditto
+function deckBackFrontUnshuffle(inputDeck) {
+    var outputDeck = inputDeck.splice(0); // just a deep copy
+    var back = CARDS;
+    var front = -1;
+    for (var i=CARDS-1; i >= 0; --i) {
+        if (i % 2 == 0) {
+            --back;
+            outputDeck[i]=inputDeck[back];
+        } else {
+            ++front;
+            outputDeck[i]=inputDeck[front];
+        }
+    }
+    return outputDeck;    
+}
+
+// slight modification to work with differently working cutting and shuffling
+function deckPseudoShuffle(deck, cutLoc) {
+    var temp;
+    temp = deckCut(deck,cutLoc);
+    temp = deckBackFrontShuffle(temp,deck);
+    for (var i=0; i<CARDS; ++i) {
+        temp[i]=0;
+    }
+}
+
+var DOWN_CODES = [
+    //Q    A    2    3    4    5    6    7    8    9
+    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',  // + 0 club 
+    'A', 'B', 'C', 'D', 'E', 'F', '@', '=','\\', '~',  // +10 diamond
+    '#', '$', '%', '^', '&', '|', '-', '+', '/', '*',  // +20 heart
+    '\n', ';', '?','\'', '\u{1F622}', '\u{1F604}'      // +30 spade  
+];
+
+var CODES = [
     //Q    A    2    3    4    5    6    7    8    9
     'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',  // + 0 club   
     'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',  // +10 diamond
-    'u', 'v', 'w', 'x', 'y', 'z', ',', '.', '-', ' ',  // +20 heart  
-    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'   // +30 spade  
+    'u', 'v', 'w', 'x', 'y', 'z', '<', '>', '(', ')',  // +20 heart  
+    ' ', ',', '.','\"', '\u{1F44E}', '\u{1F44D}'       // +30 spade  
 ];
+
+var UP_CODES = [
+    //Q    A    2    3    4    5    6    7    8    9
+    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',  // + 0 club   
+    'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',  // +10 diamond
+    'U', 'V', 'W', 'X', 'Y', 'Z', '{', '}', '[', ']',  // +20 heart  
+    '_', ':', '!', '`', '\u{1F494}', '\u{2764}'	       // +30 spade
+];
+
+var CODES = [DOWN_CODES, CODES, UP_CODES];
+
+function showEmoji() {
+    var s = "";
+    CODES.map((x) => s += `${x[34]}${x[35]}`);
+    console.log(s);
+}
+
+if(LOUD) console.log("Emoji test:"); showEmoji();
 
 function parseDeck(deck) {
     return deck.split(",").map((x) => parseInt(x));
@@ -71,12 +165,40 @@ function crypt(msg, deck, f) {
 function scramble(msg, deck) { crypt(msg, deck, add); }
 function unscramble(msg, deck) { crypt(msg, deck, sub); }
 
+// TODO: this is dumb, make it not dumb
+// maybe make a list with items like so:
+// expected
+// actual
+// function pointer
+// arg list
 function assertEq(msg, expected, actual) {
     if(LOUD) console.log(`Testing ${msg}`);
-    if(expected == actual && LOUD) console.log("Passed");
-    else {
+    if(expected == actual) {
+        if(LOUD) console.log("Passed");
+    } else {
         if(!LOUD) console.log(`Testing ${msg}`);
         console.log(`!!!!Error, expected ${expected}, got ${actual}`);
+        return false;
+    }
+    return true;
+}
+
+// messy binary decoder I threw together to see values for debugging
+function bin(n) {
+    if(n<=0) return "0 or less";
+    else {
+        var ret = "";
+        var div = 1;
+        while(div <= n) div *= 2;
+        while(div != 1) {
+            div /= 2;
+            if(n >= div) {
+                n -= div;
+                ret += "1";
+            } else ret += "0";
+        }
+        while(ret.length < 32) ret = "0" + ret;
+        return ret;
     }
 }
 
@@ -84,9 +206,11 @@ var testDeck = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24
 var testDeckShifted = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39, 0];
 var cutTestDeck = [20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19];
 
+var correct = true;
 for(var i = 0; i < CARDS; i++) {
-    assertEq(`find ${i} in testDeck`, i, deckFindCard(testDeck, i));
-    assertEq(`find ${i} in testDeckShifted`, sub(i, 1), deckFindCard(testDeck, i));    
+    correct = correct && assertEq(`find ${i} in testDeck`, i, deckFindCard(testDeck, i));
+    correct = correct && assertEq(`find ${i} in testDeckShifted`, sub(i, 1), deckFindCard(testDeckShifted, i));    
 }
-assertEq(`find 23 in cutTestDeck`, 3, deckFindCard(cutTestDeck, 23));
-assertEq(`find 15 in cutTestDeck`, 35, deckFindCard(cutTestDeck, 15));
+correct = correct && assertEq(`find 23 in cutTestDeck`, 3, deckFindCard(cutTestDeck, 23));
+correct = correct && assertEq(`find 15 in cutTestDeck`, 35, deckFindCard(cutTestDeck, 15));
+if(correct) console.log("Passed all tests!");
