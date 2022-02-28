@@ -55,7 +55,7 @@ function deckFindCard(deck, card) {
 // basically just pasted the code and changed some names
 // with the exception that the output works differently
 function deckCut(inputDeck, cutLoc) {
-    var outputDeck = inputDeck.splice(0); // just a deep copy
+    var outputDeck = inputDeck.slice(0); // just a deep copy
     for (var i=0; i<CARDS; ++i) {
         outputDeck[i]=inputDeck[(i+cutLoc) % CARDS];
     }
@@ -64,7 +64,7 @@ function deckCut(inputDeck, cutLoc) {
 
 // same here
 function deckBackFrontShuffle(inputDeck) {
-    var outputDeck = inputDeck.splice(0); // just a deep copy    
+    var outputDeck = inputDeck.slice(0); // just a deep copy    
     var back = CARDS/2;
     var front = CARDS/2-1;
     for (var i=0; i<CARDS; i += 2) {
@@ -78,7 +78,7 @@ function deckBackFrontShuffle(inputDeck) {
 
 // ditto
 function deckBackFrontUnshuffle(inputDeck) {
-    var outputDeck = inputDeck.splice(0); // just a deep copy
+    var outputDeck = inputDeck.slice(0); // just a deep copy
     var back = CARDS;
     var front = -1;
     for (var i=CARDS-1; i >= 0; --i) {
@@ -205,19 +205,19 @@ function scramble(rawMsg, deckString) {
     var scrambled = [];
     for(var i = 0; i < msg.length; i++) {
         scrambled.push(add(msg[i], noise(deck)));
-        deck = deckCut(deck, deckFindCard(msg[i]));
+        deck = deckCut(deck, deckFindCard(deck, msg[i]));
         // deck = deckBackFrontShuffle(deck);
     }
     document.getElementById("msg").value = detranslate(scrambled);
 }
 
-function unscramble(msg, deck) {
+function unscramble(rawMsg, deckString) {
     var deck = readDeckString(deckString);
     var msg = translateString(rawMsg);
     var unscrambled = [];
     for(var i = 0; i < msg.length; i++) {
-        scrambled.push(subtract(msg[i], noise(deck)));
-        deck = deckCut(deck, deckFindCard(unscrambled[i]));
+        unscrambled.push(sub(msg[i], noise(deck)));
+        deck = deckCut(deck, deckFindCard(deck, unscrambled[i]));
         // deck = deckBackFrontShuffle(deck);
     }
     document.getElementById("msg").value = detranslate(unscrambled);
