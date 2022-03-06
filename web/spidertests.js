@@ -1,3 +1,19 @@
+// ------------------quick documentation-----------------
+// pass a list of tests to runTests to run them
+// normal test constructor takes:
+// msg, expected, func, arglist, checkfunc
+// msg gets said if you're in loud mode or when it fails
+// expected is the expected value
+// func is the function to run when testing
+// arglist is the list of arguments to func
+// checkfunc takes expected and func.apply(arglist)
+//   and returns a bool of whether the test passed
+// EqTestCase(msg, expected, func, args)
+//   not deep equality, it's just shallow equality
+// BoolTestCase(msg, func, args)
+//   if func.apply(args) is true, the test passes
+// ------------------------------------------------------
+
 // messy binary decoder I threw together to see values for debugging
 function bin(n) {
     if(n<=0) return "0 or less";
@@ -56,60 +72,16 @@ class BoolTestCase extends TestCase {
     }
 }
 
-function decksAreEqual(a, b) {
-    for(var i = 0; i < CARDS; i++) if(a[i] != b[i]) return false;
-    return true;
-}
-
-// This is a weird function mostly here to help with testing, its name isn't even very descriptive
-function deckToIndices(deck) {
-    var indices = [];
-    for(var i = 0; i < CARDS; i++) indices.push(deckFindCard(deck, i));
-    return indices;    
-}
-
-var testDeck = [];
-for(var i = 0; i < CARDS; i++) testDeck.push(i);
-var testDeckShifted = [];
-for(var i = 0; i < CARDS; i++) testDeckShifted.push((i + 1) % CARDS);
-var cutTestDeck = [];
-for(var i = 0; i < CARDS; i++) cutTestDeck.push((i + 20) % CARDS);
-
-var tests = [
-    new TestCase(
-        "finding cards in testDeck",
-        testDeck,
-        deckToIndices,
-        [testDeck],
-        decksAreEqual
-    ),
-    new TestCase(
-        "finding cards in testDeckShifted",
-        testDeck.map((x) => sub(x, 1)),
-        deckToIndices,
-        [testDeckShifted],
-        decksAreEqual
-    ),
-    new EqTestCase(
-        'finding 23 in cutTestDeck',
-        3,
-        deckFindCard,
-        [cutTestDeck, 23]
-    ),
-    new EqTestCase(
-        'finding 23 in cutTestDeck',
-        35,
-        deckFindCard,
-        [cutTestDeck, 15]
-    ),   
-];
-
-function runTests() {
+function runTests(tests, beLoud = true) {
     var passed = true;
-    tests.map((test) => {
-        if(!test.runTest(LOUD)) passed = false;
-    });
+    try {
+        tests.map((test) => {
+            if(!test.runTest(beLoud)) passed = false;
+        });
+    } catch(e) {
+        console.error(e);
+        passed = false;
+    }
     if(passed) console.log("Passed all tests!");
 }
 
-runTests();

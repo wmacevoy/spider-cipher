@@ -132,17 +132,6 @@ var UP_CODES = [
 
 var ALL_CODES = [DOWN_CODES, CODES, UP_CODES];
 
-function showEmoji() {
-    var s = "";
-    ALL_CODES.map((x) => s += `${x[34]}${x[35]}`);
-    console.log(s);
-}
-
-if(LOUD) {
-    console.log("Emoji test:");
-    showEmoji();
-}
-
 // ? why is ord called ord in your code?
 // ? and why does it return -1 when you use it with a shift state other than a normal one and it finds the code in the normal ones?
 // ? Why does it perform this search at all in this case? Why not just return the code?
@@ -162,7 +151,7 @@ function translateChar(ch, shift) {
             }
         }
     }
-    throw "couldn't find character; halt and catch fire";
+    throw `couldn't find character ${ch}; halt and catch fire`;
 }
 
 function detranslateChar(ch, shift) {
@@ -173,7 +162,6 @@ function readDeckString(deck) {
     return deck.split(",").map((x) => parseInt(x));
 }
 
-// TODO: look into it
 function translateString(str) {
     var letters = str.split("");
     var shift = 0;
@@ -198,8 +186,9 @@ function detranslate(arr) {
     return detranslated;
 }
 
-// these two could use refactoring, but advanceDeck was pretty hard to read
-// so I'm still thinking about how best to do it
+// these two could use refactoring to remove redundancy, but advanceDeck was pretty 
+// hard to read so I'm still thinking about how best to do it
+// TODO: that
 function scramble(rawMsg, deckString) {
     var deck = readDeckString(deckString);
     var msg = translateString(rawMsg);
