@@ -74,14 +74,14 @@ class BoolTestCase extends TestCase {
 
 function runTests(tests, beLoud = true) {
     var passed = true;
-    try {
-        tests.map((test) => {
+    tests.map((test) => {
+        try {
             if(!test.runTest(beLoud)) passed = false;
-        });
-    } catch(e) {
-        console.error(e);
-        passed = false;
-    }
+        } catch(e) {
+            console.error(e);
+            passed = false;
+        }
+    });
     if(passed) console.log("Passed all tests!");
 }
 
