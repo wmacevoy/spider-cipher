@@ -11,7 +11,7 @@ function pageScramble(scrambleMsg = true) {
 function testScramble(scrambleMsg = true) {
     var msgBox = document.getElementById('msg');
     var deckBox = document.getElementById('deck');
-    if(deckBox.value = "") deckBox.value = defaultDeck;
+    if(deckBox.value == "") deckBox.value = defaultDeck;
     if(scrambleMsg) msgBox.value = scramble(msgBox.value, deckBox.value);
     else msgBox.value = unscramble(msgBox.value, deckBox.value);
 }
@@ -74,22 +74,32 @@ codeArrWithoutEmoji = codeArrWithoutEmoji.concat([38, 10, 11, 12, 13, 14, 15, 39
 for(var i = 6; i < 34; i++) codeArrWithoutEmoji.push(i);
 codeArrWithoutEmoji = codeArrWithoutEmoji.concat([38, 38, 21, 39, 39, 16, 38, 7]);
 
-var codeString = DOWN_CODES.join("").concat(CODES.join("")).concat(UP_CODES.join("")) + "$Qh";
+var codeString = DOWN_CODES
+    .join("")
+    + String.fromCharCode(0xD83D, EMOJICODES[0])
+    + String.fromCharCode(0xD83D, EMOJICODES[1])
+    .concat(CODES.join(""))
+    + String.fromCharCode(0xD83D, EMOJICODES[2])
+    + String.fromCharCode(0xD83D, EMOJICODES[3])
+    .concat(UP_CODES.join(""))
+    + String.fromCharCode(0xD83D, EMOJICODES[4])
+    + String.fromCharCode(0xD83D, EMOJICODES[5])
+    + "$Qh";
 var codeArr = [];
-for(var i = 0; i < 36; i++) codeArr.push(i);
-codeArr.push(39);
-for(var i = 0; i < 36; i++) codeArr.push(i);
+for(var i = 0; i < 34; i++) codeArr.push(i);
+codeArr = codeArr.concat([34, 35, 39]);
+for(var i = 0; i < 34; i++) codeArr.push(i);
 // deal with A-F being weird
-codeArr = codeArr.concat([38, 10, 11, 12, 13, 14, 15, 39, 39]);
-for(var i = 6; i < 36; i++) codeArr.push(i);
-codeArr = codeArr.concat([38, 38, 21, 39, 39, 16, 38, 7]);
+codeArr = codeArr.concat([34, 35, 38, 10, 11, 12, 13, 14, 15, 39, 39]);
+for(var i = 6; i < 34; i++) codeArr.push(i);
+codeArr = codeArr.concat([34, 35, 38, 38, 21, 39, 39, 16, 38, 7]);
 
 tests.push(new TestCase("translating a string, no emoji", codeArrWithoutEmoji, translateString, [codeStringWithoutEmoji], arraysAreEqual));
 tests.push(new EqTestCase("detranslating, no emoji", codeStringWithoutEmoji, detranslate, [codeArrWithoutEmoji]));
 
 // TODO: fix emoji, get these cases working
-tests.push(new TestCase("translating a string", codeArr, translateString, [codeString], arraysAreEqual));
-tests.push(new EqTestCase("detranslating", codeString, detranslate, [codeArr]));
+tests.push(new TestCase("translating a string, with emoji", codeArr, translateString, [codeString], arraysAreEqual));
+tests.push(new EqTestCase("detranslating, with emoji", codeString, detranslate, [codeArr]));
 
 // ------------------quick documentation-----------------
 // TestCase(msg, expected, func, args, check)
@@ -110,8 +120,9 @@ tests.push(new EqTestCase("detranslating", codeString, detranslate, [codeArr]));
 // pass a list of tests to runTests to run them
 // ------------------------------------------------------
 
-runTests(tests, true);
+runTests(tests, beLoud = false);
 
-var s = "";
-ALL_CODES.map((x) => s += `${x[34]}${x[35]}`);
+s = "";
+testCodes = [0xDE22, 0xDE04, 0xDC4E, 0xDC4D, 0xDC94, 0xDDA4]; 
+for(var i = 0; i < testCodes.length; i++) s += String.fromCharCode(0xD83D, testCodes[i]);
 console.log("Emoji test: " + s);

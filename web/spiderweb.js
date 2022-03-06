@@ -1,4 +1,5 @@
 "use strict";
+// TODO TOMORROW deal with the fact that it needs to avoid shift ranges in certain situations
 
 // If you're looking at this while this comment is still here, you're looking at an intermediate verison.
 // ...Unless I forgot to remove this.
@@ -111,7 +112,7 @@ var DOWN_CODES = [
     '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',  // + 0 club 
     'A', 'B', 'C', 'D', 'E', 'F', '@', '=','\\', '~',  // +10 diamond
     '#', '$', '%', '^', '&', '|', '-', '+', '/', '*',  // +20 heart
-    '\n', ';', '?','\'', '\u{1F622}', '\u{1F604}'      // +30 spade  
+    '\n', ';', '?','\'',                               // +30 spade  
 ];
 
 var CODES = [
@@ -119,7 +120,7 @@ var CODES = [
     'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',  // + 0 club   
     'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',  // +10 diamond
     'u', 'v', 'w', 'x', 'y', 'z', '<', '>', '(', ')',  // +20 heart  
-    ' ', ',', '.','\"', '\u{1F44E}', '\u{1F44D}'       // +30 spade  
+    ' ', ',', '.','\"',                                // +30 spade  
 ];
 
 var UP_CODES = [
@@ -127,10 +128,22 @@ var UP_CODES = [
     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',  // + 0 club   
     'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',  // +10 diamond
     'U', 'V', 'W', 'X', 'Y', 'Z', '{', '}', '[', ']',  // +20 heart  
-    '_', ':', '!', '`', '\u{1F494}', '\u{2764}'	       // +30 spade
+    '_', ':', '!', '`',                                // +30 spade
 ];
 
 var ALL_CODES = [DOWN_CODES, CODES, UP_CODES];
+var EMOJICODES = [0xDE22, 0xDE04, 0xDC4E, 0xDC4D, 0xDC94, 0xDDA4];
+// I could do this using some magical modular arithmetic but a parallel array
+// is way easier to get right, easier to read, and not particularly worse here
+var EMOJIINDICES = [[0, 34], [0, 35], [1, 34], [1, 35], [2, 34], [2, 35]];
+
+// javascript's array find is terrible. it returns undefined when the value is not found
+// undefined is ridiculously full of nonsense edge cases to work directly with, so
+// I'm just avoiding it this way
+function saneArrFind(arr, valToFind) {
+    for(var i = 0; i < arr.length; i++) if(arr[i] === valToFind) return i;
+    return -1;
+}
 
 // ? why is ord called ord in your code?
 // ? and why does it return -1 when you use it with a shift state other than a normal one and it finds the code in the normal ones?
@@ -139,11 +152,19 @@ var ALL_CODES = [DOWN_CODES, CODES, UP_CODES];
 // TODO: fix halt and catch fire
 // ? TODO: implement this with a hash map?
 // ? Your code is much harder to read than this, though more performant. Priorities for this version?
-function translateChar(ch, shift) {
+// 
+// also: gotta deal with the annoyingness of emoji somehow
+// for some reason the codes you use to get them to print aren't the same
+// testing reveals that converting from char codes doesn't print right, and that
+// the printable ones can't be looked with the same code
+// maybe I'm missing something, but this should work
+function translateChar(str, pos, shift) {
+    var ch = str[pos];
     for(var searchShift = 0; searchShift < 3; searchShift++) {
         for(var index = 0; index < 36; index++) {
             if(ALL_CODES[searchShift][index] == ch) {
-                // this approach is probably kinda slow but it's very readable compared to other options I could think of
+                // this approach is probably kinda slow but it's very readable
+                // compared to other options I could think of
                 var ret = new Object();
                 ret.shift = searchShift;
                 ret.ch = index;
@@ -151,10 +172,19 @@ function translateChar(ch, shift) {
             }
         }
     }
-    throw `couldn't find character ${ch}; halt and catch fire`;
+    var emojiIndex = -1;
+    if(ch.charCodeAt(0) == 0xD83D) emojiIndex = saneArrFind(EMOJICODES, str[pos + 1].charCodeAt(0));
+    if(emojiIndex != -1) {
+        var ret = new Object();
+        ret.shift = EMOJIINDICES[emojiIndex][0];
+        ret.ch = EMOJIINDICES[emojiIndex][1];
+        return ret;
+    }
+    throw `couldn't find character ${ch} (charcode1 ${ch.charCodeAt(0)}, 2 ${str[index + 1].charCodeAt(0)}); halt and catch fire`;
 }
 
 function detranslateChar(ch, shift) {
+    if(ch == 34 || ch == 35) return String.fromCharCode(0xD83D, EMOJICODES[shift * 2 + (ch - 34)]);
     return ALL_CODES[shift][ch];
 }
 
@@ -163,14 +193,14 @@ function readDeckString(deck) {
 }
 
 function translateString(str) {
-    var letters = str.split("");
     var shift = 0;
     var translated = [];
-    for(var i = 0; i < letters.length; i++) {
-        var charInfo = translateChar(letters[i], shift);
+    for(var i = 0; i < str.length; i++) {
+        var charInfo = translateChar(str, i, shift);
         if(shift < charInfo.shift) for(; shift < charInfo.shift; shift++) translated.push(39); // shift up
         if(shift > charInfo.shift) for(; shift > charInfo.shift; shift--) translated.push(38); // shift down
         translated.push(charInfo.ch);
+        if(charInfo.ch == 34 || charInfo.ch == 35) i++;
     }
     return translated;
 }
@@ -216,3 +246,8 @@ function unscramble(rawMsg, deckString) {
 }
 
 
+// [0-35]     39,     [0-33]     34,     [35,38,]                      [0-33, inc.A-F screwiness]        34,           [manually added section]
+// [0-35]  34,39,34,  [0-33]  38,34,39,  [35,38,]  34,39,39,34,38,38,  [0-33, inc.A-F screwiness]  38,38,34,39,39,35,  [manually added section]
+
+// [0-33]  34,  [35,39,]  [0-33] 34,35,38,  [0-33]  34,35,38,38
+// [0-33]  35,  [35,39,]  [0-33] 38,35,35,  [0-33]  38,38,35,35  
