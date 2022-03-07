@@ -1,6 +1,4 @@
 "use strict";
-// TODO TOMORROW deal with the fact that it needs to avoid shift ranges in certain situations
-
 // If you're looking at this while this comment is still here, you're looking at an intermediate verison.
 // ...Unless I forgot to remove this.
 // If you see something really weird, it's probably a change I made just to test a simpler version of the thing while making this.
@@ -8,6 +6,11 @@
 // javascript's const implementation is... screwy, but even just marking it as such is useful
 const CARDS = 40;
 const LOUD = false;
+// hmm, maybe I should use something seedable - this isn't exactly testable right now
+const RANDFUNC = Math.random;
+
+function add36(a, b) { return (a + b) % CARDS; }
+function sub36(a, b) { return ((a + CARDS) - b) % CARDS; }
 
 // Macros are used in your code, which avoids making stack frames, which has several advantages.
 // Javascript is not so kind. This is slower, but as far as I can tell shouldn't introduce any security issues.
@@ -105,6 +108,10 @@ function deckPseudoShuffle(deck, cutLoc) {
     }
 }
 
+// WARNING: DO NOT ACCESS THESE ARRAYS DIRECTLY FOR TRANSLATION
+// emoji are too weird to slap into a homogeneous data structure like this
+// use translateChar or translateString
+
 // Some translation was needed; emoji are encoded slightly different here.
 // ? You missed UP_CODE 33, '`'. This is an accident right?
 var DOWN_CODES = [
@@ -114,7 +121,7 @@ var DOWN_CODES = [
     '#', '$', '%', '^', '&', '|', '-', '+', '/', '*',  // +20 heart
     '\n', ';', '?','\'',                               // +30 spade  
 ];
-
+// HEED THE ABOVE WARNING, LEST YE MEET A WATERY GRAVE
 var CODES = [
     //Q    A    2    3    4    5    6    7    8    9
     'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',  // + 0 club   
@@ -122,7 +129,7 @@ var CODES = [
     'u', 'v', 'w', 'x', 'y', 'z', '<', '>', '(', ')',  // +20 heart  
     ' ', ',', '.','\"',                                // +30 spade  
 ];
-
+// HEED THE ABOVE WARNING, LEST YE MEET A WATERY GRAVE
 var UP_CODES = [
     //Q    A    2    3    4    5    6    7    8    9
     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',  // + 0 club   
@@ -130,7 +137,7 @@ var UP_CODES = [
     'U', 'V', 'W', 'X', 'Y', 'Z', '{', '}', '[', ']',  // +20 heart  
     '_', ':', '!', '`',                                // +30 spade
 ];
-
+// HEED THE ABOVE WARNING, LEST YE MEET A WATERY GRAVE
 var ALL_CODES = [DOWN_CODES, CODES, UP_CODES];
 var EMOJICODES = [0xDE22, 0xDE04, 0xDC4E, 0xDC4D, 0xDC94, 0xDDA4];
 // I could do this using some magical modular arithmetic but a parallel array
@@ -185,6 +192,7 @@ function translateChar(str, pos, shift) {
 
 function detranslateChar(ch, shift) {
     if(ch == 34 || ch == 35) return String.fromCharCode(0xD83D, EMOJICODES[shift * 2 + (ch - 34)]);
+    if(shift < 0 || shift >= 3) throw `Invalid shift of ${shift} in detranslateChar`;
     return ALL_CODES[shift][ch];
 }
 
@@ -211,43 +219,85 @@ function detranslate(arr) {
     for(var i = 0; i < arr.length; i++) {
         if(arr[i] == 38) shift--;
         else if(arr[i] == 39) shift++;
-        else detranslated += detranslateChar(arr[i], shift);
+        else {
+            if(shift < 0 || shift >= 3) throw `Invalid shift of ${shift} in detranslate, arr=${arr}`;
+            detranslated += detranslateChar(arr[i], shift);
+        }
     }
     return detranslated;
+}
+
+// does not include x
+function zeroTo(x) {
+    return Math.floor(RANDFUNC() * x);
+}
+
+function randCard() {
+    return zeroTo(CARDS);
+}
+
+function packet(msg) {
+    for(var i = 0; i < 5; i++) msg.push(39);
+    var len = msg.length;
+    // geez, the splice function just has so much going on
+    // anyway, the array is being modified while you're inserting, so this is a bit
+    // weird to think about, but start by inserting at position 0, then 0 and 1 are
+    // both occupied; to insert before the next unhandled plain card is to insert
+    // at index 2, now. 
+    for(var i = 0; i < len; i++) msg.splice(i * 2, 0, randCard());
+    // unshift is a bit obscure and weirdly named; it's analogous to push, but operates
+    // on the front of an array
+    for(var i = 0; i < 10; i++) msg.unshift(randCard());
+    while((msg.length % 10) != 0) msg.push(randCard());
+    return msg;
+}
+
+function unpacket(msg) {
+    // find end of message
+    var count = 0;
+    var index = 1;
+    while(count < 5) {
+        if(index >= msg.length) throw "Message doesn't check out!";
+        if(msg[index] == 39) count++;
+        else count = 0;
+        index += 2;
+    }
+    // this lands index at the last 39
+    while((msg.length % 10) != 0) msg.pop();
+    // delete everything *after* the last 39
+    msg.splice(index + 1);
+    // this might seem kinda confusing
+    // at the start, index 0 has a junk card, so remove that
+    // now index 0 is a real card, index 1 is the next junk
+    // remove that, and it gets replaced by a real card
+    var len = msg.length / 2;
+    for(var i = 0; i < len; i++) msg.splice(i, 1);
+    // verify the message
+    for(var i = 0; i < 5; i++) msg.pop();
+    return msg;
 }
 
 // these two could use refactoring to remove redundancy, but advanceDeck was pretty 
 // hard to read so I'm still thinking about how best to do it
 // TODO: that
-function scramble(rawMsg, deckString) {
-    var deck = readDeckString(deckString);
-    var msg = translateString(rawMsg);
+function scramble(msg, deck) {
+    //msg = packet(msg);
     var scrambled = [];
     for(var i = 0; i < msg.length; i++) {
         scrambled.push(add(msg[i], noise(deck)));
         deck = deckCut(deck, deckFindCard(deck, msg[i]));
-        // TODO: add the front-back shuffle in
-        // deck = deckBackFrontShuffle(deck);
+        deck = deckBackFrontShuffle(deck);
     }
-    return detranslate(scrambled);
+    return scrambled;
 }
 
-function unscramble(rawMsg, deckString) {
-    var deck = readDeckString(deckString);
-    var msg = translateString(rawMsg);
+function unscramble(msg, deck) {
     var unscrambled = [];
     for(var i = 0; i < msg.length; i++) {
         unscrambled.push(sub(msg[i], noise(deck)));
         deck = deckCut(deck, deckFindCard(deck, unscrambled[i]));
-        // TODO: add the front-back shuffle in        
-        // deck = deckBackFrontShuffle(deck);
+        deck = deckBackFrontShuffle(deck);
     }
-    return detranslate(unscrambled);
+    //unscrambled = unpacket(unscrambled);
+    return unscrambled;
 }
-
-
-// [0-35]     39,     [0-33]     34,     [35,38,]                      [0-33, inc.A-F screwiness]        34,           [manually added section]
-// [0-35]  34,39,34,  [0-33]  38,34,39,  [35,38,]  34,39,39,34,38,38,  [0-33, inc.A-F screwiness]  38,38,34,39,39,35,  [manually added section]
-
-// [0-33]  34,  [35,39,]  [0-33] 34,35,38,  [0-33]  34,35,38,38
-// [0-33]  35,  [35,39,]  [0-33] 38,35,35,  [0-33]  38,38,35,35  

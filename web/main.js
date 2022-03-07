@@ -1,19 +1,22 @@
-var defaultDeck = "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39";
+var testDeck = [];
+for(var i = 0; i < CARDS; i++) testDeck.push(i);
+var deckString = testDeck.join(",");
 
 function pageScramble(scrambleMsg = true) {
     var msgBox = document.getElementById('msg');
-    var deckBox = document.getElementById('deck');
-    if(scrambleMsg) msgBox.value = scramble(msgBox.value, deckBox.value);
-    else msgBox.value = unscramble(msgBox.value, deckBox.value);
+    var msg = msgBox.value;
+    if(scrambleMsg) msg = translateString(msg);
+    else msg = readDeckString(msg);
+    var deck = readDeckString(document.getElementById('deck').value);
+    if(scrambleMsg) msgBox.value = scramble(msg, deck);
+    else msgBox.value = detranslate(unscramble(msg, deck));
 }
 
 // only for testing! kinda obviously. 
 function testScramble(scrambleMsg = true) {
-    var msgBox = document.getElementById('msg');
     var deckBox = document.getElementById('deck');
-    if(deckBox.value == "") deckBox.value = defaultDeck;
-    if(scrambleMsg) msgBox.value = scramble(msgBox.value, deckBox.value);
-    else msgBox.value = unscramble(msgBox.value, deckBox.value);
+    if(deckBox.value == "") deckBox.value = deckString;
+    pageScramble(scrambleMsg);
 }
 
 function decksAreEqual(a, b) {
@@ -34,8 +37,6 @@ function arraysAreEqual(a, b) {
     return true;
 }
 
-var testDeck = [];
-for(var i = 0; i < CARDS; i++) testDeck.push(i);
 var testDeckShifted = [];
 for(var i = 0; i < CARDS; i++) testDeckShifted.push((i + 1) % CARDS);
 var testDeckShiftedBack = [];
@@ -100,6 +101,37 @@ tests.push(new EqTestCase("detranslating, no emoji", codeStringWithoutEmoji, det
 // TODO: fix emoji, get these cases working
 tests.push(new TestCase("translating a string, with emoji", codeArr, translateString, [codeString], arraysAreEqual));
 tests.push(new EqTestCase("detranslating, with emoji", codeString, detranslate, [codeArr]));
+
+for(var test = 0; test < 100; test++) {
+    // generating a random deck
+    var randDeck = [];
+    var pullDeck = testDeck.slice();    
+    for(var i = CARDS; i > 0; i--) {
+        var randy = Math.floor(Math.random() * i);
+        randDeck.push(pullDeck.splice(randy, 1)[0]);
+    }
+    // generating a random string of characters in our character set
+    var str = "";
+    for(var len = 0; len < 100; len++) {
+        var chIndex = Math.floor(Math.random() * 36);
+        var thisShift = Math.floor(Math.random() * 3);
+        str += detranslateChar(chIndex, thisShift);
+    }
+    // first we want to test that detranslate(translate(str)) == str
+    tests.push(new EqTestCase(
+        `translation invertibility of ${str}`,
+        str, 
+        (str) => detranslate(translateString(str)),
+        [str]
+    ));
+    // and now the big test, that decrypt(encrypt(str)) == str
+    tests.push(new EqTestCase(
+        `encryption invertibility of ${str}`,
+        str, 
+        (str) => detranslate(unscramble(scramble(translateString(str), randDeck), randDeck)),
+        [str]
+    ));
+}
 
 // ------------------quick documentation-----------------
 // TestCase(msg, expected, func, args, check)
