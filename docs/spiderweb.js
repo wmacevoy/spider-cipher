@@ -9,9 +9,6 @@ const LOUD = false;
 // hmm, maybe I should use something seedable - this isn't exactly testable right now
 const RANDFUNC = Math.random;
 
-function add36(a, b) { return (a + b) % CARDS; }
-function sub36(a, b) { return ((a + CARDS) - b) % CARDS; }
-
 // Macros are used in your code, which avoids making stack frames, which has several advantages.
 // Javascript is not so kind. This is slower, but as far as I can tell shouldn't introduce any security issues.
 function add(a, b) { return (a + b) % CARDS; }
@@ -255,24 +252,29 @@ function packet(msg) {
 function unpacket(msg) {
     // find end of message
     var count = 0;
-    var index = 1;
+    // gotta start looking at 11; it's the first one that even might be it, since the
+    // first 10 are random and *could* coincidentally look like EOM
+    // index starts at 9 since it increases before things even start
+    // we can assume that there are no 39s before the EOM marker since it doesn't
+    // make sense to end by shifting, so the very first run of 5 39s is EOM for sure
+    var index = 9;
     while(count < 5) {
+        index += 2;        
         if(index >= msg.length) throw "Message doesn't check out!";
         if(msg[index] == 39) count++;
         else count = 0;
-        index += 2;
     }
     // this lands index at the last 39
-    while((msg.length % 10) != 0) msg.pop();
     // delete everything *after* the last 39
     msg.splice(index + 1);
+    // now get rid of the junk at the start
+    msg.splice(0, 10)
     // this might seem kinda confusing
     // at the start, index 0 has a junk card, so remove that
     // now index 0 is a real card, index 1 is the next junk
     // remove that, and it gets replaced by a real card
     var len = msg.length / 2;
     for(var i = 0; i < len; i++) msg.splice(i, 1);
-    // verify the message
     for(var i = 0; i < 5; i++) msg.pop();
     return msg;
 }
@@ -281,7 +283,7 @@ function unpacket(msg) {
 // hard to read so I'm still thinking about how best to do it
 // TODO: that
 function scramble(msg, deck) {
-    //msg = packet(msg);
+    msg = packet(msg);
     var scrambled = [];
     for(var i = 0; i < msg.length; i++) {
         scrambled.push(add(msg[i], noise(deck)));
@@ -298,6 +300,6 @@ function unscramble(msg, deck) {
         deck = deckCut(deck, deckFindCard(deck, unscrambled[i]));
         deck = deckBackFrontShuffle(deck);
     }
-    //unscrambled = unpacket(unscrambled);
+    unscrambled = unpacket(unscrambled);
     return unscrambled;
 }
