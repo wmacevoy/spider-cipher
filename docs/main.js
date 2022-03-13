@@ -12,9 +12,11 @@ function pageScramble(scrambleMsg = true) {
     else msgBox.value = detranslate(unscramble(msg, deck));
 }
 
-function fillDeckWithDefault() {
+// only for testing! kinda obviously. 
+function testScramble(scrambleMsg = true) {
     var deckBox = document.getElementById('deck');
-    deckBox.value = deckString;
+    if(deckBox.value == "") deckBox.value = deckString;
+    pageScramble(scrambleMsg);
 }
 
 function decksAreEqual(a, b) {
@@ -100,7 +102,7 @@ tests.push(new EqTestCase("detranslating, no emoji", codeStringWithoutEmoji, det
 tests.push(new TestCase("translating a string, with emoji", codeArr, translateString, [codeString], arraysAreEqual));
 tests.push(new EqTestCase("detranslating, with emoji", codeString, detranslate, [codeArr]));
 
-for(var test = 0; test < 10; test++) {
+for(var test = 0; test < 100; test++) {
     // generating a random deck
     var randDeck = [];
     var pullDeck = testDeck.slice();    
@@ -110,7 +112,7 @@ for(var test = 0; test < 10; test++) {
     }
     // generating a random string of characters in our character set
     var str = "";
-    for(var len = 0; len < 10; len++) {
+    for(var len = 0; len < 100; len++) {
         var chIndex = Math.floor(Math.random() * 36);
         var thisShift = Math.floor(Math.random() * 3);
         str += detranslateChar(chIndex, thisShift);
@@ -150,7 +152,7 @@ for(var test = 0; test < 10; test++) {
 // pass a list of tests to runTests to run them
 // ------------------------------------------------------
 
-//runTests(tests, beLoud = false);
+runTests(tests, beLoud = false);
 
 s = "";
 testCodes = [0xDE22, 0xDE04, 0xDC4E, 0xDC4D, 0xDC94, 0xDDA4]; 
