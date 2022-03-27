@@ -14,9 +14,12 @@
 
   <body>
     <script src="demo.js"></script>    
-    <button onclick="moveCards()">Back-Front Shuffle</button>
-    <button onclick="playAnimation(cutAnimation)">Cut</button>
-    <button onclick="playAnimation(fullAnimation)">Full Process</button>
+    <button onclick="setAnimation(backFrontShuffleStep)">Back-Front Shuffle</button>
+    <button onclick="setAnimation(cutStep)">Cut</button>
+    <button onclick="setAnimation(fullStep)">Full Process</button>
+    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+    <button onclick="step()">Step</button>
+    <button id="autoButton" onclick="swapAuto()">Autoplay OFF</button>
     <br />
     <canvas id="demoCanvas"></canvas>
   </body>

@@ -24,20 +24,57 @@ window.addEventListener("load", loadStuff);
 var drawables = [];
 var frame = 0;
 var dt = 17;
-var cardToSend = 0;
+var cardToSend = -1;
+var deck = [];
+var CARDS = 40;
+drawables = deck;
+var step = null;
+var auto = false;
+var started = false;
+var stepNow = false;
 
-function play() {
-    ctx.clearRect(0, 0, width, height);
-    if(frame % 80 == 0 && cardToSend < 40) {
-        var offset = (cardToSend + 1) / 60;
-        if(cardToSend % 2 != 0) offset = -offset;
-        drawables[cardToSend].moveTo([0.9, (offset/2) + 0.5], 60);
-        cardToSend++;
+var backFrontShuffleStep = function() {
+    cardToSend++;    
+    var offset = (Math.floor((cardToSend + 2) / 2)) / 22;
+    if(cardToSend % 2 == 0) offset = -offset;
+    drawables[cardToSend].moveTo([0.9, (offset/2) + 0.5], 60);
+}
+
+var cutStep = function() {
+    cardToSend++;    
+    var offset = (Math.floor((cardToSend + 2) / 2)) / 22;
+    if(cardToSend % 2 == 0) offset = -offset;
+    drawables[cardToSend].moveTo([0.9, (offset/2) + 0.5], 60);
+}
+
+function swapAuto() {
+    auto = !auto;
+    document.getElementById("autoButton").innerHTML = "Autoplay " + (auto?"ON":"OFF");
+}
+
+function setAnimation(newAnim) {
+    resetCardPos();
+    step = newAnim;
+    cardToSend = -1;
+    if(!started) {
+        started = true;
+        updateLoop();
     }
-    drawables.map(x => x.move());        
+}
+
+function updateLoop() {
+    frame++;    
+    ctx.clearRect(0, 0, width, height);
+    // welcome to the condition pile
+    if(step != null &&
+       frame % 80 == 0 &&
+       cardToSend < 40 &&
+       cardToSend >= 0 &&
+       auto
+      ) step();
+    drawables.map(x => x.move());
     drawables.map(x => x.draw());
-    frame++;
-    setTimeout(play, dt);
+    setTimeout(updateLoop, dt);
 }
 
 // simple interpolation from 0 to 1
@@ -82,6 +119,9 @@ class Card {
         this.endFrame = 0;
     }
 
+    setPos(newPos) { this.pos = newPos; }
+    setVel(newVel) { this.vel = newVel; }
+
     draw() {
         ctx.beginPath();
         ctx.strokeStyle = this.color;
@@ -115,18 +155,15 @@ class Card {
     }
 }
 
-var deck = [];
-
-var CARDS = 40;
 for(var i = 0; i < CARDS; i++) {
-    deck.push(new Card([0.1, (i + 0.1) / (CARDS + 3)],
-                       toHexSmall(i/CARDS, (CARDS-i)/CARDS, 0.5), 
-                       [[0.7, (i + 0.1) / (CARDS+3)]],
-                       ));
+    deck.push(new Card([0, 0], toHexSmall(i / CARDS, (CARDS - i) / CARDS, 0.5)));
 }
 
-function moveCards() {
-    drawables = deck;
-    drawables.push(new Card([0.9, 0.5], toHexSmall(0, 0, 0)));
-    play();
+function resetCardPos() {
+    for(var i = 0; i < CARDS; i++) {
+        deck[i].setPos([0.1, (i + 0.5) / (CARDS + 3)]);
+        deck[i].setVel([0, 0]);
+    }
 }
+
+// drawables.push(new Card([0.9, 0.5], toHexSmall(0, 0, 0)));
