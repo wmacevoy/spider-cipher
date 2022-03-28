@@ -1,3 +1,8 @@
+// new:
+// 2250 clock cycles to scramble or unscramble a char
+// old:
+// 21375 cycles for the same
+
 "use strict";
 // If you're looking at this while this comment is still here, you're looking at an intermediate verison.
 // ...Unless I forgot to remove this.
@@ -18,44 +23,21 @@ function sub(a, b) { return ((a + CARDS) - b) % CARDS; }
 // I'm gonna just leave it out unless there's a reason to re-include it.
 // The mark is similarly used only once, in finding the tag. Seems like you just completely removed that terminology from the slides.
 // I agree with this decision. I was thinking about making a note to suggest it already.
-function noise(deck) {
-    var tagVal = add(39, deck[2]); // same as subtracting 1
-    var tagIndex = deckFindCard(deck, tagVal);
-    return deck[add(tagIndex, 1)];
-}
-
-function deckFindCard(deck, card) {
-    // TODO: test on more browsers
-    // Works on: ([Y]es, [N]o, [P]ending testing)
-    // Y Firefox
-    // Y Chromium (so probably Chrome)
-    // P Edge
-    // P Opera
-    // P Various mobile browsers
-    // ? Wait, why didn't you do it this way before?
-    //
-    // Explanation:
-    // The first part of this is quite similar to the C version.
-    // ~0 is all 1's in binary, and in this case I don't need to worry about the truthiness of that. So a mask is selected based
-    // on whether the current index is correct or not. It's anded with the index, which gives either the i & 0 (0) or i & 1 (i).
-    // Since you've got 39 zeroes with (hopefully) an i in there, if you just or the pile together, the result is i or 0 or 0
-    // or 0 ......... or 0. Which is still just i, and remains so in any order for any i. The difference here is that you should
-    // be able to accumulate as you go without problems. As far as I can tell, this is constant time, constant space. There is an
-    // implicit "if" here in the loop, but it runs the same every time. The only thing that changes between runs is which deck[i]
-    // is the same as the card and therefore which entry is selected in the mask.
-    //
-    // Note that this is a pretty funny solution - the algorithm is O(N), but N is constant and we always take the worse case.
-    // So it always takes the same amount of time to run for our purposes. You can definitely do better. I might try to.
-    var acc = 0;
-    // Seems like just testing equality to get an index doesn't actually work in js, I had to do something slightly different    
-    var mask = {false: 0, true: ~0};
-    for(var i = 0; i < CARDS; i++) acc = acc | (i & mask[deck[i]==card]);
-    return acc;
-}
 
 // basically just pasted the code and changed some names
 // with the exception that the output works differently
-function deckCut(inputDeck, cutLoc) {
+// and that there's some extra bookkeeping for later use
+function deckCut(inputDeck, cutLoc, ref) {
+    var outputDeck = inputDeck.slice(0); // just a deep copy
+    var workingCard;
+    for (var i=0; i<CARDS; ++i) {
+        ref[(i + cutLoc) % CARDS].loc = i;
+        outputDeck[i]=inputDeck[(i+cutLoc) % CARDS];
+    }
+    return outputDeck;
+}
+
+function oldDeckCut(inputDeck, cutLoc) {
     var outputDeck = inputDeck.slice(0); // just a deep copy
     for (var i=0; i<CARDS; ++i) {
         outputDeck[i]=inputDeck[(i+cutLoc) % CARDS];
@@ -64,7 +46,22 @@ function deckCut(inputDeck, cutLoc) {
 }
 
 // same here
-function deckBackFrontShuffle(inputDeck) {
+function deckBackFrontShuffle(inputDeck, ref) {
+    var outputDeck = inputDeck.slice(0); // just a deep copy    
+    var back = CARDS/2;
+    var front = CARDS/2-1;
+    for (var i=0; i<CARDS; i += 2) {
+        ref[i].loc = back;
+        outputDeck[back]=inputDeck[i];
+        ref[i + 1].loc = front;
+        outputDeck[front]=inputDeck[i+1];
+        ++back;
+        --front;
+    }
+    return outputDeck;    
+}
+
+function oldDeckBackFrontShuffle(inputDeck) {
     var outputDeck = inputDeck.slice(0); // just a deep copy    
     var back = CARDS/2;
     var front = CARDS/2-1;
@@ -279,26 +276,103 @@ function unpacket(msg) {
     return msg;
 }
 
+function noise(deck, straight, ref) {
+    var tagVal = add(39, deck[2]); // same as subtracting 1
+    var tagIndex = deckQuickFind(tagVal, straight);
+    return deck[add(tagIndex, 1)];
+}
+
+function oldNoise(deck) {
+    var tagVal = add(39, deck[2]); // same as subtracting 1
+    var tagIndex = deckFindCard(deck, tagVal);
+    return deck[add(tagIndex, 1)];
+}
+
+// Not currently in use, but nice to have around for its utility
+function deckFindCard(deck, card) {
+    // TODO: test on more browsers
+    // Works on: ([Y]es, [N]o, [P]ending testing)
+    // Y Firefox
+    // Y Chromium (so probably Chrome)
+    // P Edge
+    // P Opera
+    // P Various mobile browsers
+    //
+    // Explanation:
+    // The first part of this is quite similar to the C version.
+    // ~0 is all 1's in binary, and in this case I don't need to worry about the truthiness of that. So a mask is selected based
+    // on whether the current index is correct or not. It's anded with the index, which gives either the i & 0 (0) or i & 1 (i).
+    // Since you've got 39 zeroes with (hopefully) an i in there, if you just or the pile together, the result is i or 0 or 0
+    // or 0 ......... or 0. Which is still just i, and remains so in any order for any i. The difference here is that you should
+    // be able to accumulate as you go without problems. As far as I can tell, this is constant time, constant space. There is an
+    // implicit "if" here in the loop, but it runs the same every time. The only thing that changes between runs is which deck[i]
+    // is the same as the card and therefore which entry is selected in the mask.
+    //
+    // Note that this is a pretty funny solution - the algorithm is O(N), but N is constant and we always take the worse case.
+    // So it always takes the same amount of time to run for our purposes. You can definitely do better. I might try to.
+    var acc = 0;
+    // Seems like just testing equality to get an index doesn't actually work in js, I had to do something slightly different    
+    var mask = {false: 0, true: ~0};
+    for(var i = 0; i < CARDS; i++) acc = acc | (i & mask[deck[i]==card]);
+    return acc;
+}
+
+function deckQuickFind(card, straight) { return straight[card].loc; }
+
 // these two could use refactoring to remove redundancy, but advanceDeck was pretty 
 // hard to read so I'm still thinking about how best to do it
 // TODO: that
 function scramble(msg, deck) {
+    // straight can be indexed into to find the location of a card
+    // i.e. straight[i].loc is the location of the card with value i
+    // in the deck
+    var straight = new Array(CARDS);
+    for(var i = 0; i < CARDS; i++) { straight[deck[i]] = { loc: i }; }
+    var ref = straight.slice(0);
     msg = packet(msg);
     var scrambled = [];
     for(var i = 0; i < msg.length; i++) {
-        scrambled.push(add(msg[i], noise(deck)));
-        deck = deckCut(deck, deckFindCard(deck, msg[i]));
-        deck = deckBackFrontShuffle(deck);
+        scrambled.push(add(msg[i], noise(deck, straight, ref)));
+        deck = deckCut(deck, deckQuickFind(msg[i], straight), ref);
+        deck = deckBackFrontShuffle(deck, ref);
     }
     return scrambled;
 }
 
 function unscramble(msg, deck) {
+    var straight = new Array(CARDS);
+    for(var i = 0; i < CARDS; i++) { straight[deck[i]] = { loc: i }; }
+    var ref = straight.slice(0);
     var unscrambled = [];
     for(var i = 0; i < msg.length; i++) {
-        unscrambled.push(sub(msg[i], noise(deck)));
-        deck = deckCut(deck, deckFindCard(deck, unscrambled[i]));
-        deck = deckBackFrontShuffle(deck);
+        unscrambled.push(sub(msg[i], noise(deck, straight, ref)));
+        deck = deckCut(deck, deckQuickFind(unscrambled[i], straight), ref);
+        deck = deckBackFrontShuffle(deck, ref);
+    }
+    unscrambled = unpacket(unscrambled);
+    return unscrambled;
+}
+
+// these two could use refactoring to remove redundancy, but advanceDeck was pretty 
+// hard to read so I'm still thinking about how best to do it
+// TODO: that
+function oldScramble(msg, deck) {
+    msg = packet(msg);
+    var scrambled = [];
+    for(var i = 0; i < msg.length; i++) {
+        scrambled.push(add(msg[i], oldNoise(deck)));
+        deck = oldDeckCut(deck, deckFindCard(deck, msg[i]));
+        deck = oldDeckBackFrontShuffle(deck);
+    }
+    return scrambled;
+}
+
+function oldUnscramble(msg, deck) {
+    var unscrambled = [];
+    for(var i = 0; i < msg.length; i++) {
+        unscrambled.push(sub(msg[i], oldNoise(deck)));
+        deck = oldDeckCut(deck, deckFindCard(deck, unscrambled[i]));
+        deck = oldDeckBackFrontShuffle(deck);
     }
     unscrambled = unpacket(unscrambled);
     return unscrambled;

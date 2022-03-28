@@ -43,6 +43,9 @@ var cutTestDeck = [];
 for(var i = 0; i < CARDS; i++) cutTestDeck.push((i + 20) % CARDS);
 // manually shuffled just to check
 var backFrontShuffledDeck = [39, 37, 35, 33, 31, 29, 27, 25, 23, 21, 19, 17, 15, 13, 11, 9, 7, 5, 3, 1, 0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38];
+// doesn't need to be correct; just a dummy argument for it to play with
+var refRef = new Array(CARDS);
+for(var i = 0; i < CARDS; i++) refRef[i] = { loc: i };
 
 var tests = [
     new TestCase("finding cards in testDeck", testDeck, deckToIndices, [testDeck], decksAreEqual),
@@ -55,11 +58,11 @@ var tests = [
     new EqTestCase('sub identity', 3, sub, [3, 0]),
     new EqTestCase('sub identity 2', 3, sub, [3, CARDS]),
     new EqTestCase('sub rollover', 4, sub, [3, 39]),
-    new TestCase("that a cut at the start does nothing", testDeck, deckCut, [testDeck, 0], decksAreEqual),
-    new TestCase("normal cut", cutTestDeck, deckCut, [testDeck, 20], decksAreEqual),
-    new TestCase("that a cut at the end shifts", testDeckShiftedBack, deckCut, [testDeck, 39], decksAreEqual),
-    new TestCase("basic back-front shuffle", backFrontShuffledDeck, deckBackFrontShuffle, [testDeck], decksAreEqual),
-    new TestCase("back-front unshuffle", testDeck, deckBackFrontUnshuffle, [backFrontShuffledDeck], decksAreEqual),
+    new TestCase("that a cut at the start does nothing", testDeck, deckCut, [testDeck, 0, refRef], decksAreEqual),
+    new TestCase("normal cut", cutTestDeck, deckCut, [testDeck, 20, refRef], decksAreEqual),
+    new TestCase("that a cut at the end shifts", testDeckShiftedBack, deckCut, [testDeck, 39, refRef], decksAreEqual),
+    new TestCase("basic back-front shuffle", backFrontShuffledDeck, deckBackFrontShuffle, [testDeck, refRef], decksAreEqual),
+    new TestCase("back-front unshuffle", testDeck, deckBackFrontUnshuffle, [backFrontShuffledDeck, refRef], decksAreEqual),
     new TestCase("deckstring reading", [32, 9], readDeckString, ["32, 9"], arraysAreEqual),
 ];
 
@@ -100,7 +103,7 @@ tests.push(new EqTestCase("detranslating, no emoji", codeStringWithoutEmoji, det
 tests.push(new TestCase("translating a string, with emoji", codeArr, translateString, [codeString], arraysAreEqual));
 tests.push(new EqTestCase("detranslating, with emoji", codeString, detranslate, [codeArr]));
 
-for(var test = 0; test < 10; test++) {
+for(var test = 0; test < 1000; test++) {
     // generating a random deck
     var randDeck = [];
     var pullDeck = testDeck.slice();    
@@ -110,7 +113,7 @@ for(var test = 0; test < 10; test++) {
     }
     // generating a random string of characters in our character set
     var str = "";
-    for(var len = 0; len < 10; len++) {
+    for(var len = 0; len < 1000; len++) {
         var chIndex = Math.floor(Math.random() * 36);
         var thisShift = Math.floor(Math.random() * 3);
         str += detranslateChar(chIndex, thisShift);
@@ -156,3 +159,22 @@ s = "";
 testCodes = [0xDE22, 0xDE04, 0xDC4E, 0xDC4D, 0xDC94, 0xDDA4]; 
 for(var i = 0; i < testCodes.length; i++) s += String.fromCharCode(0xD83D, testCodes[i]);
 console.log("Emoji test: " + s);
+
+var randRuns = []
+for(var run = 0; run < 1000; run++) {
+    // generating a random deck
+    var randDeck = [];
+    var pullDeck = testDeck.slice();    
+    for(var i = CARDS; i > 0; i--) {
+        var randy = Math.floor(Math.random() * i);
+        randDeck.push(pullDeck.splice(randy, 1)[0]);
+    }
+    // generating a random string of characters in our character set
+    var str = "";
+    for(var len = 0; len < 1000; len++) {
+        var chIndex = Math.floor(Math.random() * 36);
+        var thisShift = Math.floor(Math.random() * 3);
+        str += detranslateChar(chIndex, thisShift);
+    }
+    randRuns.push([randDeck, translateString(str)]);
+}
