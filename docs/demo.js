@@ -1,3 +1,7 @@
+// Note to all who find this code. "Fantastic quality" wasn't exactly prioritized,
+// because I'm working on a semi-fixed time limit for a school project and this part's code
+// isn't particularly critical. I don't hate it, it's just not the best I could do.
+
 "use strict";
 
 var canvas;
@@ -21,30 +25,80 @@ function loadStuff() {
 }
 window.addEventListener("load", loadStuff);
 
+const dt = 17;
+const CARDS = 20;
+// functionally a const
+var UNSHUFFLED = [];
+// an item in an array that stores its own position? seems weird but will make sense
+for(var i = 0; i < CARDS; i++) UNSHUFFLED.push({loc: i});
+var shuffled = UNSHUFFLED.slice(0); // deep copy
+
+// if for whatever reason this ever gets more complicated, these need to
+// get moved into an object for managing the animation state - this is only fine
+// now because the thing I'm making is small; furthermore, I'm prioritizing getting
+// this part done over making it "clean"
 var drawables = [];
-var frame = 0;
-var dt = 17;
-var cardToSend = -1;
 var deck = [];
-var CARDS = 40;
 drawables = deck;
-var step = null;
+
+var frame = 0;
+var animStep = -1;
+var stepFunc = null;
+
 var auto = false;
 var started = false;
-var stepNow = false;
 
-var backFrontShuffleStep = function() {
-    cardToSend++;    
-    var offset = (Math.floor((cardToSend + 2) / 2)) / 22;
-    if(cardToSend % 2 == 0) offset = -offset;
-    drawables[cardToSend].moveTo([0.9, (offset/2) + 0.5], 60);
+function deckCut(cutLoc) {
+    var newDeck = shuffled.slice(0); // deep copy
+    var workingCard;
+    for (var i = 0; i < CARDS; i++) {
+        workingCard = shuffled[(i + cutLoc) % CARDS];
+        workingCard.loc = i;
+        newDeck[i] = workingCard;
+    }
+    shuffled = newDeck;
+}
+
+function deckCutConstantLoc() { deckCut(Math.floor(CARDS / 3)); }
+
+function deckBackFrontShuffle() {
+    var newDeck = shuffled.slice(0); // just a deep copy    
+    var back = CARDS/2;
+    var front = CARDS/2-1;
+    var workingCard;
+    for (var i=0; i<CARDS; i += 2) {
+        workingCard = shuffled[i];
+        workingCard.loc = back;
+        newDeck[back] = workingCard;
+        workingCard = shuffled[i + 1];
+        workingCard.loc = front;
+        newDeck[front] = workingCard;
+        ++back;
+        --front;
+    }
+    shuffled = newDeck;
+}
+
+function cardY(depthInDeck) { return (depthInDeck + 0.5) / (CARDS + 3); }
+
+var bfsStep = function() {
+    animStep++;
+    // here's the payoff to the earlier setup; shuffled and unshuffled refer to
+    // the same 40 cards, but in different orders. as a result, you can use
+    // one to look into the other; the location needed to be a property
+    // simply because otherwise it would be passing numbers around,
+    // not pointers, which isn't very helpful
+    drawables[animStep].moveTo([0.7, cardY(UNSHUFFLED[animStep].loc)], 60);
 }
 
 var cutStep = function() {
-    cardToSend++;    
-    var offset = (Math.floor((cardToSend + 2) / 2)) / 22;
-    if(cardToSend % 2 == 0) offset = -offset;
-    drawables[cardToSend].moveTo([0.9, (offset/2) + 0.5], 60);
+    animStep++;
+    var cutLoc = Math.floor(CARDS / 3);
+    var start = 0;
+    var end = 0;
+    if(animStep == 0) { start = 0; end = cutLoc; }
+    if(animStep == 1) { start = cutLoc; end = CARDS; }    
+    for(var i = start; i < end; i++) drawables[i].moveTo([0.7, cardY(UNSHUFFLED[i].loc)], 60);
 }
 
 function swapAuto() {
@@ -52,10 +106,29 @@ function swapAuto() {
     document.getElementById("autoButton").innerHTML = "Autoplay " + (auto?"ON":"OFF");
 }
 
-function setAnimation(newAnim) {
+function bfsSetup() {
+    setup(bfsStep, bfsColors)
+    shuffled = UNSHUFFLED.slice(0);
+    deckBackFrontShuffle();
+}
+
+function cutSetup() {
+    setup(cutStep, cutColors)
+    shuffled = UNSHUFFLED.slice(0);
+    deckCutConstantLoc();
+}
+
+function bfsColors(i) { return toHexSmall(i / CARDS, 0, (CARDS - i) / CARDS); }
+function cutColors(i) {
+    if(i == Math.floor(CARDS / 3)) return toHexSmall(0, 0, 0);
+    return (i < CARDS / 3) ? toHexSmall(1, 0, 0) : toHexSmall(0, 0, 1);
+}
+
+function setup(newAnim, colorFunc, shuffleFunc) {
+    for(var i = 0; i < CARDS; i++) deck[i].setColor(colorFunc(i));    
     resetCardPos();
-    step = newAnim;
-    cardToSend = -1;
+    stepFunc = newAnim;
+    animStep = -1;
     if(!started) {
         started = true;
         updateLoop();
@@ -66,12 +139,11 @@ function updateLoop() {
     frame++;    
     ctx.clearRect(0, 0, width, height);
     // welcome to the condition pile
-    if(step != null &&
+    if(stepFunc != null &&
        frame % 80 == 0 &&
-       cardToSend < 40 &&
-       cardToSend >= 0 &&
+       animStep < CARDS &&
        auto
-      ) step();
+      ) stepFunc();
     drawables.map(x => x.move());
     drawables.map(x => x.draw());
     setTimeout(updateLoop, dt);
@@ -121,6 +193,8 @@ class Card {
 
     setPos(newPos) { this.pos = newPos; }
     setVel(newVel) { this.vel = newVel; }
+    setDest(newDest) { this.dest = newDest; }
+    setColor(newHexString) { this.color = newHexString; }
 
     draw() {
         ctx.beginPath();
@@ -156,14 +230,13 @@ class Card {
 }
 
 for(var i = 0; i < CARDS; i++) {
-    deck.push(new Card([0, 0], toHexSmall(i / CARDS, (CARDS - i) / CARDS, 0.5)));
+    deck.push(new Card([0, 0], toHexSmall(0, 0, 0)));
 }
 
 function resetCardPos() {
     for(var i = 0; i < CARDS; i++) {
-        deck[i].setPos([0.1, (i + 0.5) / (CARDS + 3)]);
+        deck[i].setPos([0.1, cardY(i)]);
         deck[i].setVel([0, 0]);
+        deck[i].setDest(null);
     }
 }
-
-// drawables.push(new Card([0.9, 0.5], toHexSmall(0, 0, 0)));
