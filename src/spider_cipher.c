@@ -272,7 +272,7 @@ const uint32_t UP_CODES[] =
     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',  // + 0 club   
     'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',  // +10 diamond
     'U', 'V', 'W', 'X', 'Y', 'Z', '{', '}', '[', ']',  // +20 heart  
-    '_', ':', '!', 0x1F494, 0x2764		       // +30 spade
+    '_', ':', '!', '`', 0x1F494, 0x2764		       // +30 spade
   };
 
 const uint32_t *const ALL_CODES[] = { DOWN_CODES, CODES, UP_CODES };

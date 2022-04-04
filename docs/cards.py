@@ -104,10 +104,10 @@ def card(number):
         plain=""
         
     formats="formats" if number < 36 else "formats-dark"
-
+    lines="lines" if number < 36 else "lines-dark"
 
     arrow="" if number < 36 else ARROWS[number-36]
-    clover=clover_svg({'id': f"card-{str_number}-suit-club",'style': 'fill:#55ff55;stroke:none','transform':'translate(7,7)'})
+    clover=clover_svg({'id': f"card-{str_number}-suit-club",'style': 'fill:#60ff60;stroke:none','transform':'translate(7,7)'})
 
     tmp = svg
     tmp = tmp.replace("${suit}",SUITS[suit])
@@ -123,6 +123,7 @@ def card(number):
     tmp = tmp.replace("${hint_up}",hint_up)
     tmp = tmp.replace("${hint_plain}",hint_plain)
     tmp = tmp.replace("${formats}",formats)
+    tmp = tmp.replace("${lines}",lines)
     tmp = tmp.replace("${arrow}",arrow)
     tmp = tmp.replace("${clover}",clover)    
     return tmp

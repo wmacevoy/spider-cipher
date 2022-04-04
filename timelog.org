@@ -1,28 +1,64 @@
 ... denotes a continuation of the previous day
-|   | Date    | Minutes Logged | Description of Activities      | Learning Outcomes |
-|---+---------+----------------+--------------------------------+-------------------|
-|   | 01/24   |              0 |                                |                   |
-|   | 01/25   |              0 |                                |                   |
-|   | 01/26   |              0 | [still setting things up]      |                   |
-|   | 01/27   |              0 |                                |                   |
-|   | 01/28   |              0 |                                |                   |
-|   | 01/29   |            200 | Reading existing cipher code   | 4, 5              |
-|   | 01/30   |            160 | More code reading              | 4, 5              |
-|   | 01/31   |             40 | Meeting w/MacEvoy              | 5, 6              |
-|   | 02/01   |              0 |                                |                   |
-|   | 02/02   |              0 | [during this period, busy      |                   |
-|   | 02/03   |              0 | dealing with other classes]    |                   |
-|   | 02/04   |              0 |                                |                   |
-|   | 02/05   |            200 | Researching [Schneier, mostly] | 2, 3              |
-|   | 02/06   |             80 | ...                            | 2, 3              |
-|   | 02/07   |             40 | Meeting w/MacEvoy              | 5, 6              |
-|   | 02/08   |              0 |                                |                   |
-|   | 02/09   |              0 |                                |                   |
-|   | 02/10   |              0 |                                |                   |
-|   | 02/11   |            140 | Research                       | 2, 3              |
-|   | 02/12   |            300 | ...                            | 2, 3              |
-|   | 02/13   |            240 | ... + writing rough draft      | 1, 2, 3, 6        |
-|---+---------+----------------+--------------------------------+-------------------|
-| # | Total   |           1400 | 8100 by end of semester        |                   |
-| # | Average |      66.666667 | (ideal: >72)                   |                   |
+|   | Date    | Minutes Logged | Description of Activities       | Learning Outcomes |
+|---+---------+----------------+---------------------------------+-------------------|
+|   | 01/24   |              0 |                                 |                   |
+|   | 01/25   |              0 |                                 |                   |
+|   | 01/26   |              0 | [still setting things up]       |                   |
+|   | 01/27   |              0 |                                 |                   |
+|   | 01/28   |              0 |                                 |                   |
+|   | 01/29   |            200 | Reading existing cipher code    | 4, 5              |
+|   | 01/30   |            160 | More code reading               | 4, 5              |
+|   | 01/31   |             60 | Meeting w/MacEvoy               | 5, 6              |
+|   | 02/01   |              0 |                                 |                   |
+|   | 02/02   |              0 | [during this period, busy       |                   |
+|   | 02/03   |              0 | dealing with other classes]     |                   |
+|   | 02/04   |              0 |                                 |                   |
+|   | 02/05   |            200 | Researching [Schneier, mostly]  | 2, 3              |
+|   | 02/06   |             80 | ...                             | 2, 3              |
+|   | 02/07   |             40 | Meeting w/MacEvoy               | 5, 6              |
+|   | 02/08   |              0 |                                 |                   |
+|   | 02/09   |              0 |                                 |                   |
+|   | 02/10   |              0 |                                 |                   |
+|   | 02/11   |            140 | Research                        | 2, 3              |
+|   | 02/12   |            300 | ...                             | 2, 3              |
+|   | 02/13   |            240 | ... + writing rough draft       | 1, 2, 3, 6        |
+|   | 02/14   |             60 | Meeting w/MacEvoy               | 5, 6              |
+|   | 02/15   |              0 |                                 |                   |
+|   | 02/16   |              0 |                                 |                   |
+|   | 02/17   |              0 |                                 |                   |
+|   | 02/18   |             40 | Writing rough draft             | 1, 6              |
+|   | 02/19   |              0 |                                 |                   |
+|   | 02/20   |            320 | ...                             | 1, 6              |
+|   | 02/21   |            100 | Reading code, meeting w/MacEvoy | 4, 5, 6           |
+|   | 02/22   |              0 |                                 |                   |
+|   | 02/23   |              0 |                                 |                   |
+|   | 02/24   |              0 |                                 |                   |
+|   | 02/25   |              0 |                                 |                   |
+|   | 02/26   |            240 | Writing JS version              | 5                 |
+|   | 02/27   |            320 | ...                             | 5                 |
+|   | 02/28   |              0 |                                 |                   |
+|   | 03/01   |              0 |                                 |                   |
+|   | 03/02   |              0 |                                 |                   |
+|   | 03/03   |              0 |                                 |                   |
+|   | 03/04   |              0 |                                 |                   |
+|   | 03/05   |              0 |                                 |                   |
+|   | 03/06   |            360 | ...                             | 5                 |
+|   | 03/07   |            220 | ..., Meeting w/MacEvoy          | 5, 6              |
+|   | 03/08   |              0 |                                 |                   |
+|   | 03/09   |              0 |                                 |                   |
+|   | 03/10   |              0 |                                 |                   |
+|   | 03/11   |              0 |                                 |                   |
+|   | 03/12   |            240 | Writing demo code               | 5                 |
+|   | 03/13   |              0 |                                 |                   |
+|   | 03/14   |            220 | ..., Meeting w/MacEvoy          | 5, 6              |
+|   | 03/15   |              0 |                                 |                   |
+|   | 03/16   |              0 |                                 |                   |
+|   | 03/17   |              0 |                                 |                   |
+|   | 03/18   |              0 |                                 |                   |
+|   | 03/19   |             80 | ..., also spring break          | 5                 |
+|   | 03/27   |            240 | Writing JS version + Demo       | 5                 |
+|   | 03/28   |            220 | ..., Meeting w/MacEvoy          | 5, 6              |
+|---+---------+----------------+---------------------------------+-------------------|
+| # | Total   |           4080 | 8100 by end of semester         |                   |
+| # | Average |      71.578947 | (ideal: >72)                    |                   |
 #+TBLFM: @>>$3=vsum(@2$3..@>>>$3)::@>$3=vmean(@2$3..@>>>$3)

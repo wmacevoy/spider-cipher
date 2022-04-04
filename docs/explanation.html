@@ -1,0 +1,26 @@
+<!doctype html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Spiderweb Explanation</title>
+    <meta name="description" content="A web implementation of the spider cipher">
+    <meta name="author" content="Caleb Spiess, with some help from Warren MacEvoy">
+    <meta property="og:title" content="Spider">
+    <meta property="og:type" content="website">
+    <link rel="stylesheet" href="style.css">
+  </head>
+
+  <body>
+    <script src="demo.js"></script>    
+    <button onclick="bfsSetup()">Back-Front Shuffle</button>
+    <button onclick="cutSetup()">Cut</button>
+    <button onclick="fullSetup()">Full Process</button>
+    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+    <button onclick="stepFunc()">Step</button>
+    <button id="autoButton" onclick="swapAuto()">Autoplay OFF</button>
+    <br />
+    <canvas id="demoCanvas"></canvas>
+  </body>
+</html>

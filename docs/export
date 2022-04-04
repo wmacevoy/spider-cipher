@@ -1,6 +1,6 @@
 #!/bin/bash
 ./cards.py
-for svg in [0-3][0-9].svg
+for svg in front.svg [0-3][0-9].svg
 do
   echo "$svg:"
   /Applications/Inkscape.app/Contents/MacOS/inkscape --export-type=png --export-dpi=600 $svg
