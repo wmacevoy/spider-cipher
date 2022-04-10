@@ -1,14 +1,11 @@
-// new:
-// 2250 clock cycles to scramble or unscramble a char
-// old:
-// 21375 cycles for the same
-
 "use strict";
-// If you're looking at this while this comment is still here, you're looking at an intermediate verison.
-// ...Unless I forgot to remove this.
-// If you see something really weird, it's probably a change I made just to test a simpler version of the thing while making this.
+/* Written primarily by me, Caleb Spiess
+ * Based VERY heavily on Warren MacEvoy's C code for the same algorithm
+ * I implemented the tricky constant-time parts other than the old find
+ * (which only stays for testing now)
+ */
 
-// javascript's const implementation is... screwy, but even just marking it as such is useful
+// like most languages, javascript's const implementation is... screwy, but even just marking it as such is useful
 const CARDS = 40;
 const LOUD = false;
 // hmm, maybe I should use something seedable - this isn't exactly testable right now
@@ -37,14 +34,6 @@ function deckCut(inputDeck, cutLoc, ref) {
     return outputDeck;
 }
 
-function oldDeckCut(inputDeck, cutLoc) {
-    var outputDeck = inputDeck.slice(0); // just a deep copy
-    for (var i=0; i<CARDS; ++i) {
-        outputDeck[i]=inputDeck[(i+cutLoc) % CARDS];
-    }
-    return outputDeck;
-}
-
 // same here
 function deckBackFrontShuffle(inputDeck, ref) {
     var outputDeck = inputDeck.slice(0); // just a deep copy    
@@ -54,19 +43,6 @@ function deckBackFrontShuffle(inputDeck, ref) {
         ref[i].loc = back;
         outputDeck[back]=inputDeck[i];
         ref[i + 1].loc = front;
-        outputDeck[front]=inputDeck[i+1];
-        ++back;
-        --front;
-    }
-    return outputDeck;    
-}
-
-function oldDeckBackFrontShuffle(inputDeck) {
-    var outputDeck = inputDeck.slice(0); // just a deep copy    
-    var back = CARDS/2;
-    var front = CARDS/2-1;
-    for (var i=0; i<CARDS; i += 2) {
-        outputDeck[back]=inputDeck[i];
         outputDeck[front]=inputDeck[i+1];
         ++back;
         --front;
@@ -92,7 +68,6 @@ function deckBackFrontUnshuffle(inputDeck) {
 }
 
 // slight modification to work with differently working cutting and shuffling
-// ? Wait, why does the actual code use pseudo shuffle?
 function deckPseudoShuffle(deck, cutLoc) {
     var temp;
     temp = deckCut(deck,cutLoc);
@@ -107,7 +82,6 @@ function deckPseudoShuffle(deck, cutLoc) {
 // use translateChar or translateString
 
 // Some translation was needed; emoji are encoded slightly different here.
-// ? You missed UP_CODE 33, '`'. This is an accident right?
 var DOWN_CODES = [
     //Q    A    2    3    4    5    6    7    8    9
     '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',  // + 0 club 
@@ -146,15 +120,9 @@ function saneArrFind(arr, valToFind) {
     return -1;
 }
 
-// ? why is ord called ord in your code?
-// ? and why does it return -1 when you use it with a shift state other than a normal one and it finds the code in the normal ones?
-// ? Why does it perform this search at all in this case? Why not just return the code?
 // I'm rewriting this to be significantly different. I just want to get the thing working for now.
 // TODO: fix halt and catch fire
-// ? TODO: implement this with a hash map?
-// ? Your code is much harder to read than this, though more performant. Priorities for this version?
-// 
-// also: gotta deal with the annoyingness of emoji somehow
+// gotta deal with the annoyingness of emoji somehow
 // for some reason the codes you use to get them to print aren't the same
 // testing reveals that converting from char codes doesn't print right, and that
 // the printable ones can't be looked with the same code
@@ -282,12 +250,6 @@ function noise(deck, straight, ref) {
     return deck[add(tagIndex, 1)];
 }
 
-function oldNoise(deck) {
-    var tagVal = add(39, deck[2]); // same as subtracting 1
-    var tagIndex = deckFindCard(deck, tagVal);
-    return deck[add(tagIndex, 1)];
-}
-
 // Not currently in use, but nice to have around for its utility
 function deckFindCard(deck, card) {
     // TODO: test on more browsers
@@ -348,31 +310,6 @@ function unscramble(msg, deck) {
         unscrambled.push(sub(msg[i], noise(deck, straight, ref)));
         deck = deckCut(deck, deckQuickFind(unscrambled[i], straight), ref);
         deck = deckBackFrontShuffle(deck, ref);
-    }
-    unscrambled = unpacket(unscrambled);
-    return unscrambled;
-}
-
-// these two could use refactoring to remove redundancy, but advanceDeck was pretty 
-// hard to read so I'm still thinking about how best to do it
-// TODO: that
-function oldScramble(msg, deck) {
-    msg = packet(msg);
-    var scrambled = [];
-    for(var i = 0; i < msg.length; i++) {
-        scrambled.push(add(msg[i], oldNoise(deck)));
-        deck = oldDeckCut(deck, deckFindCard(deck, msg[i]));
-        deck = oldDeckBackFrontShuffle(deck);
-    }
-    return scrambled;
-}
-
-function oldUnscramble(msg, deck) {
-    var unscrambled = [];
-    for(var i = 0; i < msg.length; i++) {
-        unscrambled.push(sub(msg[i], oldNoise(deck)));
-        deck = oldDeckCut(deck, deckFindCard(deck, unscrambled[i]));
-        deck = oldDeckBackFrontShuffle(deck);
     }
     unscrambled = unpacket(unscrambled);
     return unscrambled;
