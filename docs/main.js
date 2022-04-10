@@ -8,8 +8,8 @@ function pageScramble(scrambleMsg = true) {
     if(scrambleMsg) msg = translateString(msg);
     else msg = readDeckString(msg);
     var deck = readDeckString(document.getElementById('deck').value);
-    if(scrambleMsg) msgBox.value = scramble(msg, deck);
-    else msgBox.value = detranslate(unscramble(msg, deck));
+    if(scrambleMsg) msgBox.value = entry(deck, msg, "encrypt");
+    else msgBox.value = detranslate(entry(deck, msg, "decrypt"));
 }
 
 function fillDeckWithDefault() {
@@ -103,7 +103,7 @@ tests.push(new EqTestCase("detranslating, no emoji", codeStringWithoutEmoji, det
 tests.push(new TestCase("translating a string, with emoji", codeArr, translateString, [codeString], arraysAreEqual));
 tests.push(new EqTestCase("detranslating, with emoji", codeString, detranslate, [codeArr]));
 
-for(var test = 0; test < 1000; test++) {
+for(var test = 0; test < 100; test++) {
     // generating a random deck
     var randDeck = [];
     var pullDeck = testDeck.slice();    
@@ -129,7 +129,7 @@ for(var test = 0; test < 1000; test++) {
     tests.push(new EqTestCase(
         `encryption invertibility of ${str}`,
         str, 
-        (str) => detranslate(unscramble(scramble(translateString(str), randDeck), randDeck)),
+        (str) => detranslate(entry(randDeck, entry(randDeck, translateString(str), "encrypt"), "decrypt")),
         [str]
     ));
 }

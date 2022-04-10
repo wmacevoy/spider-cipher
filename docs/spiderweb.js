@@ -101,7 +101,7 @@ function deckPseudoShuffle(deck, cutLoc) {
 
 // TODO rewrite find code to be, in every way, more sane
 // both in terms of consistent timing and unicode support
-// probably requires a hash table unfortunately
+// maybe requires a hash table unfortunately
 
 // WARNING: DO NOT ACCESS THESE ARRAYS DIRECTLY FOR TRANSLATION
 // emoji are too weird to slap into a homogeneous data structure like this
@@ -302,27 +302,43 @@ function deckFindCard(deck, card) {
     return acc;
 }
 
-// these two could use refactoring to remove redundancy, but advanceDeck was pretty 
-// hard to read so I'm still thinking about how best to do it
-// TODO: that
-function scramble(msg, deck) {
-    msg = packet(msg);
-    var scrambled = [];
-    for(var i = 0; i < msg.length; i++) {
-        scrambled.push(add(msg[i], noise(deck)));
-        deck = deckCut(deck, deckFindCard(msg[i]));
-        deck = deckBackFrontShuffle(deck);
-    }
-    return scrambled;
+function shuffle(deck, plainMsg) {
+    deck = deckCut(deck, deckFindCard(add(deck[0], msg[i])));
+    deck = deckBackFrontShuffle(deck);
+    deck = deckCut(deck, deckFindCard(sub(deck[2], 1)));    
 }
 
-function unscramble(msg, deck) {
-    var unscrambled = [];
-    for(var i = 0; i < msg.length; i++) {
-        unscrambled.push(sub(msg[i], noise(deck)));
-        deck = deckCut(deck, deckFindCard(unscrambled[i]));
-        deck = deckBackFrontShuffle(deck);
+// Here, there is a concept of a source and an output. The source text is the
+// plaintext when encrypting and the ciphertext when decrypting. The output is the
+// ciphertext when encrypting and the plaintext when decrypting.
+//
+// Making everything work requires a lot of ternary operator fiddling, but each instance
+// is only once per encrypt/decrypt, so it's not a huge deal. I also think this is
+// relatively readable for what it's doing.
+function alg(deck, source, output, doEncrypt) {
+    var doDecrypt = !doEncrypt;
+    if(doEncrypt) source = packet(source);
+    var f = doEncrypt ? add : sub;
+    var plain = doEncrypt ? source : output;
+    for(var i = 0; i < source.length; i++) {
+        output.push(f(source[i], noise(deck)));
+        shuffle(deck, plain);
     }
-    unscrambled = unpacket(unscrambled);
-    return unscrambled;
+    if(doDecrypt) output = unpacket(output);
+    return output;
+}
+
+function entry(deck, text, mode) {
+    switch(mode.toLowerCase().trim()) {
+    case "encrypt":
+        // the text received is the message to encrypt and the scrambled starts empty
+        return alg(deck, text, [], true);
+        break;
+    case "decrypt":
+        // the text received is the message to decrypt and the message starts empty
+        return alg(deck, text, [], false);
+        break;
+    default:
+        throw "Not a valid mode. Valid modes are 'encrypt' and 'decrypt' only";
+    }
 }
