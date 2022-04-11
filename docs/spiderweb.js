@@ -303,9 +303,7 @@ function deckFindCard(deck, card) {
 }
 
 function shuffle(deck, plainMsg) {
-    deck = deckCut(deck, deckFindCard(add(deck[0], msg[i])));
-    deck = deckBackFrontShuffle(deck);
-    deck = deckCut(deck, deckFindCard(sub(deck[2], 1)));    
+
 }
 
 // Here, there is a concept of a source and an output. The source text is the
@@ -315,30 +313,25 @@ function shuffle(deck, plainMsg) {
 // Making everything work requires a lot of ternary operator fiddling, but each instance
 // is only once per encrypt/decrypt, so it's not a huge deal. I also think this is
 // relatively readable for what it's doing.
-function alg(deck, source, output, doEncrypt) {
+function spider(deck, source, mode) {
+    // processing mode text to set doEncrypt
+    var doEncrypt;
+    mode = mode.toLowerCase().trim();
+    if(mode == "encrypt") doEncrypt = true;
+    else if(mode == "decrypt") doEncrypt = false;
+    else throw "Not a valid mode. Valid modes are 'encrypt' and 'decrypt' only";     
     var doDecrypt = !doEncrypt;
+
+    var output = [];
     if(doEncrypt) source = packet(source);
     var f = doEncrypt ? add : sub;
     var plain = doEncrypt ? source : output;
     for(var i = 0; i < source.length; i++) {
         output.push(f(source[i], noise(deck)));
-        shuffle(deck, plain);
+        deck = deckCut(deck, deckFindCard(add(deck[0], plain[i])));
+        deck = deckBackFrontShuffle(deck);
+        deck = deckCut(deck, deckFindCard(sub(deck[2], 1)));    
     }
     if(doDecrypt) output = unpacket(output);
     return output;
-}
-
-function entry(deck, text, mode) {
-    switch(mode.toLowerCase().trim()) {
-    case "encrypt":
-        // the text received is the message to encrypt and the scrambled starts empty
-        return alg(deck, text, [], true);
-        break;
-    case "decrypt":
-        // the text received is the message to decrypt and the message starts empty
-        return alg(deck, text, [], false);
-        break;
-    default:
-        throw "Not a valid mode. Valid modes are 'encrypt' and 'decrypt' only";
-    }
 }

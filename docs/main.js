@@ -8,8 +8,8 @@ function pageScramble(scrambleMsg = true) {
     if(scrambleMsg) msg = translateString(msg);
     else msg = readDeckString(msg);
     var deck = readDeckString(document.getElementById('deck').value);
-    if(scrambleMsg) msgBox.value = entry(deck, msg, "encrypt");
-    else msgBox.value = detranslate(entry(deck, msg, "decrypt"));
+    if(scrambleMsg) msgBox.value = spider(deck, msg, "encrypt");
+    else msgBox.value = detranslate(spider(deck, msg, "decrypt"));
 }
 
 function fillDeckWithDefault() {
@@ -129,7 +129,7 @@ for(var test = 0; test < 100; test++) {
     tests.push(new EqTestCase(
         `encryption invertibility of ${str}`,
         str, 
-        (str) => detranslate(entry(randDeck, entry(randDeck, translateString(str), "encrypt"), "decrypt")),
+        (str) => detranslate(spider(randDeck, spider(randDeck, translateString(str), "encrypt"), "decrypt")),
         [str]
     ));
 }
