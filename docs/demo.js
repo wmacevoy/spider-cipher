@@ -1,17 +1,20 @@
-// Note to all who find this code. "Fantastic quality" wasn't exactly prioritized,
-// because I'm working on a semi-fixed time limit for a school project and this part's code
-// isn't particularly critical. I don't hate it, it's just not the best I could do.
-
 "use strict";
 
-var canvas;
-var width;
-var height;
-var ctx;
-var canvasUnsupportedText = "Nope, canvas isn't supported here, you're probably using an ancient browser - you should fix that";
+let canvas;
+let width;
+let height;
+let ctx;
+let canvasUnsupportedText = "Nope, canvas isn't supported here, you're probably using an ancient browser - you should fix that";
+let mouseX = 0;
+let mouseY = 0;
 
 function loadStuff() {
     canvas = document.getElementById("demoCanvas");
+    canvas.addEventListener("mousemove", (e) => {
+        let canvasRect = canvas.getBoundingClientRect();
+        mouseX = Math.round(e.clientX - canvasRect.left);
+        mouseY = Math.round(e.clientY - canvasRect.top);    
+    });    
     width = document.documentElement.clientWidth;
     height = document.documentElement.clientHeight;
     canvas.width = width;
@@ -26,128 +29,10 @@ function loadStuff() {
 window.addEventListener("load", loadStuff);
 
 const dt = 17;
-const CARDS = 20;
-// functionally a const
-var UNSHUFFLED = [];
-// an item in an array that stores its own position? seems weird but will make sense
-for(var i = 0; i < CARDS; i++) UNSHUFFLED.push({loc: i});
-var shuffled = UNSHUFFLED.slice(0); // deep copy
+const CARD_COUNT = 40;
+const THIRD_THROUGH_DECK = Math.floor(CARD_COUNT / 3);
 
-// if for whatever reason this ever gets more complicated, these need to
-// get moved into an object for managing the animation state - this is only fine
-// now because the thing I'm making is small; furthermore, I'm prioritizing getting
-// this part done over making it "clean"
-var drawables = [];
-var deck = [];
-drawables = deck;
-
-var frame = 0;
-var animStep = -1;
-var stepFunc = null;
-
-var auto = false;
-var started = false;
-
-function deckCut(cutLoc) {
-    var newDeck = shuffled.slice(0); // deep copy
-    var workingCard;
-    for (var i = 0; i < CARDS; i++) {
-        workingCard = shuffled[(i + cutLoc) % CARDS];
-        workingCard.loc = i;
-        newDeck[i] = workingCard;
-    }
-    shuffled = newDeck;
-}
-
-function deckCutConstantLoc() { deckCut(Math.floor(CARDS / 3)); }
-
-function deckBackFrontShuffle() {
-    var newDeck = shuffled.slice(0); // just a deep copy    
-    var back = CARDS/2;
-    var front = CARDS/2-1;
-    var workingCard;
-    for (var i=0; i<CARDS; i += 2) {
-        workingCard = shuffled[i];
-        workingCard.loc = back;
-        newDeck[back] = workingCard;
-        workingCard = shuffled[i + 1];
-        workingCard.loc = front;
-        newDeck[front] = workingCard;
-        ++back;
-        --front;
-    }
-    shuffled = newDeck;
-}
-
-function cardY(depthInDeck) { return (depthInDeck + 0.5) / (CARDS + 3); }
-
-var bfsStep = function() {
-    animStep++;
-    // here's the payoff to the earlier setup; shuffled and unshuffled refer to
-    // the same 40 cards, but in different orders. as a result, you can use
-    // one to look into the other; the location needed to be a property
-    // simply because otherwise it would be passing numbers around,
-    // not pointers, which isn't very helpful
-    drawables[animStep].moveTo([0.7, cardY(UNSHUFFLED[animStep].loc)], 60);
-}
-
-var cutStep = function() {
-    animStep++;
-    var cutLoc = Math.floor(CARDS / 3);
-    var start = 0;
-    var end = 0;
-    if(animStep == 0) { start = 0; end = cutLoc; }
-    if(animStep == 1) { start = cutLoc; end = CARDS; }    
-    for(var i = start; i < end; i++) drawables[i].moveTo([0.7, cardY(UNSHUFFLED[i].loc)], 60);
-}
-
-function swapAuto() {
-    auto = !auto;
-    document.getElementById("autoButton").innerHTML = "Autoplay " + (auto?"ON":"OFF");
-}
-
-function bfsSetup() {
-    setup(bfsStep, bfsColors)
-    shuffled = UNSHUFFLED.slice(0);
-    deckBackFrontShuffle();
-}
-
-function cutSetup() {
-    setup(cutStep, cutColors)
-    shuffled = UNSHUFFLED.slice(0);
-    deckCutConstantLoc();
-}
-
-function bfsColors(i) { return toHexSmall(i / CARDS, 0, (CARDS - i) / CARDS); }
-function cutColors(i) {
-    if(i == Math.floor(CARDS / 3)) return toHexSmall(0, 0, 0);
-    return (i < CARDS / 3) ? toHexSmall(1, 0, 0) : toHexSmall(0, 0, 1);
-}
-
-function setup(newAnim, colorFunc, shuffleFunc) {
-    for(var i = 0; i < CARDS; i++) deck[i].setColor(colorFunc(i));    
-    resetCardPos();
-    stepFunc = newAnim;
-    animStep = -1;
-    if(!started) {
-        started = true;
-        updateLoop();
-    }
-}
-
-function updateLoop() {
-    frame++;    
-    ctx.clearRect(0, 0, width, height);
-    // welcome to the condition pile
-    if(stepFunc != null &&
-       frame % 80 == 0 &&
-       animStep < CARDS &&
-       auto
-      ) stepFunc();
-    drawables.map(x => x.move());
-    drawables.map(x => x.draw());
-    setTimeout(updateLoop, dt);
-}
+function cardY(depthInDeck) { return (depthInDeck + 0.5) / (CARD_COUNT + 3); }
 
 // simple interpolation from 0 to 1
 function prop(whole, part) {
@@ -164,7 +49,7 @@ function lerp(p1, p2, prop) { return [p1[0] + ((p2[0] - p1[0]) * prop),
 // necessary to generate colors on a gradient
 // (without it being horribly tedious)
 function toHex(r, g, b) {
-    var codify = function(digit) {
+    let codify = function(digit) {
         if(digit < 0) digit = 0;
         if(digit >= 16) digit = 15;
         if(digit < 10) return digit + 48;
@@ -181,14 +66,50 @@ function vecScalarMult(v, s) { return [v[0] * s, v[1] * s]; }
 
 function toHexSmall(r, g, b) { return toHex(r * 255, g * 255, b * 255); }
 
+function cut(cutLoc, deck) {
+    let newDeck = deck.slice(0);
+    let workingCard;
+    for (let i = 0; i < CARD_COUNT; i++) {
+        workingCard = deck[(i + cutLoc) % CARD_COUNT];
+        newDeck[i] = workingCard;
+        workingCard.locInDeck = i;
+    }
+    return newDeck;
+}
+
+function backFrontShuffle(deck) {
+    let newDeck = deck.slice(0);
+    let back = CARD_COUNT / 2;
+    let front = (CARD_COUNT / 2) - 1;
+    let workingCard;
+    for (let i = 0; i < CARD_COUNT; i += 2) {
+        workingCard = deck[i];
+        newDeck[back] = workingCard;
+        workingCard.locInDeck = back;
+        workingCard = deck[i + 1];
+        newDeck[front] = workingCard;
+        workingCard.locInDeck = front;
+        ++back;
+        --front;
+    }
+    return newDeck;
+}
+
 class Card {
-    constructor(startPos, color) {
+    constructor(val, startPos, color, loc) {
+        this.numericVal = val;
         this.pos = startPos;
         this.color = color;
         this.target = null;
         this.vel = [0, 0];
         this.frame = -1;
         this.endFrame = 0;
+        this.locInDeck = loc;
+
+        this.img = new Image();
+        let src = `${val}`;
+        while(src.length < 2) src = "0" + src;
+        this.img.src = src + ".svg";
     }
 
     setPos(newPos) { this.pos = newPos; }
@@ -199,17 +120,33 @@ class Card {
     draw() {
         ctx.beginPath();
         ctx.strokeStyle = this.color;
-        var prop = xyProps(this.pos);
-        ctx.moveTo(prop[0], prop[1]);
-        prop = xyProps([this.pos[0] + 0.1, this.pos[1]]);
-        ctx.lineTo(prop[0], prop[1]);
+        let start = xyProps(this.pos);
+        ctx.moveTo(start[0], start[1]);
+        let end = xyProps([this.pos[0] + 0.1, this.pos[1]]);
+        ctx.lineTo(end[0], end[1]);
         ctx.closePath();
+        ctx.lineWidth = 4;
         ctx.stroke();
+
+        if(start[0] <= mouseX &&
+           mouseX <= end[0] &&
+           Math.abs(start[1] - mouseY) < 10) {
+            this.drawFront(mouseX, mouseY);
+        }
+    }
+
+    drawFront(x, y) {
+        let scale = 0.6;
+        let imgWidth = this.img.width * scale;
+        let imgHeight = this.img.height * scale;
+        let xShifted = x - Math.max(0, (x + imgWidth) - canvas.width);
+        let yShifted = y - Math.max(0, (y + imgHeight) - canvas.height);
+        ctx.drawImage(this.img, xShifted, yShifted, this.img.width * 0.6, this.img.height * 0.6);
     }
 
     move() {
         if(this.frame != -1) {
-            if(this.frame == this.endFrame) {
+            if(this.frame >= this.endFrame) {
                 // end the animation
                 this.pos = this.target;
                 this.frame = -1;
@@ -229,14 +166,185 @@ class Card {
     }
 }
 
-for(var i = 0; i < CARDS; i++) {
-    deck.push(new Card([0, 0], toHexSmall(0, 0, 0)));
-}
-
-function resetCardPos() {
-    for(var i = 0; i < CARDS; i++) {
-        deck[i].setPos([0.1, cardY(i)]);
-        deck[i].setVel([0, 0]);
-        deck[i].setDest(null);
+// this started as more but it's barely anything anymore
+class Deck {
+    constructor(colorFunc) {
+        this.cards = [];
+        for(let i = 0; i < CARD_COUNT; i++) {
+            this.cards.push(new Card(
+                i,
+                [0, cardY(i)],
+                (colorFunc ? colorFunc(i) : toHexSmall(0, 0, 0)),
+                i
+            ));
+        }
     }
 }
+
+class DeckAnimator {
+    constructor(colorFunc, inDeck) {
+        this.deck = inDeck ? inDeck : new Deck(colorFunc);
+        this.step = null;
+        this.animStep = -1;
+        this.auto = false;
+        this.frame = 0;
+        this.drawables = this.deck.cards.slice(0);
+        this.transform = new Array(CARD_COUNT);
+        this.oldLocations = [];
+        this.done = false;
+        // whether cards' display positions adjust
+        // to their positions in the deck
+        this.adaptiveCards = false;
+    }
+
+    setStep(stepFunc) {
+        this.step = stepFunc;
+        this.frame = 0;
+        this.animStep = -1;
+    }
+
+    swapAuto() {
+        this.auto = !this.auto;
+        document.getElementById("autoButton").innerHTML =
+            "Autoplay "
+            + (this.auto ? "ON" : "OFF");
+    }
+
+    resetPositions() {
+        for(let i = 0; i < CARD_COUNT; i++) {
+            let card = this.deck.cards[i];
+            card.setPos([0.1, cardY(i)]);
+            card.setVel([0, 0]);
+            card.setDest(null);
+        }        
+    }
+
+    setTransform(transformFunc) {
+        let cards = this.deck.cards;
+        this.oldLocations = cards.map(card => card.locInDeck);
+        this.transform = cards.slice(0);
+        // IMPORTANT: updates their data about locations in the deck, but not their
+        // display locations!
+        cards = transformFunc(cards);
+    }
+
+    advance() {
+        this.animStep++;
+        this.step();
+    }
+
+    update() {
+        this.frame++;
+        ctx.clearRect(0, 0, width, height);
+        // welcome to the condition pile
+        if(this.step != null &&
+           this.frame % 80 == 0 &&
+           this.auto
+          ) this.advance();
+        this.deck.cards.map(x => x.move());
+        this.drawables.map(x => x.draw());
+        // Javascript is weird. "this" is weird by Javascript standards.
+        // "this" is just the object calling a function, so unfortunately, setTimeout
+        // sets "this" to the window unless we keep it bound from here. It's a tiny fix,
+        // but a pain to figure out if you didn't know that intricacy, like I didn't.
+        if(!this.done) setTimeout(this.update.bind(this), dt);
+        if(this.adaptiveCards) {
+            for(let i = 0; i < CARD_COUNT; i++) {
+                let card = this.deck.cards[i];
+                card.pos = [card.pos[0], cardY(card.locInDeck)];
+            }
+        }
+    }
+
+    start() {
+        this.update();
+    }
+
+    bfsStep() {
+        if(this.animStep < CARD_COUNT) {
+            this.deck
+                .cards[this.oldLocations[this.animStep]]
+                .moveTo([0.7, cardY(this.transform[this.animStep].locInDeck)], 60);
+        }
+    }
+
+    cutStep() {
+        let cutLoc = THIRD_THROUGH_DECK;
+        let start = 0;
+        let end = 0;
+        if(this.animStep == 0) { start = 0; end = cutLoc; }
+        if(this.animStep == 1) { start = cutLoc; end = CARD_COUNT; }    
+        for(let i = start; i < end; i++) {
+            this.deck.cards[i].moveTo([0.7, cardY(this.transform[i].locInDeck)], 60);
+        }
+    }
+}
+
+function bfsColors(i) { return toHexSmall(i / CARD_COUNT, 0, (CARD_COUNT - i) / CARD_COUNT); }
+function cutColors(i) {
+    if(i == THIRD_THROUGH_DECK) return toHexSmall(0, 0, 0);
+    return (i < CARD_COUNT / 3) ? toHexSmall(1, 0, 0) : toHexSmall(0, 0, 1);
+}
+
+function drawText(text, x, y) {
+    ctx.font = "30px serif";
+    let realPos = xyProps([x, y]);
+    ctx.fillText(text, realPos[0], realPos[1]);
+}
+
+let anim;
+function bfsSetup() {
+    if(anim) anim.done = true;
+    anim = new DeckAnimator(bfsColors);
+    anim.setStep(anim.bfsStep);
+    anim.setTransform(backFrontShuffle);
+    anim.start();
+}
+function cutSetup() {
+    if(anim) anim.done = true;    
+    anim = new DeckAnimator(cutColors);
+    anim.setStep(anim.cutStep);
+    anim.setTransform((deck) => cut(THIRD_THROUGH_DECK, deck));
+    anim.start();
+}
+function fullSetup() {
+    if(anim) anim.done = true;
+    anim = new DeckAnimator(() => { return toHexSmall(0, 0, 0); });
+    anim.adaptiveCards = true;
+    let shuff = () => { anim.deck.cards = backFrontShuffle(anim.deck.cards); };
+    let render = () => { anim.deck.cards[2].drawFront(200, 200); };
+    let stuff = { change: shuff, draw: render, };
+    let steps = [
+        
+    ];
+    for(let i = 0; i < 9999; i++) steps.push(stuff);
+    let firstRun = true;
+    let fullStepFunc = function() {
+        if(!firstRun) anim.drawables.pop();
+        else firstRun = false;
+        // oh geez, parentheses everywhere
+        if(steps.length > 0) {
+            let elem = steps.shift();
+            if(elem.change) elem.change();
+            if(elem.draw) anim.drawables.push(elem);
+        }
+    }
+    anim.setStep(fullStepFunc);
+    anim.start();
+}
+function advance() { if(anim) anim.advance(); }
+function autoClickHandler() { anim.swapAuto(); }
+
+/*let instructions = "Before anything else, shuffle the deck.\n\
+However, we will keep it unshuffled to make the demonstration a bit easier.\n\
+Give your friend a copy of the deck you're using.\n\
+They will be able to use it to see your message!\n\
+Our message will be 'Cat'.\n\
+We have work to do before we even touch the deck!\n\
+First we translate the message.\n\
+To translate a character, find the card with the right character.\n\
+Or just look it up in a table if you only have a normal deck.\n\
+\n\
+Now, we need to surround the message with garbage.\n\
+Put five 39s \n\"
+*/
