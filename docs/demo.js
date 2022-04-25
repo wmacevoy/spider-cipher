@@ -7,6 +7,33 @@ let ctx;
 let canvasUnsupportedText = "Nope, canvas isn't supported here, you're probably using an ancient browser - you should fix that";
 let mouseX = 0;
 let mouseY = 0;
+let anim;
+// this is just here to delay execution
+let instructions = () => { return [
+    new Instruction(anim, "Let's start by simply scrambling the letter m.", -1, -1, -1, -1),
+    new Instruction(anim, "Note that a lot of things will be a bit simpler because the deck is ordered.", -1, -1, -1, -1),
+    new Instruction(anim, "An m corresponds to a 12, as is written on the corresponding card.", 12, -1, -1, -1),
+    new Instruction(anim, "First, let's find the card we'll be combining with m to scramble it.", 12, -1, -1, -1),
+    new Instruction(anim, "To do this, start by looking at the value of the third card in the deck.", -1, 2, -1, 2),
+    new Instruction(anim, "Subtract 1 from this value: in this case, that's 2-1, which is 1.", 1, -1, -1, -1),
+    new Instruction(anim, "Now, find the card with the matching value: we're just looking for 1 here.", 1, -1, 1, -1),
+    new Instruction(anim, "If the cards weren't ordered, you would be jumping around the deck to find this!", 1, -1, 1, -1),
+    new Instruction(anim, "Now look at the next card in the deck. Its value is the one you want.", -1, 2, -1, -1),
+    new Instruction(anim, "In this case, we're back to 2!", -1, 2, -1, 2),
+    new Instruction(anim, "Add this value to the translated letter: 2 + 12 (m) = 14", 14, -1, -1, -1),
+    new Instruction(anim, "So 14 is our scrambled value!", 14, -1, -1, -1),
+    new Instruction(anim, "But we're not done! First, we'll need to cut the deck.", -1, -1, -1, -1),
+    new Instruction(anim, "Add the letter to the value of the top card: 0 + 12 = 12", 12, -1, 0, -1),
+    new Instruction(anim, "So find the card labeled 12, and cut there.", 12, -1, 12, -1),
+    new Instruction(anim, "", -1, -1, -1, -1, "cut", 12),
+    new Instruction(anim, "Now do a back-front shuffle.", -1, -1, -1, -1),
+    new Instruction(anim, "", -1, -1, -1, -1, "bfs"),
+    new Instruction(anim, "Finally, subtract 1 from the value of the third card: 35 - 1 = 34", 34, -1, 2, -1),
+    new Instruction(anim, "Cut at the card with that value.", 34, -1, 34, -1),
+    new Instruction(anim, "", -1, -1, -1, -1, "cut", 1),
+    new Instruction(anim, "Now you can just repeat these steps until the entire message is done!", -1, -1, -1, -1),
+    new Instruction(anim, "There's more to it, but these are the core ideas.", -1, -1, -1, -1),
+]; }
 
 function loadStuff() {
     canvas = document.getElementById("demoCanvas");
@@ -95,6 +122,14 @@ function backFrontShuffle(deck) {
     return newDeck;
 }
 
+function highlight(cardLoc) {
+    ctx.beginPath();
+    ctx.strokeStyle = "#FF0000";
+    let end = xyProps([0.1, 0.1]);
+    ctx.rect(cardLoc[0] - 2, cardLoc[1] - 3, end[0] + 4, 6);
+    ctx.stroke();
+}
+
 class Card {
     constructor(val, startPos, color, loc) {
         this.numericVal = val;
@@ -131,11 +166,13 @@ class Card {
         if(start[0] <= mouseX &&
            mouseX <= end[0] &&
            Math.abs(start[1] - mouseY) < 10) {
-            this.drawFront(mouseX, mouseY);
+            this.drawFront([mouseX, mouseY]);
         }
     }
 
-    drawFront(x, y) {
+    drawFront(pos) {
+        let x = pos[0];
+        let y = pos[1];
         let scale = 0.6;
         let imgWidth = this.img.width * scale;
         let imgHeight = this.img.height * scale;
@@ -173,7 +210,7 @@ class Deck {
         for(let i = 0; i < CARD_COUNT; i++) {
             this.cards.push(new Card(
                 i,
-                [0, cardY(i)],
+                [0.02, cardY(i)],
                 (colorFunc ? colorFunc(i) : toHexSmall(0, 0, 0)),
                 i
             ));
@@ -287,12 +324,11 @@ function cutColors(i) {
 }
 
 function drawText(text, x, y) {
-    ctx.font = "30px serif";
+    ctx.font = "20px serif";
     let realPos = xyProps([x, y]);
     ctx.fillText(text, realPos[0], realPos[1]);
 }
 
-let anim;
 function bfsSetup() {
     if(anim) anim.done = true;
     anim = new DeckAnimator(bfsColors);
@@ -300,6 +336,7 @@ function bfsSetup() {
     anim.setTransform(backFrontShuffle);
     anim.start();
 }
+
 function cutSetup() {
     if(anim) anim.done = true;    
     anim = new DeckAnimator(cutColors);
@@ -307,26 +344,20 @@ function cutSetup() {
     anim.setTransform((deck) => cut(THIRD_THROUGH_DECK, deck));
     anim.start();
 }
+
 function fullSetup() {
     if(anim) anim.done = true;
     anim = new DeckAnimator(() => { return toHexSmall(0, 0, 0); });
     anim.adaptiveCards = true;
-    let shuff = () => { anim.deck.cards = backFrontShuffle(anim.deck.cards); };
-    let render = () => { anim.deck.cards[2].drawFront(200, 200); };
-    let stuff = { change: shuff, draw: render, };
-    let steps = [
-        
-    ];
-    for(let i = 0; i < 9999; i++) steps.push(stuff);
+    let steps = instructions();
     let firstRun = true;
     let fullStepFunc = function() {
-        if(!firstRun) anim.drawables.pop();
-        else firstRun = false;
-        // oh geez, parentheses everywhere
+        if(firstRun) firstRun = false;
+        else anim.drawables.pop();
         if(steps.length > 0) {
             let elem = steps.shift();
-            if(elem.change) elem.change();
-            if(elem.draw) anim.drawables.push(elem);
+            if(elem.action) elem.action();
+            anim.drawables.push(elem);
         }
     }
     anim.setStep(fullStepFunc);
@@ -335,16 +366,36 @@ function fullSetup() {
 function advance() { if(anim) anim.advance(); }
 function autoClickHandler() { anim.swapAuto(); }
 
-/*let instructions = "Before anything else, shuffle the deck.\n\
-However, we will keep it unshuffled to make the demonstration a bit easier.\n\
-Give your friend a copy of the deck you're using.\n\
-They will be able to use it to see your message!\n\
-Our message will be 'Cat'.\n\
-We have work to do before we even touch the deck!\n\
-First we translate the message.\n\
-To translate a character, find the card with the right character.\n\
-Or just look it up in a table if you only have a normal deck.\n\
-\n\
-Now, we need to surround the message with garbage.\n\
-Put five 39s \n\"
-*/
+function realVal(val) { return (val && val != -1) || val === 0; }
+
+// I was gonna use a closure here
+// but a class is basically sugar for a closure and a bit more readable
+class Instruction {
+    constructor(holdingAnimation, text, showVal, showIndex, highlightVal, highlightIndex, action, cutLoc) {
+        this.localAnim = holdingAnimation;
+        this.t = text;
+        this.sv = showVal;
+        this.si = showIndex
+        this.hv = highlightVal;
+        this.hi = highlightIndex;
+        if(action) {
+            switch(action) {
+            case "bfs":
+                this.action = () => { backFrontShuffle(this.localAnim.deck.cards); }
+                break;
+            case "cut":
+                if(!realVal(cutLoc)) throw "Hey! Didn't provide a location to cut at.";
+                this.action = () => { cut(cutLoc, this.localAnim.deck.cards); }
+                break;
+            }
+        }
+    }
+    
+    draw() {
+        drawText(this.t, 0.15, 0.6);
+        if(realVal(this.sv)) this.localAnim.deck.cards.find((c) => c.numericVal == this.sv).drawFront(xyProps([0.5, 0.1]));
+        if(realVal(this.si)) this.localAnim.deck.cards.find((c) => c.locInDeck == this.si).drawFront(xyProps([0.5, 0.1]));
+        if(realVal(this.hv)) highlight(xyProps(this.localAnim.deck.cards.find((c) => c.numericVal == this.sv).pos));
+        if(realVal(this.hi)) highlight(xyProps(this.localAnim.deck.cards.find((c) => c.locInDeck == this.hi).pos));
+    }
+};
