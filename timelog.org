@@ -85,8 +85,11 @@
 |   | 04/22   |              0 |                                 |                   |
 |   | 04/23   |            160 | Writing demo code               | 5                 |
 |   | 04/24   |            160 | ..., working on presentation    | 5                 |
-|   | 04/25   |            260 | ..., Meeting w/MacEvoy          | 5, 6              |
+|   | 04/25   |            280 | ..., Meeting w/MacEvoy          | 5, 6              |
+|   | 04/26   |              0 |                                 |                   |
+|   | 04/27   |              0 |                                 |                   |
+|   | 04/28   |             40 | Preparing presentation          | 5                 |
 |---+---------+----------------+---------------------------------+-------------------|
-| # | Total   |           6160 | 8100 by end of semester         |                   |
-| # | Average |      72.470588 | (ideal: >72)                    |                   |
+| # | Total   |           6220 | 8100 by end of semester         |                   |
+| # | Average |      70.681818 | (ideal: >72)                    |                   |
 #+TBLFM: @>>$3=vsum(@2$3..@>>>$3)::@>$3=vmean(@2$3..@>>>$3)

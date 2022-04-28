@@ -22,17 +22,21 @@ let instructions = () => { return [
     new Instruction(anim, "In this case, we're back to 2!", -1, 2, -1, 2),
     new Instruction(anim, "Add this value to the translated letter: 2 + 12 (m) = 14", 14, -1, -1, -1),
     new Instruction(anim, "So 14 is our scrambled value!", 14, -1, -1, -1),
-    new Instruction(anim, "But we're not done! First, we'll need to cut the deck.", -1, -1, -1, -1),
+    new Instruction(anim, "But we're not done! There are a few things left to do.", -1, -1, -1, -1),
+    new Instruction(anim, "First, we'll need to do some simple arithmetic.", -1, -1, -1, -1),
     new Instruction(anim, "Add the letter to the value of the top card: 0 + 12 = 12", 12, -1, 0, -1),
-    new Instruction(anim, "So find the card labeled 12, and cut there.", 12, -1, 12, -1),
-    new Instruction(anim, "", -1, -1, -1, -1, "cut", 12),
+    new Instruction(anim, "Hold onto this value for later.", 12, -1, 0, -1),
+    new Instruction(anim, "Now, subtract 1 from the value of the third card: 35 - 1 = 34", 34, -1, 2, -1),
+    new Instruction(anim, "Cut at the card with that value.", 34, -1, 34, -1),
+    new Instruction(anim, "", -1, -1, -1, -1, "cut", 34),
     new Instruction(anim, "Now do a back-front shuffle.", -1, -1, -1, -1),
     new Instruction(anim, "", -1, -1, -1, -1, "bfs"),
-    new Instruction(anim, "Finally, subtract 1 from the value of the third card: 35 - 1 = 34", 34, -1, 2, -1),
-    new Instruction(anim, "Cut at the card with that value.", 34, -1, 34, -1),
-    new Instruction(anim, "", -1, -1, -1, -1, "cut", 1),
+    new Instruction(anim, "Remember that value from earlier? 12 in this case.", 12, -1, -1, -1),
+    new Instruction(anim, "Find the card with that label, and cut there: 12 in this case.", 12, -1, 12, -1),
+    new Instruction(anim, "", -1, -1, -1, -1, "cut", 29),
     new Instruction(anim, "Now you can just repeat these steps until the entire message is done!", -1, -1, -1, -1),
     new Instruction(anim, "There's more to it, but these are the core ideas.", -1, -1, -1, -1),
+    new Instruction(anim, "Happy secrecy!", -1, -1, -1, -1),
 ]; }
 
 function loadStuff() {
@@ -158,6 +162,8 @@ class Card {
         let start = xyProps(this.pos);
         ctx.moveTo(start[0], start[1]);
         let end = xyProps([this.pos[0] + 0.1, this.pos[1]]);
+        let textPos = [this.pos[0] + 0.1 + 0.01, this.pos[1]];
+        drawText(`${this.numericVal.toString().padStart(2, '0')}`, textPos[0], textPos[1] + 0.005, 14);
         ctx.lineTo(end[0], end[1]);
         ctx.closePath();
         ctx.lineWidth = 4;
@@ -322,9 +328,19 @@ function cutColors(i) {
     if(i == THIRD_THROUGH_DECK) return toHexSmall(0, 0, 0);
     return (i < CARD_COUNT / 3) ? toHexSmall(1, 0, 0) : toHexSmall(0, 0, 1);
 }
+function fullColors(i) {
+    let suit = Math.floor(i / 10);
+    switch(suit) {
+    case 0: return toHexSmall(0, 1, 0);
+    case 1: return toHexSmall(0, 0, 1);
+    case 2: return toHexSmall(1, 0, 0);
+    case 3: return toHexSmall(0, 0, 0);
+    }
+    throw "What? You're out of range. The code is not built to handle this.";
+}
 
-function drawText(text, x, y) {
-    ctx.font = "20px serif";
+function drawText(text, x, y, fontSize=20) {
+    ctx.font = `${fontSize}px serif`;
     let realPos = xyProps([x, y]);
     ctx.fillText(text, realPos[0], realPos[1]);
 }
@@ -347,7 +363,7 @@ function cutSetup() {
 
 function fullSetup() {
     if(anim) anim.done = true;
-    anim = new DeckAnimator(() => { return toHexSmall(0, 0, 0); });
+    anim = new DeckAnimator(fullColors);
     anim.adaptiveCards = true;
     let steps = instructions();
     let firstRun = true;
@@ -381,11 +397,11 @@ class Instruction {
         if(action) {
             switch(action) {
             case "bfs":
-                this.action = () => { backFrontShuffle(this.localAnim.deck.cards); }
+                this.action = () => { anim.deck.cards = backFrontShuffle(this.localAnim.deck.cards); }
                 break;
             case "cut":
                 if(!realVal(cutLoc)) throw "Hey! Didn't provide a location to cut at.";
-                this.action = () => { cut(cutLoc, this.localAnim.deck.cards); }
+                this.action = () => { anim.deck.cards = cut(cutLoc, this.localAnim.deck.cards); }
                 break;
             }
         }
@@ -395,7 +411,7 @@ class Instruction {
         drawText(this.t, 0.15, 0.6);
         if(realVal(this.sv)) this.localAnim.deck.cards.find((c) => c.numericVal == this.sv).drawFront(xyProps([0.5, 0.1]));
         if(realVal(this.si)) this.localAnim.deck.cards.find((c) => c.locInDeck == this.si).drawFront(xyProps([0.5, 0.1]));
-        if(realVal(this.hv)) highlight(xyProps(this.localAnim.deck.cards.find((c) => c.numericVal == this.sv).pos));
+        if(realVal(this.hv)) highlight(xyProps(this.localAnim.deck.cards.find((c) => c.numericVal == this.hv).pos));
         if(realVal(this.hi)) highlight(xyProps(this.localAnim.deck.cards.find((c) => c.locInDeck == this.hi).pos));
     }
 };
