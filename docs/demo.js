@@ -134,6 +134,29 @@ function highlight(cardLoc) {
     ctx.stroke();
 }
 
+function drawCard(obj, length=0.1, hover=true) {
+    ctx.beginPath();
+    ctx.strokeStyle = obj.color;
+    let start = xyProps(obj.pos);
+    ctx.moveTo(start[0], start[1]);
+    let end = xyProps([obj.pos[0] + length, obj.pos[1]]);
+    if(hover) {
+        let textPos = [obj.pos[0] + length + 0.01, obj.pos[1]];
+        drawText(`${obj.numericVal.toString().padStart(2, '0')}`, textPos[0], textPos[1] + 0.005, 14);
+    }
+    ctx.lineTo(end[0], end[1]);
+    ctx.closePath();
+    ctx.lineWidth = hover ? 4 : 1;
+    ctx.stroke();
+
+    if(start[0] <= mouseX &&
+       mouseX <= end[0] &&
+       Math.abs(start[1] - mouseY) < 10 &&
+       hover) {
+        obj.drawFront([mouseX, mouseY]);
+    }
+}
+
 class Card {
     constructor(val, startPos, color, loc) {
         this.numericVal = val;
@@ -144,7 +167,9 @@ class Card {
         this.frame = -1;
         this.endFrame = 0;
         this.locInDeck = loc;
-
+        this.draw = function() {
+            drawCard(this);
+        }
         this.img = new Image();
         let src = `${val}`;
         while(src.length < 2) src = "0" + src;
@@ -156,25 +181,7 @@ class Card {
     setDest(newDest) { this.dest = newDest; }
     setColor(newHexString) { this.color = newHexString; }
 
-    draw() {
-        ctx.beginPath();
-        ctx.strokeStyle = this.color;
-        let start = xyProps(this.pos);
-        ctx.moveTo(start[0], start[1]);
-        let end = xyProps([this.pos[0] + 0.1, this.pos[1]]);
-        let textPos = [this.pos[0] + 0.1 + 0.01, this.pos[1]];
-        drawText(`${this.numericVal.toString().padStart(2, '0')}`, textPos[0], textPos[1] + 0.005, 14);
-        ctx.lineTo(end[0], end[1]);
-        ctx.closePath();
-        ctx.lineWidth = 4;
-        ctx.stroke();
 
-        if(start[0] <= mouseX &&
-           mouseX <= end[0] &&
-           Math.abs(start[1] - mouseY) < 10) {
-            this.drawFront([mouseX, mouseY]);
-        }
-    }
 
     drawFront(pos) {
         let x = pos[0];
@@ -350,6 +357,14 @@ function bfsSetup() {
     anim = new DeckAnimator(bfsColors);
     anim.setStep(anim.bfsStep);
     anim.setTransform(backFrontShuffle);
+    anim.drawables.push({
+        draw: function() {
+            drawCard({
+                color: toHexSmall(0, 0, 0),
+                pos: [0.69, cardY((CARD_COUNT / 2) - 0.5)],
+            }, 0.12, false);
+        },
+    });
     anim.start();
 }
 
