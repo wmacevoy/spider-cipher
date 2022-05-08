@@ -349,9 +349,13 @@ function spider(deck, source, mode) {
     // the workhorse
     for(var i = 0; i < source.length; i++) {
         output.push(f(source[i], noise(deck)));
-        deck = deckCut(deck, deckFindCard(add(deck[0], plain[i])));
+        let cutCard = add(deck[0], plain[i]);
+        let tagCard = sub(deck[2], 1);
+        // I chose to keep the find outside the cut so that you can choose to both
+        // cut on a value and cut at an index; greater flexibility
+        deck = deckCut(deck, deckFindCard(tagCard));
         deck = deckBackFrontShuffle(deck);
-        deck = deckCut(deck, deckFindCard(sub(deck[2], 1)));
+        deck = deckCut(deck, deckFindCard(cutCard));
     }
 
     // cleanup
