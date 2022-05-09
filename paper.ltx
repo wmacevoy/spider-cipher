@@ -1,0 +1,131 @@
+% Just... generally, this needs a go-over to make sure the statements therein are consistent with the statements of its sources; the vague ideas are right, but more thoroughness is needed
+
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+
+\title{The Spider Cipher: A Step Into Modernizing Manual Cryptography}
+\author{Warren MacEvoy, Caleb Spiess}
+
+\begin{document}
+
+\maketitle
+
+\section{Background}
+\subsection{Origin}
+For the 1999 book \textit{Cryptonomicon,} Bruce Schneier developed a cryptographic algorithm which uses a deck of cards for its operation. With some patience, messages can be encrypted and decrypted by hand using this cipher.
+
+Though fascinating, this scheme is considerably leaky. In the same year as the release of \textit{Cryptonomicon,} it was found to be insecure except for short messages. In 2019, some changes were proposed for the improvement of the cipher, but these made its operation more difficult. The Solitaire cipher, fortunately, exists for a fictional world. How useful could a practical implementation be?
+\subsection{Motivations}
+Trust is of primary importance in cryptography: the field itself exists in order to decrease the amount of trust required to carry out various tasks which are secretive by nature. However, in the most sensitive of circumstances, there are very good reasons to distrust even hardware. To name a few examples:
+\begin{itemize}
+  % add citations for these and check that the wording is correct
+\item The Russian government has been found to rootkit devices
+\item The CIA is constantly developing new hardware exploits with a clear intent to use them offensively
+\item The Chinese government manufactures hardware backdoors into products
+\end{itemize}
+It is evident that if one wishes to keep a secret from a powerful opponent, mathematical security is necessary but insufficient. The Spider cipher seeks to fill this gap with the creation of a manual encryption scheme which achieves both security and user-friendliness.
+
+There is another element of inherent security in a manual method: the probability of the system actually doing its job goes up dramatically. From the concluding section of Anderson's \textit{Why Cryptosystems Fail:}
+
+\begin{quote}
+Designers of cryptographic systems have suffered from a lack of information about how their products fail in practice, as opposed to how they might fail in theory. This lack of feedback has led to a false threat model being accepted. Designers focussed on what could possibly go wrong, rather than on what was likely to; and many of their products are so complex and tricky to use that they are rarely used properly. As a result, most security failures are due to implementation and management errors. One specific consequence has been a spate of ATM fraud, which has not just caused financial losses, but has also caused at least one miscarriage of justice and has eroded confidence in the UK banking system. There has also been a military cost; the details remain classified, but its existence has at last been admitted.
+\end{quote}
+
+Anderson uses the case studies of military and banking applications of cryptography, but no tremendous leap is required to figure that such problems exist elsewhere. With a manual system, some risk is mitigated, because at least the consequences of actions are very clear. This is not always true; Anderson finds that for many systems, the mathematical security of the cryptographic system at hand is understood as being equivalent to the security of the system as a whole. There is a serious tradeoff of time with a cipher such as this, but in some cases it may be worthwhile. At the very least, in particularly suspicous or sensitive instances, the result of the computer can be hand-verified. 
+
+% add "why cryptosystems fail" citation
+
+Another value of Spider is that it can be used as a teaching tool. Because it can be operated physically, while still making use of several important concepts in modern cryptography, it serves to conceptually deobfuscate encryption to students, because instead of manipulating bits, there is a physical reference for the operations which are occurring. Concepts like keys, encodings, entropy, and keystreams are made manifest without the need for specialized visualizations, allowing them to be seen, removing conceptual ambiguity, and creating the opportunity to easily play with and modify the pieces.
+
+These virtues may not be unique to the Spider cipher, however.
+\subsection{Existing Work in Manual Cryptography}
+In the academic literature, manual cryptography is sparse. However, some information is available online on the subject.
+
+Chaocipher was developed in 1918 and released publicly in 1953. The initial publication came with a substantial amount of ciphertext, which remains undeciphered to this day. However, even with some extension of the system, amounts of ciphertext which are moderate by today's standards are enough to break Chaocipher.
+
+Several hand ciphers have been developed for wartime use. RHV was used by the German Navy when no enigma machine was available. Unfortunately, it was broken even at the time it was used. The much more interesting VIC cipher was not broken at the time it was in use, and resisted cryptanalysis by the NSA for years. To this day, it appears to be the case that it has only been broken by brute force. However, it comes with a major disadvantage: for its status as the only hand cipher without known vulnerabilities, it is exceptionally complex and cumbersome. 
+
+This should not be taken as exhaustive; more work certainly exists in this field. However, these stood out as particularly notable examples of historical hand-operable ciphers. No other schemes were found which aspired to the level of security which modern computers have any difficulty breaking, though due to the sparse nature of information on the subject, there may be some undeserved exclusions. It is nevertheless clear that a gap does indeed exist between security and usability for hand ciphers.
+
+\subsection{Cryptographic Background}
+Though not otherwise referenced directly in this work because most of it is basic field knowledge, Schneier's \textit{Applied Cryptography} provided a great deal of insight into the broader picture around cryptography as well as many specific details around the implementation of cryptographic systems.
+
+\section{Description of the Spider Algorithm}
+Terminology is often in terms which do away with cryptographic jargon in favor of clarity, but corresponding cryptographic meanings are included where helpful.
+
+Only a subset of the 52-card deck is used: 40 cards, each of which has a number 0-39. The face value of the card is read as the least significant decimal digit. Queens are read as zeroes, because a Q looks enough like a 0. Aces are ones, and 2 through 9 act as themselves. The suit is read as the tens place, where ascending order of digit corresponds to alphabetical order of suit: clubs are zeroes, diamonds are ones, hearts are twos, and spades are threes. It may be helpful to lay out some unused cards, such as the kings, on the table in this order for reference. Some examples are given below., such as:
+
+\medskip
+\begin{tabular}{|c|c|}
+  \hline
+  Queen of Hearts & 20 \\\hline
+  Ace of Spades & 31 \\\hline
+  Queen of Clubs & 0  \\\hline
+  Nine of Spades & 39 \\\hline
+\end{tabular}
+\medskip
+
+\subsection*{Back-Front Shuffle}
+A back-front shuffle is fairly simple. Take the top card of the deck, remove it, and place it into its own pile. Remove the new top card of the deck and place it on the top of this pile. Continue in this way, placing the top card in the back, then the front, and so on until there are no more cards in the deck. The resulting pile is now the new deck.
+\subsection*{Cut}
+A cut seems quite simple, but it is necessary to define exactly what is meant by a cut. A cut is performed on some card which is referred to as the 'cut card.' All cards above (but not including) the cut card are moved to the bottom of the deck as a single block of cards, and all other cards (including the cut card) are moved to the top as a block, so that the cut card ends up on top. A cut with the top card as the cut card is a non-action. A cut on a sorted deck with the queen of clubs as the cut card swaps the top and bottom halves of the deck.
+\subsection*{Arithmetic}
+Often, two values, be they mere numbers or card values or a mix of the two, will need to be added or subtracted. Whenever this is done, the arithmetic is performed modulo 40. Also, instructions such as 'go to the next card' and 'go to the previous card' are more formally understood as respective incrementation and decrementation mod 40 of the index of the card being operated on.
+\subsection*{Noise}
+For a given state of the deck, there is some value from 0 to 39 which is called the noise. In more formal terms, this noise value is a single element of the keystream generated by the spider cipher. The steps to find the noise are simple:
+\begin{enumerate}
+\item Subtract 1 from the value of the third card in the deck
+\item Find the card whose value is equal to the result of the previous step
+\item The noise is the numeric value of the next card
+\end{enumerate}
+\subsection*{Packet and Unpacket}
+This operation is quite complicated and serves a few different purposes. There are several steps, and they are all gathered into the single term of 'packeting' because they are all setup which is done in sequence. Most important is to ensure that one value in the encrypted text is completely uncorrelated with the next, which makes the encrypted result clearly immune from attempts to distinguish it from other encrypted data... except that each value is between 0 and 39. This can be solved with some effort.
+% figure out the effortful solution
+
+First, add to the end of the message five 39s. This is done as a marker that the end of the message has been reached. Next, before each card, insert a random number between 0 and 39. Now, add ten random cards to the start, and then add random cards to the end until the length of the entire thing is a multiple of 10. The result is referred to as the packeted message.
+
+To unpacket, reverse each of these steps. Order matters. Start by looking for the end of the message - this can be found by looking for the place where five 39s are present, each separated by a random value. It is possible for there to be random 39s after the end, so look for the first such run. Remove everything after the last 39 which marks the end, and then remove the first 10 cards, which are random. Now, remove every other value, starting with the first; these are also random. Finally, go ahead and remove those five 39s at the end.
+\subsection*{Translating and Detranslating}
+The spider cipher's encoding scheme puts in some work in order to fit a reasonable character set into only 40 symbols. This is achieved using something called 'shift states.' A shift state is simple: each value from 0 to 35 decodes to one of three different symbols depending on the present shift state. For example, an ace of clubs, a zero, decodes to an 'a' when the shift state is neutral, an 'A' when shifted up, and a '0' when shifted down. A full reference for decoding is provided below.
+
+{
+  \medskip
+  \noindent
+  \includegraphics[width=\textwidth]{translation.png}
+  \medskip
+}
+
+36, 37, 38, and 39 are different from the others. Rather than encoding normal characters, these cards serve to modify the shift state. 36 and 37 respectively decrement and increment the shift state for the purposes of interpreting the next character. 38 and 39 respectively decrement and increment the shift state until further notice. Shifting `past' normal up and down states does nothing, although an encoding scheme could certainly be defined with more shift states.
+\subsection*{Encrypting or Decrypting a Character}
+The steps to encrypt a character are as follows:
+\begin{enumerate}
+\item To generate a character of output, add the noise to a character of input.
+\item Cut the deck in some way
+  % figure out EXACTLY how this works
+\item Perform a back-front shuffle
+\item Cut the deck in some way
+\end{enumerate}
+To decrypt, do the exact same thing, but subtract the noise instead of adding it. Be sure to remember to use the unencrypted text when performing step 2 in both scenarios.
+\subsection*{Putting It Together}
+The full process is as such:
+\begin{enumerate}
+\item Set up the deck by shuffling it very thorougly.
+\item Make a copy of the shuffled deck and set it aside.
+\item Translate your message.
+\item Packet the message.
+\item Encrypt the contents of the packeted message character by character. 
+\item Securely transfer the resulting encrypted message, along with a copy of the deck used to encrypt it, to the recipient.
+\item The recipient can decrypt the contents of the message using the deck, in a similar manner to the encryption.
+\item Then, they unpacket the message.
+\item When this is detranslated, the original message is restored!
+\end{enumerate}
+\section{Analysis}
+\section{Javascript Implementation Details}
+
+%search for evidence about whether programmers really "get" encryption or not; if not, include it here
+\section{Author Contributions}
+The development of the Spider algorithm, though somewhat influenced by Spiess in later stages, was almost entirely MacEvoy's work. The C implementation was entirely MacEvoy's, with Spiess providing only a minor bugfix or two. The Javascript implementation was written solely by Spiess, but with a great deal of help from MacEvoy and his C implementation. MacEvoy performed most of the mathematical analysis. Spiess performed the research on manual cryptography and cache side channel attacks necessary to write the Javascript implementation and this paper, which was composed by Spiess.
+% Make a note of how much MacEvoy was involved in the further revision
+
+\end{document}

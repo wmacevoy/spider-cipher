@@ -1,23 +1,50 @@
-// new:
-// 2250 clock cycles to scramble or unscramble a char
-// old:
-// 21375 cycles for the same
-
 "use strict";
-// If you're looking at this while this comment is still here, you're looking at an intermediate verison.
-// ...Unless I forgot to remove this.
-// If you see something really weird, it's probably a change I made just to test a simpler version of the thing while making this.
 
-// javascript's const implementation is... screwy, but even just marking it as such is useful
+// TODOS
+// rewrite using typed arrays
+// fix utf-16 support
+// figure out how to do caching-safe translation and detranslation
+
+/* Written primarily by me, Caleb Spiess
+ * Based VERY heavily on Warren MacEvoy's C code for the same algorithm
+ * I implemented the tricky constant-time parts other than the find.
+ *
+ * Front note: This code is written with timing attacks in mind. It is true that a
+ * "normal" timing attack, using how long a request takes to go through, provides
+ * some information. However, much more importantly, there is timing information
+ * with no privileges needed: cache timing. If a malicious program can find code
+ * which, due to its properties, pushes some of this code out of an instruction
+ * or data cache, then this code will push theirs out in turn. If the attacker can
+ * figure out which cache misses correspond to which lines of execution, shockingly
+ * granular information can be gained. This can be used to steal a key quite
+ * quickly in some situations. Because this is browser code, these side channel
+ * attacks are particularly viable. As such, code will be written to attempt
+ * to mitigate these attacks, as well as explanation for how that code works so
+ * that this code base may be more safely adapted to other languages, and checked
+ * for errors in this regard.
+ *
+ * Of note, the data itself is irrelevant. What matters is the location in memory.
+ * Also, modern CPUs "stripe" their caches, making this much more practical - as an
+ * example probably pretty numerically far off, but with the right idea,
+ * accesses where the second to last byte in physical memory is an 8 might 
+ * all take up the same set of cache slots. This striping provides a speed
+ * increase, but makes this attack much easier.
+ *
+ * Though the instruction cache is much smaller and faster, it is also relevant here.
+ * In basically exactly the same way, in fact. In other words, we need
+ * secret-independent data accesses and secret-independent execution paths. To the 
+ * unfamiliar, how this is actually achieved will make more sense when you see it.
+ */
+
+// like most languages, javascript's const implementation is... screwy, but even just marking something as such is useful
 const CARDS = 40;
 const LOUD = false;
-// hmm, maybe I should use something seedable - this isn't exactly testable right now
 const RANDFUNC = Math.random;
 
 // Macros are used in your code, which avoids making stack frames, which has several advantages.
 // Javascript is not so kind. This is slower, but as far as I can tell shouldn't introduce any security issues.
 function add(a, b) { return (a + b) % CARDS; }
-// 40 is added to deal with the fact that % has odd behavior with negative numbers
+// CARDS is added to deal with the fact that % has odd behavior with negative numbers
 function sub(a, b) { return ((a + CARDS) - b) % CARDS; }
 // You only use the cut pad once ish and it's really just the top card, and is defined by several layers of indirection.
 // I'm gonna just leave it out unless there's a reason to re-include it.
@@ -26,19 +53,11 @@ function sub(a, b) { return ((a + CARDS) - b) % CARDS; }
 
 // basically just pasted the code and changed some names
 // with the exception that the output works differently
-// and that there's some extra bookkeeping for later use
-function deckCut(inputDeck, cutLoc, ref) {
-    var outputDeck = inputDeck.slice(0); // just a deep copy
-    var workingCard;
-    for (var i=0; i<CARDS; ++i) {
-        ref[(i + cutLoc) % CARDS].loc = i;
-        outputDeck[i]=inputDeck[(i+cutLoc) % CARDS];
-    }
-    return outputDeck;
-}
-
-function oldDeckCut(inputDeck, cutLoc) {
-    var outputDeck = inputDeck.slice(0); // just a deep copy
+//
+// No extra work needs to be done for timing attack mitigation,
+// as all data is always accessed
+function deckCut(inputDeck, cutLoc) {
+    var outputDeck = inputDeck.slice(0);
     for (var i=0; i<CARDS; ++i) {
         outputDeck[i]=inputDeck[(i+cutLoc) % CARDS];
     }
@@ -46,23 +65,8 @@ function oldDeckCut(inputDeck, cutLoc) {
 }
 
 // same here
-function deckBackFrontShuffle(inputDeck, ref) {
-    var outputDeck = inputDeck.slice(0); // just a deep copy    
-    var back = CARDS/2;
-    var front = CARDS/2-1;
-    for (var i=0; i<CARDS; i += 2) {
-        ref[i].loc = back;
-        outputDeck[back]=inputDeck[i];
-        ref[i + 1].loc = front;
-        outputDeck[front]=inputDeck[i+1];
-        ++back;
-        --front;
-    }
-    return outputDeck;    
-}
-
-function oldDeckBackFrontShuffle(inputDeck) {
-    var outputDeck = inputDeck.slice(0); // just a deep copy    
+function deckBackFrontShuffle(inputDeck) {
+    var outputDeck = inputDeck.slice(0);
     var back = CARDS/2;
     var front = CARDS/2-1;
     for (var i=0; i<CARDS; i += 2) {
@@ -71,12 +75,12 @@ function oldDeckBackFrontShuffle(inputDeck) {
         ++back;
         --front;
     }
-    return outputDeck;    
+    return outputDeck;
 }
 
 // ditto
 function deckBackFrontUnshuffle(inputDeck) {
-    var outputDeck = inputDeck.slice(0); // just a deep copy
+    var outputDeck = inputDeck.slice(0);
     var back = CARDS;
     var front = -1;
     for (var i=CARDS-1; i >= 0; --i) {
@@ -88,11 +92,10 @@ function deckBackFrontUnshuffle(inputDeck) {
             outputDeck[i]=inputDeck[front];
         }
     }
-    return outputDeck;    
+    return outputDeck;
 }
 
 // slight modification to work with differently working cutting and shuffling
-// ? Wait, why does the actual code use pseudo shuffle?
 function deckPseudoShuffle(deck, cutLoc) {
     var temp;
     temp = deckCut(deck,cutLoc);
@@ -102,33 +105,39 @@ function deckPseudoShuffle(deck, cutLoc) {
     }
 }
 
+
+// BEGIN QUARANTINE ZONE
+
+
+// both in terms of consistent timing and unicode support
+// maybe requires a hash table unfortunately
+
 // WARNING: DO NOT ACCESS THESE ARRAYS DIRECTLY FOR TRANSLATION
 // emoji are too weird to slap into a homogeneous data structure like this
 // use translateChar or translateString
 
 // Some translation was needed; emoji are encoded slightly different here.
-// ? You missed UP_CODE 33, '`'. This is an accident right?
 var DOWN_CODES = [
     //Q    A    2    3    4    5    6    7    8    9
-    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',  // + 0 club 
+    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',  // + 0 club
     'A', 'B', 'C', 'D', 'E', 'F', '@', '=','\\', '~',  // +10 diamond
     '#', '$', '%', '^', '&', '|', '-', '+', '/', '*',  // +20 heart
-    '\n', ';', '?','\'',                               // +30 spade  
+    '\n', ';', '?','\'',                               // +30 spade
 ];
 // HEED THE ABOVE WARNING, LEST YE MEET A WATERY GRAVE
 var CODES = [
     //Q    A    2    3    4    5    6    7    8    9
-    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',  // + 0 club   
+    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',  // + 0 club
     'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',  // +10 diamond
-    'u', 'v', 'w', 'x', 'y', 'z', '<', '>', '(', ')',  // +20 heart  
-    ' ', ',', '.','\"',                                // +30 spade  
+    'u', 'v', 'w', 'x', 'y', 'z', '<', '>', '(', ')',  // +20 heart
+    ' ', ',', '.','\"',                                // +30 spade
 ];
 // HEED THE ABOVE WARNING, LEST YE MEET A WATERY GRAVE
 var UP_CODES = [
     //Q    A    2    3    4    5    6    7    8    9
-    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',  // + 0 club   
+    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',  // + 0 club
     'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',  // +10 diamond
-    'U', 'V', 'W', 'X', 'Y', 'Z', '{', '}', '[', ']',  // +20 heart  
+    'U', 'V', 'W', 'X', 'Y', 'Z', '{', '}', '[', ']',  // +20 heart
     '_', ':', '!', '`',                                // +30 spade
 ];
 // HEED THE ABOVE WARNING, LEST YE MEET A WATERY GRAVE
@@ -146,15 +155,8 @@ function saneArrFind(arr, valToFind) {
     return -1;
 }
 
-// ? why is ord called ord in your code?
-// ? and why does it return -1 when you use it with a shift state other than a normal one and it finds the code in the normal ones?
-// ? Why does it perform this search at all in this case? Why not just return the code?
 // I'm rewriting this to be significantly different. I just want to get the thing working for now.
-// TODO: fix halt and catch fire
-// ? TODO: implement this with a hash map?
-// ? Your code is much harder to read than this, though more performant. Priorities for this version?
-// 
-// also: gotta deal with the annoyingness of emoji somehow
+// gotta deal with the annoyingness of emoji somehow
 // for some reason the codes you use to get them to print aren't the same
 // testing reveals that converting from char codes doesn't print right, and that
 // the printable ones can't be looked with the same code
@@ -221,6 +223,9 @@ function detranslate(arr) {
     return detranslated;
 }
 
+
+// END QUARANTINE ZONE
+
 // does not include x
 function zeroTo(x) {
     return Math.floor(RANDFUNC() * x);
@@ -230,6 +235,8 @@ function randCard() {
     return zeroTo(CARDS);
 }
 
+// packet and unpacket are actually independent of the contents of the plaintext and 
+// key deck alike, so these very hefty-looking pieces of code are quite safe
 function packet(msg) {
     for(var i = 0; i < 5; i++) msg.push(39);
     var len = msg.length;
@@ -237,7 +244,7 @@ function packet(msg) {
     // anyway, the array is being modified while you're inserting, so this is a bit
     // weird to think about, but start by inserting at position 0, then 0 and 1 are
     // both occupied; to insert before the next unhandled plain card is to insert
-    // at index 2, now. 
+    // at index 2, now.
     for(var i = 0; i < len; i++) msg.splice(i * 2, 0, randCard());
     // unshift is a bit obscure and weirdly named; it's analogous to push, but operates
     // on the front of an array
@@ -256,7 +263,7 @@ function unpacket(msg) {
     // make sense to end by shifting, so the very first run of 5 39s is EOM for sure
     var index = 9;
     while(count < 5) {
-        index += 2;        
+        index += 2;
         if(index >= msg.length) throw "Message doesn't check out!";
         if(msg[index] == 39) count++;
         else count = 0;
@@ -276,104 +283,82 @@ function unpacket(msg) {
     return msg;
 }
 
-function noise(deck, straight, ref) {
-    var tagVal = add(39, deck[2]); // same as subtracting 1
-    var tagIndex = deckQuickFind(tagVal, straight);
-    return deck[add(tagIndex, 1)];
-}
-
-function oldNoise(deck) {
+// This one is tricky. Does accessing the second element of the deck leak information?
+// The value we're accessing doesn't matter, but its address does. If this element has
+// a consistent location, we have no problem. If, however, javascript's array is moreso
+// a list of pointers to numbers... we have a problem. This is the reason we use typed
+// arrays rather than just normal javascript arrays: sure, there's an efficiency gain,
+// but this is the main thing.
+function noise(deck) {
     var tagVal = add(39, deck[2]); // same as subtracting 1
     var tagIndex = deckFindCard(deck, tagVal);
     return deck[add(tagIndex, 1)];
 }
 
-// Not currently in use, but nice to have around for its utility
+/* Oh boy.
+ * Explanation:
+ * The first part of this is quite similar to the C version.
+ * ~0 is all 1's in binary, and in this case I don't need to worry about the truthiness of that. So a mask is selected based
+ * on whether the current index is correct or not. It's anded with the index, which gives either the i & 0 (0) or i & 1 (i).
+ * Since you've got 39 zeroes with (hopefully) an i in there, if you just or the pile together, the result is i or 0 or 0
+ * or 0 ......... or 0. Which is still just i, and remains so in any order for any i. The difference here is that you should
+ * be able to accumulate as you go without problems. As far as I can tell, this is constant time, constant space. There is an
+ * implicit "if" here in the loop, but it runs the same every time. The only thing that changes between runs is which deck[i]
+ * is the same as the card and therefore which entry is selected in the mask.
+ *
+ * Note that this is a pretty funny solution - the algorithm is O(N), but N is constant and we always take the worse case.
+ * So it always takes the same amount of time to run for our purposes. You can definitely do better in the general case, but
+ * doing so requires keeping track of an inverse map of your deck which is definitely not a safe method against cache attacks.
+ */
 function deckFindCard(deck, card) {
-    // TODO: test on more browsers
-    // Works on: ([Y]es, [N]o, [P]ending testing)
-    // Y Firefox
-    // Y Chromium (so probably Chrome)
-    // P Edge
-    // P Opera
-    // P Various mobile browsers
-    //
-    // Explanation:
-    // The first part of this is quite similar to the C version.
-    // ~0 is all 1's in binary, and in this case I don't need to worry about the truthiness of that. So a mask is selected based
-    // on whether the current index is correct or not. It's anded with the index, which gives either the i & 0 (0) or i & 1 (i).
-    // Since you've got 39 zeroes with (hopefully) an i in there, if you just or the pile together, the result is i or 0 or 0
-    // or 0 ......... or 0. Which is still just i, and remains so in any order for any i. The difference here is that you should
-    // be able to accumulate as you go without problems. As far as I can tell, this is constant time, constant space. There is an
-    // implicit "if" here in the loop, but it runs the same every time. The only thing that changes between runs is which deck[i]
-    // is the same as the card and therefore which entry is selected in the mask.
-    //
-    // Note that this is a pretty funny solution - the algorithm is O(N), but N is constant and we always take the worse case.
-    // So it always takes the same amount of time to run for our purposes. You can definitely do better. I might try to.
     var acc = 0;
-    // Seems like just testing equality to get an index doesn't actually work in js, I had to do something slightly different    
     var mask = {false: 0, true: ~0};
     for(var i = 0; i < CARDS; i++) acc = acc | (i & mask[deck[i]==card]);
     return acc;
 }
 
-function deckQuickFind(card, straight) { return straight[card].loc; }
+// Here, there is a concept of a source and an output. The source text is the
+// plaintext when encrypting and the ciphertext when decrypting. The output is the
+// ciphertext when encrypting and the plaintext when decrypting.
+//
+// Making everything work requires a lot of ternary operator fiddling, but each instance
+// is only once per encrypt/decrypt, so it's not a huge deal. I also think this is
+// relatively readable for what it's doing.
+//
+// Finally, are these components secure against timing attacks? Most things are clearly
+// fine. Most of this happens the same way no matter what the plaintext and deck are,
+// in terms of the memory, thanks to the work in deckFindCard. However, the same problem
+// as with noise occurs here. Fortunately, looking up a constant location per iteration
+// is safe with a typed array, as it allows us to manipulate bits rather than shuffle
+// around pointers to bits.
+function spider(deck, source, mode) {
+    // processing mode text to set doEncrypt
+    var doEncrypt;
+    mode = mode.toLowerCase().trim();
+    if(mode == "encrypt") doEncrypt = true;
+    else if(mode == "decrypt") doEncrypt = false;
+    else throw "Not a valid mode. Valid modes are 'encrypt' and 'decrypt' only";     
+    var doDecrypt = !doEncrypt;
 
-// these two could use refactoring to remove redundancy, but advanceDeck was pretty 
-// hard to read so I'm still thinking about how best to do it
-// TODO: that
-function scramble(msg, deck) {
-    // straight can be indexed into to find the location of a card
-    // i.e. straight[i].loc is the location of the card with value i
-    // in the deck
-    var straight = new Array(CARDS);
-    for(var i = 0; i < CARDS; i++) { straight[deck[i]] = { loc: i }; }
-    var ref = straight.slice(0);
-    msg = packet(msg);
-    var scrambled = [];
-    for(var i = 0; i < msg.length; i++) {
-        scrambled.push(add(msg[i], noise(deck, straight, ref)));
-        deck = deckCut(deck, deckQuickFind(msg[i], straight), ref);
-        deck = deckBackFrontShuffle(deck, ref);
-    }
-    return scrambled;
-}
+    // encryption/decryption setup
+    if(doEncrypt) source = packet(source);
+    var output = [];
+    var f = doEncrypt ? add : sub;
+    var plain = doEncrypt ? source : output;
 
-function unscramble(msg, deck) {
-    var straight = new Array(CARDS);
-    for(var i = 0; i < CARDS; i++) { straight[deck[i]] = { loc: i }; }
-    var ref = straight.slice(0);
-    var unscrambled = [];
-    for(var i = 0; i < msg.length; i++) {
-        unscrambled.push(sub(msg[i], noise(deck, straight, ref)));
-        deck = deckCut(deck, deckQuickFind(unscrambled[i], straight), ref);
-        deck = deckBackFrontShuffle(deck, ref);
+    // the workhorse
+    for(var i = 0; i < source.length; i++) {
+        output.push(f(source[i], noise(deck)));
+        let cutCard = add(deck[0], plain[i]);
+        let tagCard = sub(deck[2], 1);
+        // I chose to keep the find outside the cut so that you can choose to both
+        // cut on a value and cut at an index; greater flexibility
+        deck = deckCut(deck, deckFindCard(tagCard));
+        deck = deckBackFrontShuffle(deck);
+        deck = deckCut(deck, deckFindCard(cutCard));
     }
-    unscrambled = unpacket(unscrambled);
-    return unscrambled;
-}
 
-// these two could use refactoring to remove redundancy, but advanceDeck was pretty 
-// hard to read so I'm still thinking about how best to do it
-// TODO: that
-function oldScramble(msg, deck) {
-    msg = packet(msg);
-    var scrambled = [];
-    for(var i = 0; i < msg.length; i++) {
-        scrambled.push(add(msg[i], oldNoise(deck)));
-        deck = oldDeckCut(deck, deckFindCard(deck, msg[i]));
-        deck = oldDeckBackFrontShuffle(deck);
-    }
-    return scrambled;
-}
-
-function oldUnscramble(msg, deck) {
-    var unscrambled = [];
-    for(var i = 0; i < msg.length; i++) {
-        unscrambled.push(sub(msg[i], oldNoise(deck)));
-        deck = oldDeckCut(deck, deckFindCard(deck, unscrambled[i]));
-        deck = oldDeckBackFrontShuffle(deck);
-    }
-    unscrambled = unpacket(unscrambled);
-    return unscrambled;
+    // cleanup
+    if(doDecrypt) output = unpacket(output);
+    return output;
 }
