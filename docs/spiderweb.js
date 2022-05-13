@@ -4,6 +4,7 @@
 // rewrite using typed arrays
 // fix utf-16 support
 // figure out how to do caching-safe translation and detranslation
+// rewrite cut to be constant-order
 
 /* Written primarily by me, Caleb Spiess
  * Based VERY heavily on Warren MacEvoy's C code for the same algorithm
@@ -54,17 +55,17 @@ function sub(a, b) { return ((a + CARDS) - b) % CARDS; }
 // basically just pasted the code and changed some names
 // with the exception that the output works differently
 //
-// No extra work needs to be done for timing attack mitigation,
-// as all data is always accessed
+// There is a problem with this: access order could depend on cut location, if care isn't
+// taken. 
 function deckCut(inputDeck, cutLoc) {
     var outputDeck = inputDeck.slice(0);
     for (var i=0; i<CARDS; ++i) {
-        outputDeck[i]=inputDeck[(i+cutLoc) % CARDS];
+        outputDeck[sub(i, cutLoc)]=inputDeck[i];
     }
     return outputDeck;
 }
 
-// same here
+// the bfs is totally data-indepedent
 function deckBackFrontShuffle(inputDeck) {
     var outputDeck = inputDeck.slice(0);
     var back = CARDS/2;
@@ -104,9 +105,6 @@ function deckPseudoShuffle(deck, cutLoc) {
         temp[i]=0;
     }
 }
-
-
-// BEGIN QUARANTINE ZONE
 
 
 // both in terms of consistent timing and unicode support
@@ -224,8 +222,6 @@ function detranslate(arr) {
 }
 
 
-// END QUARANTINE ZONE
-
 // does not include x
 function zeroTo(x) {
     return Math.floor(RANDFUNC() * x);
@@ -309,11 +305,17 @@ function noise(deck) {
  * Note that this is a pretty funny solution - the algorithm is O(N), but N is constant and we always take the worse case.
  * So it always takes the same amount of time to run for our purposes. You can definitely do better in the general case, but
  * doing so requires keeping track of an inverse map of your deck which is definitely not a safe method against cache attacks.
+ * 
+ * MacEvoy's version uses a mask, but the mask has a data dependency in its accesses. What 
+ * we need is a mapping which causes true to output all 1's, and false to output all 0's, 
+ * so that i is only added to the accumulator if deck[i] is equal to the card. We do this by
+ * coercing the boolean to a number, so that we need 0 and 1 to map to 0 and -1 (-1 being the
+ * numeric representation for the binary number containing all 1's). As such, we can simply
+ * negate it, which both coerces it to a number and does what we want.
  */
 function deckFindCard(deck, card) {
-    var acc = 0;
-    var mask = {false: 0, true: ~0};
-    for(var i = 0; i < CARDS; i++) acc = acc | (i & mask[deck[i]==card]);
+    let acc = 0;
+    for(let i = 0; i < CARDS; i++) acc = acc | (i & -(deck[i]==card));
     return acc;
 }
 
@@ -346,7 +348,6 @@ function spider(deck, source, mode) {
     var f = doEncrypt ? add : sub;
     var plain = doEncrypt ? source : output;
 
-    // the workhorse
     for(var i = 0; i < source.length; i++) {
         output.push(f(source[i], noise(deck)));
         let cutCard = add(deck[0], plain[i]);
@@ -355,7 +356,7 @@ function spider(deck, source, mode) {
         // cut on a value and cut at an index; greater flexibility
         deck = deckCut(deck, deckFindCard(tagCard));
         deck = deckBackFrontShuffle(deck);
-        deck = deckCut(deck, deckFindCard(cutCard));
+        deck = deckCut(deck, deckFindCard(cutCard));    
     }
 
     // cleanup

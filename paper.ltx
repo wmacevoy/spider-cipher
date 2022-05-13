@@ -1,5 +1,3 @@
-% Just... generally, this needs a go-over to make sure the statements therein are consistent with the statements of its sources; the vague ideas are right, but more thoroughness is needed
-
 \documentclass[12pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx}
@@ -12,29 +10,28 @@
 \maketitle
 
 \section{Background}
+\subsection{About This Project}
+This paper is best understood as a summary of what I, Caleb Spiess, learned over my semester working on the Spider cipher with Dr. MacEvoy for my independent study project. As such, it may seem somewhat scattered, as the scope of a version of this project which is `complete' is much, much greater than that of a three credit-hour course. 
 \subsection{Origin}
-For the 1999 book \textit{Cryptonomicon,} Bruce Schneier developed a cryptographic algorithm which uses a deck of cards for its operation. With some patience, messages can be encrypted and decrypted by hand using this cipher.
+For the 1999 book \textit{Cryptonomicon}\cite{stephenson_cryptonomicon_1999}, Bruce Schneier developed a cryptographic algorithm which uses a deck of cards for its operation\cite{schneier_solitaire_1999}. With some patience, messages can be encrypted and decrypted by hand using this cipher.
 
-Though fascinating, this scheme is considerably leaky. In the same year as the release of \textit{Cryptonomicon,} it was found to be insecure except for short messages. In 2019, some changes were proposed for the improvement of the cipher, but these made its operation more difficult. The Solitaire cipher, fortunately, exists for a fictional world. How useful could a practical implementation be?
+Though fascinating, this scheme is considerably leaky\cite{crowley_problems_1999}. In the same year as the release of \textit{Cryptonomicon,} it was found to be insecure except for short messages. In 2019, some changes were proposed for the improvement of the cipher\cite{shiu_analysis_2019}, but these made its operation more difficult. The Solitaire cipher, fortunately, exists largely for the sake of a fictional world, but how might such a scheme be made more practical? The Spider Cipher, whose namesake is the popular card solitaire game Spider, attempts to bridge this gap.
 \subsection{Motivations}
 Trust is of primary importance in cryptography: the field itself exists in order to decrease the amount of trust required to carry out various tasks which are secretive by nature. However, in the most sensitive of circumstances, there are very good reasons to distrust even hardware. To name a few examples:
 \begin{itemize}
-  % add citations for these and check that the wording is correct
-\item The Russian government has been found to rootkit devices
-\item The CIA is constantly developing new hardware exploits with a clear intent to use them offensively
-\item The Chinese government manufactures hardware backdoors into products
+\item The Russian government has been found to rootkit devices\cite{noauthor_nsa_2020}
+\item The CIA is constantly developing new hardware exploits with a clear intent to use them offensively\cite{kumar_wikileaks_2017}
+\item The Chinese government manufactures hardware backdoors into products\cite{robertson_big_2018}
 \end{itemize}
-It is evident that if one wishes to keep a secret from a powerful opponent, mathematical security is necessary but insufficient. The Spider cipher seeks to fill this gap with the creation of a manual encryption scheme which achieves both security and user-friendliness.
+It is evident that if one wishes to keep a secret from a powerful or dedicated opponent, mathematical security is necessary but insufficient. The Spider cipher seeks to fill this gap through the creation of a manual encryption scheme which is all at once secure, user-friendly, and as intuitive as possible. User-friendliness is difficult because encryption is a necessarily tedious process to perform by hand, and intuitiveness is difficult because of the abstract mathematics necessary for cryptanalysis. The Spider cipher's design nonetheless strives to achieve these goals as effectively as possible, with the belief that there are some situations where the trade-offs it makes are worthwhile.
 
-There is another element of inherent security in a manual method: the probability of the system actually doing its job goes up dramatically. From the concluding section of Anderson's \textit{Why Cryptosystems Fail:}
+There is a strong element of inherent security in a manual method: the probability of the system being implemented correctly goes up dramatically. From the concluding section of Anderson's \textit{Why Cryptosystems Fail}\cite{anderson_why_1994}:
 
 \begin{quote}
 Designers of cryptographic systems have suffered from a lack of information about how their products fail in practice, as opposed to how they might fail in theory. This lack of feedback has led to a false threat model being accepted. Designers focussed on what could possibly go wrong, rather than on what was likely to; and many of their products are so complex and tricky to use that they are rarely used properly. As a result, most security failures are due to implementation and management errors. One specific consequence has been a spate of ATM fraud, which has not just caused financial losses, but has also caused at least one miscarriage of justice and has eroded confidence in the UK banking system. There has also been a military cost; the details remain classified, but its existence has at last been admitted.
 \end{quote}
 
-Anderson uses the case studies of military and banking applications of cryptography, but no tremendous leap is required to figure that such problems exist elsewhere. With a manual system, some risk is mitigated, because at least the consequences of actions are very clear. This is not always true; Anderson finds that for many systems, the mathematical security of the cryptographic system at hand is understood as being equivalent to the security of the system as a whole. There is a serious tradeoff of time with a cipher such as this, but in some cases it may be worthwhile. At the very least, in particularly suspicous or sensitive instances, the result of the computer can be hand-verified. 
-
-% add "why cryptosystems fail" citation
+Anderson uses the case studies of military and banking applications of cryptography, but no tremendous leap is required to figure that such problems exist elsewhere. With a manual system, some risk is mitigated, because at least the consequences of actions are very clear. This is not always true; Anderson finds that for many systems, the mathematical security of the cryptosystem at hand is understood as being equivalent to the security of the system as a whole. It can be relatively easily verified by hand that a system which implements Spider is following through on the steps needed to perform its basic functions.
 
 Another value of Spider is that it can be used as a teaching tool. Because it can be operated physically, while still making use of several important concepts in modern cryptography, it serves to conceptually deobfuscate encryption to students, because instead of manipulating bits, there is a physical reference for the operations which are occurring. Concepts like keys, encodings, entropy, and keystreams are made manifest without the need for specialized visualizations, allowing them to be seen, removing conceptual ambiguity, and creating the opportunity to easily play with and modify the pieces.
 
@@ -42,18 +39,17 @@ These virtues may not be unique to the Spider cipher, however.
 \subsection{Existing Work in Manual Cryptography}
 In the academic literature, manual cryptography is sparse. However, some information is available online on the subject.
 
-Chaocipher was developed in 1918 and released publicly in 1953. The initial publication came with a substantial amount of ciphertext, which remains undeciphered to this day. However, even with some extension of the system, amounts of ciphertext which are moderate by today's standards are enough to break Chaocipher.
+Chaocipher\cite{rubin_current_nodate} was developed in 1918 and released publicly in 1953. The initial publication came with a substantial amount of ciphertext, which remains undeciphered to this day. However, even with some extension of the system, amounts of ciphertext which are moderate by today's standards are enough to break Chaocipher.
 
-Several hand ciphers have been developed for wartime use. RHV was used by the German Navy when no enigma machine was available. Unfortunately, it was broken even at the time it was used. The much more interesting VIC cipher was not broken at the time it was in use, and resisted cryptanalysis by the NSA for years. To this day, it appears to be the case that it has only been broken by brute force. However, it comes with a major disadvantage: for its status as the only hand cipher without known vulnerabilities, it is exceptionally complex and cumbersome. 
+Several hand ciphers have been developed for wartime use. RHV\cite{sale_enigma_nodate} was used by the German Navy when no enigma machine was available; it was broken even at the time it was used. The much more interesting VIC cipher\cite{kahn_number_1993} was not broken at the time it was in use, and resisted cryptanalysis by the NSA for years. To this day, it appears to be the case that it has only been broken by brute force. However, it comes with a major disadvantage: for its status as the only hand cipher without known vulnerabilities, it is exceptionally complex and cumbersome.
 
-This should not be taken as exhaustive; more work certainly exists in this field. However, these stood out as particularly notable examples of historical hand-operable ciphers. No other schemes were found which aspired to the level of security which modern computers have any difficulty breaking, though due to the sparse nature of information on the subject, there may be some undeserved exclusions. It is nevertheless clear that a gap does indeed exist between security and usability for hand ciphers.
-
-\subsection{Cryptographic Background}
-Though not otherwise referenced directly in this work because most of it is basic field knowledge, Schneier's \textit{Applied Cryptography} provided a great deal of insight into the broader picture around cryptography as well as many specific details around the implementation of cryptographic systems.
+This should not be taken as exhaustive. More work certainly exists in this field. However, these stood out as particularly notable examples of historical hand-operable ciphers. No other manually-operable schemes were found which were either historically notable or aspired to the level of security which modern computers have any difficulty breaking, though due to the sparse nature of information on the subject, there may be some undeserved exclusions. It is nevertheless clear that a gap does indeed exist between security and usability for hand ciphers.
 
 \section{Description of the Spider Algorithm}
-Terminology is often in terms which do away with cryptographic jargon in favor of clarity, but corresponding cryptographic meanings are included where helpful.
+\subsection*{Demo}
+At the time of publication, an animated demonstration of much of the following can be found either bundled with this document, or at https://wmacevoy.github.io/spider-cipher/explanation.html
 
+\subsection*{Card Set}
 Only a subset of the 52-card deck is used: 40 cards, each of which has a number 0-39. The face value of the card is read as the least significant decimal digit. Queens are read as zeroes, because a Q looks enough like a 0. Aces are ones, and 2 through 9 act as themselves. The suit is read as the tens place, where ascending order of digit corresponds to alphabetical order of suit: clubs are zeroes, diamonds are ones, hearts are twos, and spades are threes. It may be helpful to lay out some unused cards, such as the kings, on the table in this order for reference. Some examples are given below., such as:
 
 \medskip
@@ -67,9 +63,9 @@ Only a subset of the 52-card deck is used: 40 cards, each of which has a number 
 \medskip
 
 \subsection*{Back-Front Shuffle}
-A back-front shuffle is fairly simple. Take the top card of the deck, remove it, and place it into its own pile. Remove the new top card of the deck and place it on the top of this pile. Continue in this way, placing the top card in the back, then the front, and so on until there are no more cards in the deck. The resulting pile is now the new deck.
+A back-front shuffle is fairly simple. Take the top card of the deck, remove it, and place it into its own pile, or more likely into the other hand. Remove another card from the top of the deck and place it on the top of the new pile. Continue in this way, placing a card in the back, then the front, and so on until there are no more cards in the deck. The resulting pile is now the new deck.
 \subsection*{Cut}
-A cut seems quite simple, but it is necessary to define exactly what is meant by a cut. A cut is performed on some card which is referred to as the 'cut card.' All cards above (but not including) the cut card are moved to the bottom of the deck as a single block of cards, and all other cards (including the cut card) are moved to the top as a block, so that the cut card ends up on top. A cut with the top card as the cut card is a non-action. A cut on a sorted deck with the queen of clubs as the cut card swaps the top and bottom halves of the deck.
+A cut seems quite simple, but it is necessary to define exactly what is meant by a cut. A cut is performed on some card which is referred to as the 'cut card.' All cards above the cut card, not including the cut card itself, are moved to the bottom of the deck as a single block of cards, and all remaining cards, including the cut card, are moved to the top as a block, so that the cut card ends up on top. A cut with the top card as the cut card is a non-action. A cut on a sorted deck with the queen of hearts (20) as the cut card swaps the top and bottom halves of the deck.
 \subsection*{Arithmetic}
 Often, two values, be they mere numbers or card values or a mix of the two, will need to be added or subtracted. Whenever this is done, the arithmetic is performed modulo 40. Also, instructions such as 'go to the next card' and 'go to the previous card' are more formally understood as respective incrementation and decrementation mod 40 of the index of the card being operated on.
 \subsection*{Noise}
@@ -80,14 +76,13 @@ For a given state of the deck, there is some value from 0 to 39 which is called 
 \item The noise is the numeric value of the next card
 \end{enumerate}
 \subsection*{Packet and Unpacket}
-This operation is quite complicated and serves a few different purposes. There are several steps, and they are all gathered into the single term of 'packeting' because they are all setup which is done in sequence. Most important is to ensure that one value in the encrypted text is completely uncorrelated with the next, which makes the encrypted result clearly immune from attempts to distinguish it from other encrypted data... except that each value is between 0 and 39. This can be solved with some effort.
-% figure out the effortful solution
+This operation is quite complicated and serves a few different purposes. There are several steps, and they are all gathered into the single term of 'packeting' because they are all setup which is done in sequence. Most important is to ensure that one value in the encrypted text is completely uncorrelated with the next, which makes the encrypted result clearly immune from attempts to distinguish it from other encrypted data... except that each value is between 0 and 39.*\let\thefootnote\relax\footnote{*One may want to make this indistinguishable from a bitstream in all ways. Unfortunately, this is impossible. The entropy of a string of base-40 symbols of length n is $40^{n}$, and the entropy of a string of base-2 symbols (a bitstream) is $2^{m}$. Even with the allowance of padding, one must find some whole-number solution to $40^{n}=2^{m}$. This is clearly equivalent to $(8*5)^{n}=2^{m}$. Because the prime factorization of the left side will always contain some number of 5's, and the prime factorization of the right side is composed entirely of 2's, the prime factorizations of each side will never be the same. It therefore follows from the fundamental theorem of arithmetic that this equation will never be true for any whole number. (For the unfamiliar, the fundamental theorem of arithmetic states that each integer greater than 1 has a unique prime factorization.)}
 
 First, add to the end of the message five 39s. This is done as a marker that the end of the message has been reached. Next, before each card, insert a random number between 0 and 39. Now, add ten random cards to the start, and then add random cards to the end until the length of the entire thing is a multiple of 10. The result is referred to as the packeted message.
 
-To unpacket, reverse each of these steps. Order matters. Start by looking for the end of the message - this can be found by looking for the place where five 39s are present, each separated by a random value. It is possible for there to be random 39s after the end, so look for the first such run. Remove everything after the last 39 which marks the end, and then remove the first 10 cards, which are random. Now, remove every other value, starting with the first; these are also random. Finally, go ahead and remove those five 39s at the end.
+To unpacket, reverse each of these steps. Order matters. Start by looking for the end of the message; this can be found by looking for the place where five 39's are present, each separated by a random value. It is possible for there to be random 39s after the end, so look for the first such run. Remove everything after the last 39 in the group of five, and then remove the first 10 cards, which are random. Now, remove every other value, starting with the first; these are also random. Finally, go ahead and remove those five 39s at the end.
 \subsection*{Translating and Detranslating}
-The spider cipher's encoding scheme puts in some work in order to fit a reasonable character set into only 40 symbols. This is achieved using something called 'shift states.' A shift state is simple: each value from 0 to 35 decodes to one of three different symbols depending on the present shift state. For example, an ace of clubs, a zero, decodes to an 'a' when the shift state is neutral, an 'A' when shifted up, and a '0' when shifted down. A full reference for decoding is provided below.
+The spider cipher's encoding scheme is stateful in order to fit a reasonable character set into only 40 symbols. This is achieved using something called 'shift states.' A shift state is simple: each value from 0 to 35 decodes to one of three different symbols depending on the present shift state. For example, an ace of clubs (0) decodes to an 'a' when the shift state is neutral, an 'A' when shifted up, and a '0' when shifted down. A full reference for decoding is provided below.
 
 {
   \medskip
@@ -96,36 +91,77 @@ The spider cipher's encoding scheme puts in some work in order to fit a reasonab
   \medskip
 }
 
-36, 37, 38, and 39 are different from the others. Rather than encoding normal characters, these cards serve to modify the shift state. 36 and 37 respectively decrement and increment the shift state for the purposes of interpreting the next character. 38 and 39 respectively decrement and increment the shift state until further notice. Shifting `past' normal up and down states does nothing, although an encoding scheme could certainly be defined with more shift states.
+36, 37, 38, and 39 are different from the others. Rather than encoding normal characters, these cards serve to modify the shift state. 36 and 37 respectively decrement and increment the shift state for the purposes of interpreting the next character. 38 and 39 respectively decrement and increment the shift state until further notice. Shifting `past' normal up and down states is considered an invalid encoding, although an encoding scheme could certainly be defined with more shift states.
 \subsection*{Encrypting or Decrypting a Character}
 The steps to encrypt a character are as follows:
 \begin{enumerate}
 \item To generate a character of output, add the noise to a character of input.
-\item Cut the deck in some way
-  % figure out EXACTLY how this works
+\item Add the value of the top card and the input character together. Keep track of this number for a moment.
+\item Subtract 1 from the value of the third card in the deck, and then cut on the card with that value.
 \item Perform a back-front shuffle
-\item Cut the deck in some way
+\item Remember that value from earlier? Cut on the card with that value.
 \end{enumerate}
 To decrypt, do the exact same thing, but subtract the noise instead of adding it. Be sure to remember to use the unencrypted text when performing step 2 in both scenarios.
 \subsection*{Putting It Together}
 The full process is as such:
 \begin{enumerate}
 \item Set up the deck by shuffling it very thorougly.
-\item Make a copy of the shuffled deck and set it aside.
+\item Make a copy of the shuffled deck and set it aside, or write down the order of the cards in this initial state.
 \item Translate your message.
 \item Packet the message.
 \item Encrypt the contents of the packeted message character by character. 
-\item Securely transfer the resulting encrypted message, along with a copy of the deck used to encrypt it, to the recipient.
-\item The recipient can decrypt the contents of the message using the deck, in a similar manner to the encryption.
+\item Using some appropriately secure method, ensure if you haven't already that the proper recipient receives or recreates a copy of the deck which was used for encryption. Using some other, possibly less secure but more convenient method, transfer the scrambled message.
+\item The recipient can decrypt the contents of the message using the deck, in a manner similar to the encryption.
 \item Then, they unpacket the message.
 \item When this is detranslated, the original message is restored!
 \end{enumerate}
-\section{Analysis}
-\section{Javascript Implementation Details}
+\section{Implementation}
+Much of the non-research time spent for this project was on the particularities of safely implementing a cryptographic cipher. Attempting to further ensure mathematical security was somewhat too expansive a task for the scale of this project; however, one issue of practical security proved especially complex and vital: side-channel attack mitigation.
+\subsection{The Principle of the Attack}
+Accessing main memory is exceptionally slow. It is so much slower that a great deal of speed can be gained by caching memory accesses directly in the CPU. The principle of a cache side channel attack is quite similar to that of any other timing attack: determine hidden information based on timing differences. It is of course the case that the difference between a cached and non-cached value creates a timing difference. The steps to exploit this are quite simple:
+\begin{enumerate}
+\item \label{identify} Identify the address of information for which it is useful to know if it has been accessed by the CPU.
+\item \label{uncache} Ensure that this address is uncached.
+\item \label{wait} Wait for some time.
+\item \label{time} Time how long it takes to perform an access at this location. If the access is very fast, the location was accessed; if it is very slow, then that location has not been touched. A miss is one or two orders of magnitude slower than a hit.\cite{taylor_cache_2010}
+\end{enumerate}
 
-%search for evidence about whether programmers really "get" encryption or not; if not, include it here
+On its face, this plan seems nearly viable, but it faces a few important roadblocks. Shouldn't memory protection prevent an attacker from accessing the memory location of another program? And how does the uncaching step work? To understand how to make this into a functional attack, it is necessary to look a bit deeper.
+\subsection{The Modern CPU Cache}
+A modern CPU almost always has what is called an \textit{N-way set-associative cache.} When data is called for, a small, aligned block of data (a cache line) is loaded all at once, and then the last few bits are used as an offset into that cache line to retrieve the data. If the cache line was loaded after a cache miss, the line is immediately stored in the cache. If data is read which has the same leading bits, that cache line is read into in order to retrieve that data. This is all very sensible policy which ensures that when data is read, calls to read nearby data get cache hits.
+
+However, the cache is not unlimited. Sometimes, one piece of data will need to push another piece out. Modern caches make the decision to have one subcache handle data accesses to addresses with a certain format; each of these is referred to as a \textit{set.} This scheme is also typically striped to avoid each set handling a single huge block of contiguous memory. As an example, an 8-bit memory space might have a certain set which gets filled by any memory access whose fourth bit is a 0 and whose fifth bit is a 1, with three other sets for each other combination of values for these two bits. Each of these sets can store multiple cache lines (the number it can store is referred to as its number of \textit{ways,} and all of the normal problems around eviction policies and the sort come up per-set. This scheme is the aforementioned N-way set-associative cache, and it has a very exploitable problem: because it is faster to implement a striped scheme, almost every program will, in the course of its operation, be able to modify the states of all of these sets. The roadblocks above are now trivial. A modified set of steps is as follows:
+
+\begin{enumerate}
+\item \label{identify} Identify the cache sets which are used when some valuable information is accessed by the CPU.
+\item \label{uncache} Fill the relevant sets with garbage.
+\item \label{wait} Wait for some time.
+\item \label{time} Time how long it takes to perform an access in that set, and use the result to extract information about any other running program.
+\end{enumerate}
+
+This vulnerability is almost without limits. It breaks through memory barriers and even through virtualization. All you need is the ability to run low-privilege code on a machine at the same time as some vulnerable code is running, and enough time to find the relevant sets. These two steps are fortunately not completely trivial, and the process of actually using this information is statistical. After all, the whims of the operating system's scheduler often end up running some third program which does something to memory, which introduces noise. However, the power of this exploit is not to be understated.*\let\thefootnote\relax\footnote{*For example, what if the CPU didn't check memory access privileges before speculatively executing code, and then when reversing the results of that code after realizing the problem, the caching was left in place? Then, you could for example access some memory address you do own plus the value of some memory address you don't own, and time the accesses of each address until you get a cache hit - by subtracting the location of the hit from the base address, you would know, with reasonably low noise, the value of the address you don't own. This is the basis of the critical vulnerability Meltdown\cite{lipp_meltdown_2018}, which was initially disbelieved by some on the ground of its sheer severity\cite{king_`it_2018}: that is, its ability to, in one motion, bypass memory protection completely.}
+\subsection{Identification and Mitigation}
+Part of the solution to this problem of modern CPUs is to write code whose data accesses are the same no matter what the value of the secret is. However, lest it be believed that this is all that is required, the CPU's data cache is not the only concern: there is also an instruction cache, which means that even if the same locations are accessed, writing any sort of branch also creates an exploitable timing difference. These factors imply that several changes need to be made to the implementation of the spider cipher.
+
+Some pieces are easily seen as secure or insecure. The front-back shuffle is entirely data-independent with no branching, so is certainly safe. There are two very obvious data dependencies. The first comes up every time a card is searched for. This is solved by using a bitmask to keep the value when it is found, accessing every value along the way but discarding all but the result. Fortunately, because there are only 40 cards, so the linear nature of this operation, compared to the ideal O(1) solution of maintaining a reverse mapping, ends up not being too tremendous a drawback. The same can be said of the translation step: when finding the number which corresponds to a given character, these data accesses should not give away the entirety of the text by placing a different value in the cache depending on the character. The very same search method is therefore utilized.
+
+The search method used at the outset of this project was subtly flawed for javascript, and accessed a different index of a mask array in order to achieve this. Though probably existing within a single cache line in C, no such guarantees could be made in javascript, and instead the mask was produced by negating the boolean value of the comparison between the value of the deck at the current index and the value of the card being searched for.
+
+The cut is a different matter. The locations of the cuts are determined by the state of the deck and the value of the plaintext, both of which are secret. As the temporal granularity of cache side channel attacks can be very high\cite{goos_timing_1996}, it is not enough that all of the data is accessed by the end of the cut. The difference in order is enough to extract some information. Because of this, a fairly in-depth solution is required for this seemingly simple operation. The solution is to cut at every possible position, and only keep the resulting deck which corresponds with the correct cut location.
+
+Another subtle matter is the step where the noise is found. Aside from the secure find, the only data access is that of the third card. This may appear secure, as it is easy to believe that the third card is always found at the same memory address, or at least that this address is not dependent on the state of the deck. This is true in C, but is not true by default in a language like javascript, which makes extensive use of a semi-hidden layer of pointer indirection for almost everything. In the naive approach, the array which stores the deck is actually an array of pointers, and therefore the memory location being accessed is the memory location of whatever the third card in the deck currently is. In order to fix this problem, a javascript feature called `typed arrays,' which provides lower-level access to arrays than javascript Array objects, is used. This ensures that when accessing the deck, that which appears to be a constant-address access really is. This is a concern in any language which provides this type of indirection.
+
+At time of writing, not all of these fixes have actually been implemented into the javascript implementation of the spider cipher, spiderweb, due to time constraints. If the .js file still has a TODO section at the top, it should be regarded as not hardened to these attacks.
+
+It is very difficult to know if a given implementation is certainly safe against this form of attack. One important reason for this is that javascript exists atop a great deal of abstraction, including the ECMAScript specification; in other words, it is unknowable in the most general case what the CPU is actually doing for a given piece of javascript code, as the specification only describes outward behaviors\cite{noauthor_ecma-262_2021}.
+
+\section{Mathematical Analysis}
+The goal of the cipher is to provide 160-bit security in a stream cipher which is manageable by hand. This stream cipher is mathematically analyzed as a sequence of permutations in the permutation group $S_{40}$. The details of this analysis are well outside the scope of this paper. A great deal of such analysis has been done by MacEvoy.
+
 \section{Author Contributions}
-The development of the Spider algorithm, though somewhat influenced by Spiess in later stages, was almost entirely MacEvoy's work. The C implementation was entirely MacEvoy's, with Spiess providing only a minor bugfix or two. The Javascript implementation was written solely by Spiess, but with a great deal of help from MacEvoy and his C implementation. MacEvoy performed most of the mathematical analysis. Spiess performed the research on manual cryptography and cache side channel attacks necessary to write the Javascript implementation and this paper, which was composed by Spiess.
-% Make a note of how much MacEvoy was involved in the further revision
+The development of the Spider algorithm, though somewhat influenced by Spiess in later stages, was almost entirely MacEvoy's work. The C implementation was entirely MacEvoy's, with Spiess providing only a minor bugfix or two. The Javascript implementation was written solely by Spiess, but with a great deal of help from MacEvoy and his C implementation. MacEvoy performed most of the mathematical analysis. Spiess performed the research on manual cryptography and cache side channel attacks necessary to write the Javascript implementation and this paper, which was also composed by Spiess, with MacEvoy providing a few suggestions. The demo was written by Spiess.
+
+\bibliographystyle{unsrt}
+\bibliography{spider}
 
 \end{document}
