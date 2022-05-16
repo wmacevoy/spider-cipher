@@ -54,15 +54,15 @@ static const unsigned MASK[] = {0U,~0U};
 
 #define MARK_CARD(deck) ADD(deck[MARK_ZTH],MARK_ADD)
 
-#if (1 == 1) == 1
-#define FIND1(deck,offset,card)			\
-  ((offset) & MASK[(deck)[offset]==(card)])
-#elif (1 == 1) == ~0
-#define FIND1(deck,offset,card)			\
-  ((offset) & (deck)[offset]==(card))
+#if ((0 == 0) == 1) && (-1 == ~0)
+#define VALUE_IF(x,p) ((x) & (-(!!(p))))
+#elif (0 == 0) == ~0
+#define VALUE_IF(x,p) ((x) & ( (!!(p))))
 #else
 #error C compiler defines true as neither 1 nor ~0
 #endif
+
+#define FIND1(deck,offset,card)	VALUE_IF(offset,(deck)[offset]==(card))
 
 #define FIND5(deck,offset,card)			\
   FIND1(deck,offset+0,card) |			\
@@ -78,7 +78,26 @@ static const unsigned MASK[] = {0U,~0U};
   FIND10(deck,offset,card)|FIND10(deck,offset+10,card)
 
 #define FIND(deck,card)				\
-  (FIND20(deck,0,card)|FIND20(deck,20,card))
+  FIND20(deck,0,card)|FIND20(deck,20,card)
+
+#define CUTIJ(deck,i,j,cutLoc) VALUE_IF(deck[(i+j) % CARDS],j == cutLoc)
+
+#define CUTI5(deck,i,j,cutLoc) \
+    VALUE_IF(deck[(i+j+0) % CARDS],j+0 == cutLoc) \
+  | VALUE_IF(deck[(i+j+1) % CARDS],j+1 == cutLoc) \
+  | VALUE_IF(deck[(i+j+2) % CARDS],j+2 == cutLoc) \
+  | VALUE_IF(deck[(i+j+3) % CARDS],j+3 == cutLoc) \
+  | VALUE_IF(deck[(i+j+4) % CARDS],j+4 == cutLoc)    
+
+#define CUTI20(deck,i,j,cutLoc) \
+      CUTI5(deck,i,j+ 0,cutLoc) \
+    | CUTI5(deck,i,j+ 5,cutLoc) \
+    | CUTI5(deck,i,j+10,cutLoc) \
+    | CUTI5(deck,i,j+15,cutLoc)
+	
+#define CUTI(deck,i,cutLoc) \
+      CUTI20(deck,i, 0,cutLoc) \
+    | CUTI20(deck,i,20,cutLoc)
 
 int cardFaceNo(Card card)
 {
@@ -148,7 +167,7 @@ void deckInit(Deck deck) {
 void deckCut(Deck input, int cutLoc,Deck output)
 {
   for (int i=0; i<CARDS; ++i) {
-    output[i]=input[(i+cutLoc) % CARDS];
+    output[i]=CUTI(input,i,cutLoc);
   }
 }
 

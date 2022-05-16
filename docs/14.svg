@@ -66,7 +66,7 @@
 
     
 <g  id="card-14-suit-club"   transform="translate(7,7)" >
-  <path  id="card-14-suit-club-flower"   style="fill:#60ff60;stroke:none" 
+  <path  id="card-14-suit-club-flower"   style="fill:#208020;stroke:none" 
     d="
     M -7.347880794884119e-16,4.0 
     C 3.364647586332764,12.55703574175789 12.55703574175789,-3.364647586332763 3.4641016151377544,-2.0 
@@ -74,7 +74,7 @@
     C -12.557035741757888,-3.364647586332771 -3.3646475863327683,12.557035741757888 -7.347880794884119e-16,4.0 
     Z
     " />
-  <path  id="card-14-suit-club-stem"   style="fill:#60ff60;stroke:none" 
+  <path  id="card-14-suit-club-stem"   style="fill:#208020;stroke:none" 
     d="
     m 0,7.0 
     h -1.5 
@@ -85,17 +85,17 @@
 
 
     <g id="card-14-suit-heart" >
-      <path style="fill:#ff6060;stroke:none" 
+      <path style="fill:#802020;stroke:none" 
             d="M 7,14 C -5.5,3.5 2,-3 7,2 12,-3 19.5,3.5 7,14 Z" />
     </g>
 
     <g id="card-14-suit-diamond" >
-      <path style="fill:#6060ff;stroke:none" d="m 7,14 -7,-10 7,-4 7,4 z" />
+      <path style="fill:#202080;stroke:none" d="m 7,14 -7,-10 7,-4 7,4 z" />
     </g>
 
     <g id="card-14-suit-spade" >
-      <path style="fill:#606060;stroke:none" d="M 7,0 C -5.5,10.5 2,17 7,12 12,17 19.5,10.5 7,0 Z" />
-      <path style="fill:#606060;stroke:none" d="m 7,14 h -1.5 c 1.5,-1.5 1.5,-7.0 1.5,-7.0 c 0,0 0,5.5 1.5,7.0 z" />
+      <path style="fill:#202020;stroke:none" d="M 7,0 C -5.5,10.5 2,17 7,12 12,17 19.5,10.5 7,0 Z" />
+      <path style="fill:#202020;stroke:none" d="m 7,14 h -1.5 c 1.5,-1.5 1.5,-7.0 1.5,-7.0 c 0,0 0,5.5 1.5,7.0 z" />
     </g>
     
     <g id="card-14-lines">
@@ -153,16 +153,16 @@
   </defs>
   <g id="card-14-main-layer"><!-- 63 x 88 -->
     <rect x="-3" y="-3" width="69" height="94" style="fill:#808080" />
-    <use opacity="1" transform="matrix(1.5,0,0,1.5,7,4)"  xlink:href="#card-14-suit-diamond" />
+    <use opacity="1" transform="matrix(2,0,0,2,-6,-6)"  xlink:href="#card-14-suit-diamond" />
     <use xlink:href="#card-14-formats" />
     <g transform="rotate(180,31.5,44)">
-      <use opacity="1" transform="matrix(1.5,0,0,1.5,7,4)"  xlink:href="#card-14-suit-diamond" />
+      <use opacity="1" transform="matrix(2,0,0,2,-6,-6)"  xlink:href="#card-14-suit-diamond" />
       <use xlink:href="#card-14-formats" />      
     </g>
     <g id="card-14-border">
       <!-- <rect x="-1.5" y="-1.5" width="66" height="91" rx="6.35" opacity="1.0" style="fill:none;stroke:#000000;stroke-width:3.0" /> -->
       <!--      <path id="card-14-border-separator" style="stroke-width: 3.0px; fill: none;" d="M -1.5,25 C -1.5,40 64.5,48 64.5,63" /> -->
-      <path id="card-14-border-separator" style="stroke:#ffffff;stroke-width:0.5;fill:none;" d="M -3.0,30 C 18.5,30 44.5,58 66,58" />
+      <path id="card-14-border-separator" style="stroke:#ffffff;stroke-width:1.75;fill:none;" d="M -3.0,30 C 18.5,30 44.5,58 66,58" />
       <!--
       <text xml:space="preserve" style="fill:#ffffff; font-size:6px;font-family:Courier;" text-anchor="middle"><textPath startOffset="30%" xlink:href="#card-14-border-separator" baseline-shift="20%"> 123   Abc</textPath></text>
       <text xml:space="preserve" style="fill:#ffffff; font-size:6px;font-family:Courier;" text-anchor="middle"><textPath startOffset="9%" xlink:href="#card-14-border-separator" baseline-shift="20%">⤓</textPath></text>
@@ -171,12 +171,12 @@
       <text xml:space="preserve" style="fill:#000000; font-size:2px;font-family:Courier;" text-anchor="middle"><textPath startOffset="30%" xlink:href="#card-14-border-separator" baseline-shift="-32%">38 01 02 03 39 30 37 00 01 02</textPath></text>	-->
     </g> 
     <g id="card-14-upward">
-      <text x="17" y="21" style="font-family:Helvetica;font-size:24px;" text-anchor="middle">14</text>
+      <text x="14" y="17" style="font-family:Helvetica;font-size:20px;fill:#fff" text-anchor="middle">14</text>
       <use xlink:href="#card-14-translate-text" />
     </g>
     <use xlink:href="#card-14-upward" transform="rotate(180,31.5,44)" />
-<!--    <rect x="0" y="0" width="63" height="88" style="stroke:#f00;stroke-width:0.25;fill:none;" /> -->
+    <rect x="0" y="0" width="63" height="88" style="stroke:#f00;stroke-width:0.25;fill:none;" />
     <!-- 57 x 82 -->
-    <!-- <rect x="3" y="3" width="57" height="82" style="stroke:#f00;stroke-width:0.25;fill:none;" />    -->
+    <rect x="3" y="3" width="57" height="82" style="stroke:#f00;stroke-width:0.25;fill:none;" /> 
   </g>
 </svg>
