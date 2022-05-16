@@ -63,7 +63,7 @@ UPS=[('A','ALFA'),  ('B','BRAVO'), ('C','CHARLIE'),('D','DELTA'), ('E','ECHO'),(
 
 DOWNS=[('0','zero'),('1','one'),('2','two'),('3','three'),('4','four'),('5','five'),('6','six'),('7','seven'),('8','eight'),('9','nine'),
        ('A','ALFA'),('B','BRAVO'),('C','CHARLIE'),('D','DELTA'),('E','ECHO'),('F','FOXTROT'),('@',"<tspan dy=\"-2\" x=\"0\">at</tspan>"),('=','equal'),('\\',"<tspan dy=\"0\" x=\"0\">\\back\\</tspan><tspan x=\"0\" dy=\"3\">slash</tspan>"),('~','tilde'),
-       ('#','hash'),('$','dollar'),('%',"<tspan dy=\"-2\" x=\"0\">percent</tspan>"),('^','carat'),('&amp;','and'),('|','pipe'),('-','dash'),('+','plus'),('/',"<tspan dy=\"0\" x=\"0\">/front/</tspan><tspan x=\"0\" dy=\"3\">slash</tspan>"),('*','astrisk*'),
+       ('#','hash'),('$','dollar'),('%',"<tspan dy=\"-2\" x=\"0\">percent</tspan>"),('^','^carat'),('&amp;','and'),('|','|pipe|'),('-','dash'),('+','plus'),('/',"<tspan dy=\"0\" x=\"0\">/front/</tspan><tspan x=\"0\" dy=\"3\">slash</tspan>"),('*','astrisk*'),
        (small('↩',dy=3,s=1),"<tspan dy=\"-4\" x=\"0\">end</tspan><tspan x=\"0\" dy=\"3\">line</tspan>"),(';','semi;'),('?','ask?'),('&#39;','&#39;single&#39;'),('sad',''),('happy',''),('',''),('',''),('',''),('','')]
 
 PLAINS=[('a','alfa'),('b','bravo'),('c','charlie'),('d','delta'),('e','echo'),('f','foxtrot'),('g','golf'),('h','hotel'),('i','india'),('j','juliett'),
