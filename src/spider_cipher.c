@@ -55,7 +55,7 @@ static const unsigned MASK[] = {0U,~0U};
 #define MARK_CARD(deck) ADD(deck[MARK_ZTH],MARK_ADD)
 
 #if ((0 == 0) == 1) && (-1 == ~0)
-// Caleb Speiss came up with this: if T/F = 1/0, then -(T/F) = ~0/0
+// Caleb Spiess came up with this: if T/F = 1/0, then -(T/F) = ~0/0
 // in 2's complement.
 #define VALUE_IF(x,p) ((x) & (-(p)))
 #elif (0 == 0) == ~0
