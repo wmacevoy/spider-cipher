@@ -45,19 +45,30 @@ def clover_svg(params={}):
 </g>
 """
 
+def morse(x):
+    if x < 5:
+        return [ '.' if i < x else '-' for i in range(5)]
+    else:
+        return [ '.' if i >= x-5 else '-' for i in range(5)]
+
+def small(x,dy=-3,s=0.75):
+    size = 19.04*s
+    return '<tspan dy=\"' + str(dy) + '\" dx=\"0\" style=\"font-size:' + str(size) + 'px\">' + str(x) + '</tspan>'
+
+
 UPS=[('A','ALFA'),  ('B','BRAVO'), ('C','CHARLIE'),('D','DELTA'), ('E','ECHO'),('F','FOXTROT'),('G','GOLF'),('H','HOTEL'),('I','INDIA'),('J','JULIETT'),
      ('K','KILO'),    ('L','LIMA'),  ('M','MIKE'),   ('N','NOVEMBER'), ('O','OSCAR'), ('P','PAPA'), ('Q','QUEBEC'),('R','ROMEO'),('S','SIERRA'),('T','TANGO'),
-     ('U','UNIFORM'),('V','VICTOR'),('W',"<tspan dy=\"-2\" x=\"0\">WHISKEY</tspan>"),('X','XRAY'),('Y','YANKEE'),('Z','ZULU'),('{','{curly'),('}','curly}'),('[','[bracket'),(']','bracket]'),
-     ('_',"<tspan dy=\"-4\" x=\"0\">UNDER</tspan><tspan x=\"0\" dy=\"3\">B_A_R</tspan>"),  (':','colon:'), ('!','bang!'),   ('&#96;','&#96;back&#96;'),('heart-broken',''),('heart-full',''),('',''),('',''),('',''),('','')]
+     ('U','UNIFORM'),('V','VICTOR'),('W',"<tspan dy=\"-2\" x=\"0\">WHISKEY</tspan>"),('X','XRAY'),('Y','YANKEE'),('Z','ZULU'),(small('{'),'{curly'),(small('}'),'curly}'),(small('['),'[bracket'),(small(']'),'bracket]'),
+     (small('_'),"<tspan dy=\"-4\" x=\"0\">UNDER</tspan><tspan x=\"0\" dy=\"3\">B_A_R</tspan>"),  (':','colon:'), ('!','bang!'),   ('&#96;','&#96;back&#96;'),('heart-broken',''),('heart-full',''),('',''),('',''),('',''),('','')]
 
 DOWNS=[('0','zero'),('1','one'),('2','two'),('3','three'),('4','four'),('5','five'),('6','six'),('7','seven'),('8','eight'),('9','nine'),
        ('A','ALFA'),('B','BRAVO'),('C','CHARLIE'),('D','DELTA'),('E','ECHO'),('F','FOXTROT'),('@',"<tspan dy=\"-2\" x=\"0\">at</tspan>"),('=','equal'),('\\',"<tspan dy=\"0\" x=\"0\">\\back\\</tspan><tspan x=\"0\" dy=\"3\">slash</tspan>"),('~','tilde'),
        ('#','hash'),('$','dollar'),('%',"<tspan dy=\"-2\" x=\"0\">percent</tspan>"),('^','carat'),('&amp;','and'),('|','pipe'),('-','dash'),('+','plus'),('/',"<tspan dy=\"0\" x=\"0\">/front/</tspan><tspan x=\"0\" dy=\"3\">slash</tspan>"),('*','astrisk*'),
-       ('↩',"<tspan dy=\"-4\" x=\"0\">end</tspan><tspan x=\"0\" dy=\"3\">line</tspan>"),(';','semi;'),('?','ask?'),('&#39;','&#39;single&#39;'),('sad',''),('happy',''),('',''),('',''),('',''),('','')]
+       (small('↩',dy=3,s=1),"<tspan dy=\"-4\" x=\"0\">end</tspan><tspan x=\"0\" dy=\"3\">line</tspan>"),(';','semi;'),('?','ask?'),('&#39;','&#39;single&#39;'),('sad',''),('happy',''),('',''),('',''),('',''),('','')]
 
 PLAINS=[('a','alfa'),('b','bravo'),('c','charlie'),('d','delta'),('e','echo'),('f','foxtrot'),('g','golf'),('h','hotel'),('i','india'),('j','juliett'),
         ('k','kilo'),('l','lima'),('m','mike'),('n','november'),('o','oscar'),('p','papa'),('q','quebec'),('r','romeo'),('s','sierra'),('t','tango'),
-        ('u','uniform'),('v','victor'),('w',"<tspan dy=\"0\" x=\"0\">whiskey</tspan>"),('x','xray'),('y','yankee'),('z','zulu'),('&lt;','less'),('&gt;','more'),('(','(paren'),(')','paren)'),
+        ('u','uniform'),('v','victor'),('w',"<tspan dy=\"0\" x=\"0\">whiskey</tspan>"),('x','xray'),('y','yankee'),('z','zulu'),('&lt;','less'),('&gt;','more'),(small('('),'(paren'),(small(')'),'paren)'),
         (' ','s p a c e'),(',','comma,'),('.','period.'),('&#34;','&#34;double&#34;'),('thumb-down',''),('thumb-up',''),
         ('',"<tspan dy=\"-7\" x=\"0\">dOWN sHIFT</tspan><tspan x=\"0\" dy=\"3.5\">oNCE</tspan>"),
         ('',"<tspan dy=\"-7\" x=\"0\">Up Shift</tspan><tspan x=\"0\" dy=\"3.5\">Once</tspan>"),

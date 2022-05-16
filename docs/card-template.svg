@@ -40,14 +40,51 @@
          0.8335591,-0.026714 0.8550277,-2.3513266 0.8550277,-2.3513266 z" />
    </g>
 
-   <g id="card-${number}-thumb-up" class="emoji" transform="translate(-7,-14)">
+   <!-- <g id="card-${number}-thumb-up" class="emoji" transform="translate(-7,-14)">
       <use xlink:href="#card-${number}-thumb" />
       <text text-anchor="middle" x="6" y="12">+1</text>
-    </g>
-    <g id="card-${number}-thumb-down" class="emoji" transform="translate(-7,-14)">
+    </g> -->
+    <!-- <g id="card-${number}-thumb-down" class="emoji" transform="translate(-7,-14)">
       <use transform="matrix(1,0,0,-1,0,14)" xlink:href="#card-${number}-thumb" />
       <text text-anchor="middle" x="7" y="7">-1</text>
-    </g>
+    </g> -->
+    <g
+    id="card-${number}-thumb-down" transform="translate(-7,-14)"
+    ><g 
+     transform="translate(-0.10642031,-0.64599116)">
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.342017;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 6.1642365,1.456454 c -0.871272,0.316656 -1.750465,0.576052 -1.953762,0.576448 -0.336604,6.56e-4 -0.369631,0.278762 -0.369631,3.112571 v 3.111858 l 1.419668,1.699053 c 0.895561,1.071803 1.580294,2.129611 1.854768,2.865334 0.577558,1.548131 0.663337,1.652232 1.361413,1.652232 1.505822,0 2.1398995,-1.654275 1.302137,-3.39721 -0.702816,-1.462181 -0.702698,-1.462299 1.4546235,-1.462299 1.648923,0 1.959708,-0.05407 2.344084,-0.407798 0.35358,-0.325398 0.416189,-0.551256 0.309818,-1.11769 C 13.393046,5.575399 13.352289,5.053912 12.66662,2.130804 11.270244,0.67207403 9.0958115,0.39099803 6.1642365,1.456454 Z" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.342017;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 8.6162945,14.409985 c 0.97396,-0.08315 0.525595,-1.451089 0.525595,-1.451089 l -1.29377,-1.562712 c -1.552367,-0.03925 -0.710224,0.584539 -1.051189,0.706942" />    <rect
+       style="fill:none;fill-opacity:0.800885;stroke:#000000;stroke-width:0.390267;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       width="3.5654082"
+       height="7.3779297"
+       x="0.30155382"
+       y="2.0944207" />
+  </g></g>
+
+  <g id="card-${number}-thumb-up" class="emoji" transform="translate(-7,-14)"> 
+    <g
+  transform="translate(-0.10641977,-0.29657915)">
+ <path
+    style="fill:none;stroke:#000000;stroke-width:0.341523;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+    d="m 6.1871597,13.485321 c -0.86873,-0.316667 -1.745357,-0.576073 -1.94806,-0.576468 -0.335622,-6.46e-4 -0.368552,-0.278773 -0.368552,-3.1126884 v -3.111973 l 1.415523,-1.699116 c 0.892948,-1.071843 1.575684,-2.12969 1.849356,-2.865441 0.575873,-1.54818795 0.661402,-1.65229395 1.35744,-1.65229395 1.501428,0 2.1336563,1.65433695 1.298337,3.39733595 -0.700765,1.462237 -0.700646,1.462354 1.4503803,1.462354 1.64411,0 1.953989,0.05407 2.337242,0.407813 0.352549,0.32541 0.414974,0.551277 0.308914,1.117732 -0.492867,2.513648 -0.533505,3.035154 -1.217172,5.9583704 -1.392301,1.458785 -3.5603873,1.739871 -6.4834083,0.674375 z"
+   />
+ <path
+    style="fill:none;stroke:#000000;stroke-width:0.341523;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+    d="m 8.6320627,0.53130865 c 0.971117,0.08316 0.52406,1.45114295 0.52406,1.45114295 l -1.289995,1.56277 c -1.547836,0.03925 -0.708151,-0.584561 -1.04812,-0.706968"
+    />
+ <rect
+    style="fill:none;fill-opacity:0.800885;stroke:#000000;stroke-width:0.389704;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+    id="rect1836"
+    width="3.5550032"
+    height="7.3782034"
+    x="0.30127177"
+    y="6.6973658" />
+</g></g>
+
     
     <g id="card-${number}-sad" class="emoji" transform="translate(-7,-14)">
       <ellipse id="card-${number}-sad-right-eye" cx="9.5" cy="4" rx="0.25" ry="0.75" />
@@ -142,7 +179,7 @@
       <use xlink:href="#card-${number}-${formats}" />      
     </g>
     <g id="card-${number}-border">
-      <!-- <rect x="-1.5" y="-1.5" width="66" height="91" rx="6.35" opacity="1.0" style="fill:none;stroke:#000000;stroke-width:3.0" /> -->
+      <rect x="-1.5" y="-1.5" width="66" height="91" rx="6.35" opacity="1.0" style="fill:none;stroke:#ffffff;stroke-width:6.0" />
       <!--      <path id="card-${number}-border-separator" style="stroke-width: 3.0px; fill: none;" d="M -1.5,25 C -1.5,40 64.5,48 64.5,63" /> -->
       <path id="card-${number}-border-separator" style="stroke:#ffffff;stroke-width:1.75;fill:none;" d="M -3.0,30 C 18.5,30 44.5,58 66,58" />
       <!--
