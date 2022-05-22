@@ -47,9 +47,9 @@ def clover_svg(params={}):
 
 def morse(x):
     if x < 5:
-        return [ '.' if i < x else '-' for i in range(5)]
+        return [ 'dot' if i < x else 'dash' for i in range(5)]
     else:
-        return [ '.' if i >= x-5 else '-' for i in range(5)]
+        return [ 'dot' if i >= x-5 else 'dash' for i in range(5)]
 
 def small(x,dy=-3,s=0.75):
     size = 19.04*s
@@ -69,7 +69,7 @@ DOWNS=[('0','zero'),('1','one'),('2','two'),('3','three'),('4','four'),('5','fiv
 PLAINS=[('a','alfa'),('b','bravo'),('c','charlie'),('d','delta'),('e','echo'),('f','foxtrot'),('g','golf'),('h','hotel'),('i','india'),('j','juliett'),
         ('k','kilo'),('l','lima'),('m','mike'),('n','november'),('o','oscar'),('p','papa'),('q','quebec'),('r','romeo'),('s','sierra'),('t','tango'),
         ('u','uniform'),('v','victor'),('w',"<tspan dy=\"0\" x=\"0\">whiskey</tspan>"),('x','xray'),('y','yankee'),('z','zulu'),('&lt;','less'),('&gt;','more'),(small('('),'(paren'),(small(')'),'paren)'),
-        (' ','s p a c e'),(',','comma,'),('.','period.'),('&#34;','&#34;double&#34;'),('thumb-down',''),('thumb-up',''),
+        (' ','s p a c e'),(',','comma,'),('.','period.'),('&#34;','&#34;double&#34;'),('thumb-down',"<tspan dy=\"22\" x=\"0\">BAD</tspan>"),('thumb-up',"<tspan dy=\"22\" x=\"0\">GOOD</tspan>"),
         ('',"<tspan dy=\"-7\" x=\"0\">dOWN sHIFT</tspan><tspan x=\"0\" dy=\"3.5\">oNCE</tspan>"),
         ('',"<tspan dy=\"-7\" x=\"0\">Up Shift</tspan><tspan x=\"0\" dy=\"3.5\">Once</tspan>"),
         ('',"<tspan dy=\"-9\" x=\"0\">down shift</tspan><tspan x=\"0\" dy=\"3.5\">lock</tspan>"),
@@ -77,6 +77,7 @@ PLAINS=[('a','alfa'),('b','bravo'),('c','charlie'),('d','delta'),('e','echo'),('
 
 
 SUITS=['suit-club','suit-diamond','suit-heart','suit-spade']
+COLORS=['#208020','#202080','#802020','#202020']
 ARROWS=['↓','↑','⤓','⤒']
 
 
@@ -123,6 +124,13 @@ def card(number):
 
     tmp = svg
     tmp = tmp.replace("${suit}",SUITS[suit])
+    tmp = tmp.replace("${color}",COLORS[suit])
+    mf = morse(face)
+    for k in range(len(mf)):
+        tmp = tmp.replace("${face-morse-" + str(k) + "}",mf[k])
+    ms = morse(suit)
+    for k in range(len(ms)):
+        tmp = tmp.replace("${suit-morse-" + str(k) + "}",ms[k])
     tmp = tmp.replace("${number}",str(suit)+str(face))
     tmp = tmp.replace("${translate_type}",translate_type)
     tmp = tmp.replace("${translate_down}",down)

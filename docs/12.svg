@@ -14,6 +14,12 @@
    g#card-12-lines path.lines-center { stroke-dasharray:0.25, 0.75;}
   </style>
   <defs>
+    <g id="card-12-morse-dot">
+      <circle cx="1" cy="0" r="0.5" style="stroke:none;stroke-width:0;fill:#fff" />
+    </g>
+    <g id="card-12-morse-dash">
+      <rect x="0.125" y="-0.5" width="1.75" height="1" style="stroke:none;stroke-width:0;fill:#fff" />
+    </g>
     <g id="card-12-heart-full" class="emoji" transform="translate(-7,-14)">
     <path
        d="M 7,14 C -5.5,3.5 2,-3 7,2 12,-3 19.5,3.5 7,14 Z" />
@@ -191,7 +197,7 @@
       <use xlink:href="#card-12-formats" />      
     </g>
     <g id="card-12-border">
-      <rect x="-1.5" y="-1.5" width="66" height="91" rx="6.35" opacity="1.0" style="fill:none;stroke:#ffffff;stroke-width:6.0" />
+      <rect x="-1.5" y="-1.5" width="66" height="91" rx="6.35" opacity="1.0" style="fill:none;stroke:#ffffff;stroke-width:9.0" />
       <!--      <path id="card-12-border-separator" style="stroke-width: 3.0px; fill: none;" d="M -1.5,25 C -1.5,40 64.5,48 64.5,63" /> -->
       <path id="card-12-border-separator" style="stroke:#ffffff;stroke-width:1.75;fill:none;" d="M -3.0,30 C 18.5,30 44.5,58 66,58" />
       <!--
@@ -202,7 +208,25 @@
       <text xml:space="preserve" style="fill:#000000; font-size:2px;font-family:Courier;" text-anchor="middle"><textPath startOffset="30%" xlink:href="#card-12-border-separator" baseline-shift="-32%">38 01 02 03 39 30 37 00 01 02</textPath></text>	-->
     </g> 
     <g id="card-12-upward">
-      <text x="14" y="17" style="font-family:Helvetica;font-size:20px;fill:#fff" text-anchor="middle">12</text>
+      <text x="16" y="20" style="font-family:Helvetica;font-size:20px;fill:#fff" text-anchor="middle">12</text>
+      <g id="card-12-morse" transform="translate(6,4)">
+	<g id="card-12-suit-morse" >
+	  <use xlink:href="#card-12-morse-dot" transform="translate(0,0)" />
+	  <use xlink:href="#card-12-morse-dash" transform="translate(2,0)" />
+	  <use xlink:href="#card-12-morse-dash" transform="translate(4,0)" />
+	  <use xlink:href="#card-12-morse-dash" transform="translate(6,0)" />
+	  <use xlink:href="#card-12-morse-dash" transform="translate(8,0)" />	
+	</g>
+
+	<g id="card-12-face-morse" transform="translate(11,0)">
+	  <use xlink:href="#card-12-morse-dot" transform="translate(0,0)" />
+	  <use xlink:href="#card-12-morse-dot" transform="translate(2,0)" />
+	  <use xlink:href="#card-12-morse-dash" transform="translate(4,0)" />
+	  <use xlink:href="#card-12-morse-dash" transform="translate(6,0)" />
+	  <use xlink:href="#card-12-morse-dash" transform="translate(8,0)" />	
+	</g>
+      </g>
+      <use xlink:href="#card-12-morse" transform="translate(8,0) rotate(90)" />
       <use xlink:href="#card-12-translate-text" />
     </g>
     <use xlink:href="#card-12-upward" transform="rotate(180,31.5,44)" />
