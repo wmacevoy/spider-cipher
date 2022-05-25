@@ -23,43 +23,64 @@ class Card(SVG):
                 self._glyphs[shift]=Glyph.build(params)
 
     def suit(self): return str(self._suit)
+
+    def lines(self):
+        return f"""<g id="{self.cardId()}-lines">
+<path d="m 0,0 14,0"/>
+<path style="stroke-dasharray:0.25, 0.75"  d="m 1,7 12,0" />
+<path d="m 0,14 14,0" />
+</g>
+"""
+
     
     def defs(self):
         return f"""
 <defs>
 {self.suit()}
+{self.glyphs()}
+{self.lines()}
 </defs>
 """
     def bg(self):
         return f"""<g id="{self.cardId()}-bg">
 <rect x="-3" y="-3" width="69" height="94" style="fill:#808080" />
 <use xlink:href="#{self.cardId()}-suit" />
+<use xlink:href="#{self.cardId()}-formats" />
 <g transform="rotate(180,31.5,44)">
   <use xlink:href="#{self.cardId()}-suit" />
+  <use xlink:href="#{self.cardId()}-formats" />
 </g>
 <rect x="-1.5" y="-1.5" width="66" height="91" rx="6.35" opacity="1.0" style="fill:none;stroke:#ffffff;stroke-width:9.0" />
 <path style="stroke:#ffffff;stroke-width:1.75;fill:none;" d="M -3.0,30 C 18.5,30 44.5,58 66,58" />
 </g><!-- {self.cardId()}-bg -->
 """
+    def fg(self):
+        return f"""<g id="{self.cardId()}-fg">
+<use xlink:href="#{self.cardId()}-glyphs" />
+<g transform="rotate(180,31.5,44)">
+  <use xlink:href="#{self.cardId()}-glyphs" />
+</g>
+</g><!-- {self.cardId()}-fg -->
+"""
 
     def suit(self): return str(self._suit)
     def glyphs(self):
-        ans = ""
+        ans = f'<g id="{self.cardId()}-glyphs" >'
         for glyph in self._glyphs:
             ans = ans + str(self._glyphs[glyph])
+        ans = ans + f'</g><!-- {self.cardId()}-glyphs -->'
         return ans
     def parts(self):
         return f"""
 {self.bg()}
-<!-- {self.suit()} -->
-{self.glyphs()}
+{self.fg()}
 """
     def __str__(self):
         return f"""<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg width="69mm" height="94mm" viewBox="-3 -3 69 94" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg"><!-- {self.cardId()} -->
 {self.defs()}
 {SVG.__str__(self)}
-</svg><!-- {self.cardId()} -->
+</svg>
 """
 
 for number in range(40):

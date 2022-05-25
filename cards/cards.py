@@ -1,16 +1,6 @@
 #!/usr/bin/env python3
 
-
-from string import Template
-
-s = Template('$who likes $what')
->>> s.substitute(who='tim', what='kung pao')
-
 import math
-
-class Generate:
-    def generate(self,out):
-        pass
 
 r=4.0
 R=13.0

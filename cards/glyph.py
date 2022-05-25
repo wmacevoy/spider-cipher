@@ -34,6 +34,7 @@ class Glyph(SVG):
             if shift == 'up': return GlyphHeartBad(params)
             if shift == 'none': return GlyphThumbBad(params)
             if shift == 'down': return GlyphFaceBad(params)
+
         if number == 35:
             if shift == 'up': return GlyphHeartGood(params)
             if shift == 'none': return GlyphThumbGood(params)
@@ -49,6 +50,13 @@ class Glyph(SVG):
         self._params['@transform']=f"translate({self.x()},{self.y()})"
         self._params['tag']='g'
         
+    def lines(self):
+        return f"""<g style="stroke:#fff" id="{self.cardId()}-lines">
+<path d="m 0,0 14,0"/>
+<path style="stroke-dasharray:0.25, 0.75"  d="m 1,7 12,0" />
+<path d="m 0,14 14,0" />
+</g>
+"""
     def shift(self):
         return self._params['shift']
     
@@ -70,6 +78,7 @@ class GlyphThumbGood(Glyph):
         self._params["@style"]="fill:none;stroke:#000;stroke-width:1.0"
     def parts(self):
         return f"""
+{self.lines()}
 <g transform="translate(-7,-14) translate(-0.10641977,-0.29657915)">{self.hand()}</g>
 """
     def hand(self):
@@ -94,6 +103,7 @@ class GlyphThumbBad(Glyph):
         
     def parts(self):
         return f"""
+{self.lines()}
 <g transform="translate(-7,-14) translate(-0.10642031,-0.64599116)">{self.hand()}</g>
 """
     def hand(self):
@@ -115,7 +125,10 @@ class GlyphHeartGood(Glyph):
         self._params["@style"]="fill:none;stroke:#000;stroke-width:1.0"
         
     def parts(self):
-        return f"<path d=\"M 7,14 C -5.5,3.5 2,-3 7,2 12,-3 19.5,3.5 7,14 Z\" />"
+        return f"""
+{self.lines()}        
+<path d="M 7,14 C -5.5,3.5 2,-3 7,2 12,-3 19.5,3.5 7,14 Z" />
+"""
 
 class GlyphHeartBad(Glyph):
     def __init__(self,params={}):
@@ -124,15 +137,16 @@ class GlyphHeartBad(Glyph):
         
     def parts(self):
         return f"""
-    <path
-       d="M 3.1192613,0.91816809 C -0.51575331,1.1343295 -2.3043291,6.5459524 6.5727643,13.572239 
-          L 10.055526,6.1948296 5.8047553,7.7606133 6.7629245,2.3188525 
-          C 5.5460584,1.2839481 4.244462,0.85125639 3.1192613,0.91816809 Z" />
-    <path
-       d="M 11.5983,-0.03055905 C 10.626785,-0.0873111 9.5242056,0.22914926 8.4585571,0.98296888 
-          L 6.9371668,5.7541131 12.359724,4.4696249 6.6548634,12.991543 
-          c 0.14833,0.145957 0.2983343,0.292314 0.4533994,0.44009 
-          C 17.163309,6.0077897 15.370964,0.189818 11.5983,-0.03055905 Z" />
+{self.lines()}
+<path
+  d="M 3.1192613,0.91816809 C -0.51575331,1.1343295 -2.3043291,6.5459524 6.5727643,13.572239 
+     L 10.055526,6.1948296 5.8047553,7.7606133 6.7629245,2.3188525 
+     C 5.5460584,1.2839481 4.244462,0.85125639 3.1192613,0.91816809 Z" />
+<path
+  d="M 11.5983,-0.03055905 C 10.626785,-0.0873111 9.5242056,0.22914926 8.4585571,0.98296888 
+     L 6.9371668,5.7541131 12.359724,4.4696249 6.6548634,12.991543 
+     c 0.14833,0.145957 0.2983343,0.292314 0.4533994,0.44009 
+     C 17.163309,6.0077897 15.370964,0.189818 11.5983,-0.03055905 Z" />
 """
 
 class GlyphFaceGood(Glyph):
@@ -142,10 +156,11 @@ class GlyphFaceGood(Glyph):
         
     def parts(self):
         return f"""
-        <ellipse cx="9.5" cy="4" rx="0.25" ry="0.75" />
-        <ellipse cx="4.5" cy="4" rx="0.25" ry="0.75" /> 
-        <circle cx="7" cy="7" r="7" />
-        <path d="m 3,8 c 1.5,4 6,4 8,0" />
+{self.lines()}
+<ellipse cx="9.5" cy="4" rx="0.25" ry="0.75" />
+<ellipse cx="4.5" cy="4" rx="0.25" ry="0.75" /> 
+<circle cx="7" cy="7" r="7" />
+<path d="m 3,8 c 1.5,4 6,4 8,0" />
 """
 
 class GlyphFaceBad(Glyph):
@@ -155,10 +170,11 @@ class GlyphFaceBad(Glyph):
         
     def parts(self):
         return f"""
-        <ellipse cx="9.5" cy="4" rx="0.25" ry="0.75" />
-        <ellipse cx="4.5" cy="4" rx="0.25" ry="0.75" />
-        <circle cx="7" cy="7" r="7" />
-        <path d="m 3,10 c 1.5,-3 6,-3 8,0" />
+{self.lines()}
+<ellipse cx="9.5" cy="4" rx="0.25" ry="0.75" />
+<ellipse cx="4.5" cy="4" rx="0.25" ry="0.75" />
+<circle cx="7" cy="7" r="7" />
+<path d="m 3,10 c 1.5,-3 6,-3 8,0" />
 """
 
 class GlyphLetter(Glyph):
@@ -166,4 +182,8 @@ class GlyphLetter(Glyph):
         Glyph.__init__(self,params)
         self._params['letter']=letter
     def letter(self): return self._params['letter']
-    def parts(self): return f"<text xml:space=\"preserve\" text-anchor=\"middle\" >{self.letter()}</text>"
+    def parts(self):
+        return f"""
+{self.lines()}
+<text xml:space=\"preserve\" text-anchor=\"middle\" >{self.letter()}</text>
+"""
