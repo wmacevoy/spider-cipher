@@ -10,8 +10,8 @@ UPS=[('A','ALFA'),  ('B','BRAVO'), ('C','CHARLIE'),('D','DELTA'), ('E','ECHO'),(
      (small('_'),"<tspan dy=\"-4\" x=\"0\">UNDER</tspan><tspan x=\"0\" dy=\"3\">B_A_R</tspan>"),  (':','colon:'), ('!','bang!'),   ('&#96;','&#96;back&#96;'),('heart-broken',''),('heart-full',''),('',''),('',''),('',''),('','')]
 
 DOWNS=[('0','zero'),('1','one'),('2','two'),('3','three'),('4','four'),('5','five'),('6','six'),('7','seven'),('8','eight'),('9','nine'),
-       ('A','ALFA'),('B','BRAVO'),('C','CHARLIE'),('D','DELTA'),('E','ECHO'),('F','FOXTROT'),('@',"<tspan dy=\"-2\" x=\"0\">at</tspan>"),('=','equal'),('\\',"<tspan dy=\"0\" x=\"0\">\\back\\</tspan><tspan x=\"0\" dy=\"3\">slash</tspan>"),('~','tilde'),
-       ('#','hash'),('$','dollar'),('%',"<tspan dy=\"-2\" x=\"0\">percent</tspan>"),('^','^carat'),('&amp;','and'),('|','|pipe|'),('-','dash'),('+','plus'),('/',"<tspan dy=\"0\" x=\"0\">/front/</tspan><tspan x=\"0\" dy=\"3\">slash</tspan>"),('*','astrisk*'),
+       ('A','ALFA'),('B','BRAVO'),('C','CHARLIE'),('D','DELTA'),('E','ECHO'),('F','FOXTROT'),('@',"<tspan dy=\"-2\" x=\"0\">at</tspan>"),('=','equal'),('\\',"<tspan dy=\"-2\" x=\"0\">\\back\\</tspan><tspan x=\"0\" dy=\"3\">slash</tspan>"),('~','tilde'),
+       ('#','hash'),('$','dollar'),('%',"<tspan dy=\"-2\" x=\"0\">percent</tspan>"),('^','^carat'),('&amp;','and'),('|','|pipe|'),('-','dash'),('+','plus'),('/',"<tspan dy=\"-2\" x=\"0\">/front/</tspan><tspan x=\"0\" dy=\"3\">slash</tspan>"),('*','astrisk*'),
        (small('↩',dy=3,s=1),"<tspan dy=\"-4\" x=\"0\">end</tspan><tspan x=\"0\" dy=\"3\">line</tspan>"),(';','semi;'),('?','ask?'),('&#39;','&#39;single&#39;'),('sad',''),('happy',''),('',''),('',''),('',''),('','')]
 
 PLAINS=[('a','alfa'),('b','bravo'),('c','charlie'),('d','delta'),('e','echo'),('f','foxtrot'),('g','golf'),('h','hotel'),('i','india'),('j','juliett'),
@@ -40,9 +40,9 @@ class Glyph(SVG):
             if shift == 'none': return GlyphThumbGood(params)
             if shift == 'down': return GlyphFaceGood(params)
         if number <= 34:
-            if shift == 'up': return GlyphLetter(UPS[number][0],params)
-            if shift == 'none': return GlyphLetter(PLAINS[number][0],params)
-            if shift == 'down': return GlyphLetter(DOWNS[number][0],params)
+            if shift == 'up': return GlyphLetter(UPS[number],params)
+            if shift == 'none': return GlyphLetter(PLAINS[number],params)
+            if shift == 'down': return GlyphLetter(DOWNS[number],params)
             
     def __init__(self,params={}):
         SVG.__init__(self,params)
@@ -51,7 +51,7 @@ class Glyph(SVG):
         self._params['tag']='g'
         
     def lines(self):
-        return f"""<g style="stroke:#fff" id="{self.cardId()}-lines">
+        return f"""<g style="stroke:#fff;stroke-width:0.25" id="{self.cardId()}-lines" transform="translate(-7,-14)">
 <path d="m 0,0 14,0"/>
 <path style="stroke-dasharray:0.25, 0.75"  d="m 1,7 12,0" />
 <path d="m 0,14 14,0" />
@@ -63,14 +63,15 @@ class Glyph(SVG):
     def x(self):
         shift = self.shift()
         if shift == 'none': return 37.45
-        if shift == 'up': return 51
+        if shift == 'up':   return 51
         if shift == 'down': return 51
 
     def y(self):
+        center=34.0
         shift = self.shift()        
-        if shift == 'none': return 37.45
-        if shift == 'up': return 20.25
-        if shift == 'down': return 48.25
+        if shift == 'none': return center
+        if shift == 'up': return   center-14.0
+        if shift == 'down': return center+14.0
 
 class GlyphThumbGood(Glyph):
     def __init__(self,params={}):
@@ -126,8 +127,10 @@ class GlyphHeartGood(Glyph):
         
     def parts(self):
         return f"""
-{self.lines()}        
+{self.lines()}
+<g transform="translate(-7,-14)">
 <path d="M 7,14 C -5.5,3.5 2,-3 7,2 12,-3 19.5,3.5 7,14 Z" />
+</g>
 """
 
 class GlyphHeartBad(Glyph):
@@ -138,6 +141,7 @@ class GlyphHeartBad(Glyph):
     def parts(self):
         return f"""
 {self.lines()}
+<g transform="translate(-7,-14)">
 <path
   d="M 3.1192613,0.91816809 C -0.51575331,1.1343295 -2.3043291,6.5459524 6.5727643,13.572239 
      L 10.055526,6.1948296 5.8047553,7.7606133 6.7629245,2.3188525 
@@ -147,6 +151,7 @@ class GlyphHeartBad(Glyph):
      L 6.9371668,5.7541131 12.359724,4.4696249 6.6548634,12.991543 
      c 0.14833,0.145957 0.2983343,0.292314 0.4533994,0.44009 
      C 17.163309,6.0077897 15.370964,0.189818 11.5983,-0.03055905 Z" />
+</g>
 """
 
 class GlyphFaceGood(Glyph):
@@ -157,10 +162,12 @@ class GlyphFaceGood(Glyph):
     def parts(self):
         return f"""
 {self.lines()}
+<g transform="translate(-7,-14)">
 <ellipse cx="9.5" cy="4" rx="0.25" ry="0.75" />
 <ellipse cx="4.5" cy="4" rx="0.25" ry="0.75" /> 
 <circle cx="7" cy="7" r="7" />
 <path d="m 3,8 c 1.5,4 6,4 8,0" />
+</g>
 """
 
 class GlyphFaceBad(Glyph):
@@ -171,19 +178,30 @@ class GlyphFaceBad(Glyph):
     def parts(self):
         return f"""
 {self.lines()}
+<g transform="translate(-7,-14)">
 <ellipse cx="9.5" cy="4" rx="0.25" ry="0.75" />
 <ellipse cx="4.5" cy="4" rx="0.25" ry="0.75" />
 <circle cx="7" cy="7" r="7" />
 <path d="m 3,10 c 1.5,-3 6,-3 8,0" />
+</g>
 """
 
 class GlyphLetter(Glyph):
-    def __init__(self,letter,params={}):
+    def __init__(self,letterHint,params={}):
         Glyph.__init__(self,params)
-        self._params['letter']=letter
-    def letter(self): return self._params['letter']
+        self._params['letter']=letterHint[0]
+        self._params['hint']=letterHint[1]        
+    def letter(self):
+        return f"""
+<text xml:space=\"preserve\" text-anchor=\"middle\" >{self._params['letter']}</text>
+"""
+    def hint(self):
+        return f"""
+<text transform="translate(-8,-7) rotate(-90)" xml:space="preserve" text-anchor="middle" style="font-size:2.75px;line-height:1;font-family:Courier;fill:#ffffff;stroke:none">{self._params['hint']}</text>
+"""
     def parts(self):
         return f"""
 {self.lines()}
-<text xml:space=\"preserve\" text-anchor=\"middle\" >{self.letter()}</text>
+{self.hint()}
+{self.letter()}
 """

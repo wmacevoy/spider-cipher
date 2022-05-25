@@ -24,13 +24,6 @@ class Card(SVG):
 
     def suit(self): return str(self._suit)
 
-    def lines(self):
-        return f"""<g id="{self.cardId()}-lines">
-<path d="m 0,0 14,0"/>
-<path style="stroke-dasharray:0.25, 0.75"  d="m 1,7 12,0" />
-<path d="m 0,14 14,0" />
-</g>
-"""
 
     
     def defs(self):
@@ -38,7 +31,6 @@ class Card(SVG):
 <defs>
 {self.suit()}
 {self.glyphs()}
-{self.lines()}
 </defs>
 """
     def bg(self):
