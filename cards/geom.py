@@ -1,6 +1,10 @@
 import math
 from maybe import Maybe
 
+#
+# in SVG, y points downward, so all the quadrants are funny
+#
+
 class Geom:
     def __init__(self):
         pass
@@ -42,8 +46,13 @@ class Point(Geom):
 
     @staticmethod    
     def polar(r,theta):
-        return Point(r*math.cos(math.radians(theta)),r*math.sin(math.radians(theta)))
+        return Point(r*math.cos(math.radians(theta)),-r*math.sin(math.radians(theta)))
 
+    @staticmethod
+    def build(p):
+        return Point.cartesian(Point.getX(p),Point.getY(p))
+#            return polar(getR(p),getTheta(p))
+        
     @property
     def x(self):
         return self._x
@@ -58,7 +67,7 @@ class Point(Geom):
 
     @property
     def theta(self):
-        return math.degrees(math.atan2(self._y,self._x))
+        return -math.degrees(math.atan2(self._y,self._x))
     
     def __add__(self,rhs):
         return Point(self._x+rhs._x,self._y+rhs._y)
@@ -89,7 +98,7 @@ class Point(Geom):
         oy = (Maybe(lambda arg : Point.getY(arg)) | Maybe(lambda arg : 0.0)).so(origin)
         
         c=math.cos(math.radians(anticlockwise))
-        s=math.sin(math.radians(anticlockwise))
+        s=-math.sin(math.radians(anticlockwise))
 
         dx=self._x - ox
         dy=self._y - oy
@@ -98,5 +107,3 @@ class Point(Geom):
 
     def __str__(self):
         return "(" + str(self._x) + "," + str(self._y) + ")"
-
-    

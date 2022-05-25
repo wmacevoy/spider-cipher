@@ -25,7 +25,7 @@ class PointTest(unittest.TestCase):
         x = 3
         y = 4
         r = 5
-        theta = 53.130102354155978703144387440906589342408428599290442055972032630
+        theta = -53.130102354155978703144387440906589342408428599290442055972032630
         assert abs(Point.getR(Point(3,4)) - r) < 1e-10
         assert abs(Point.getR({'r':r,'theta':theta}) - r) < 1e-10
 
@@ -33,7 +33,7 @@ class PointTest(unittest.TestCase):
         x = 3
         y = 4
         r = 5
-        theta = 53.130102354155978703144387440906589342408428599290442055972032630
+        theta = -53.130102354155978703144387440906589342408428599290442055972032630
         assert abs(Point.getTheta(Point(3,4)) - theta) < 1e-10
         assert abs(Point.getTheta({'r':r,'theta':theta}) - theta) < 1e-10
 
@@ -42,7 +42,7 @@ class PointTest(unittest.TestCase):
         y = 4
         p = Point(x,y)
         r = 5
-        theta = 53.130102354155978703144387440906589342408428599290442055972032630
+        theta = -53.130102354155978703144387440906589342408428599290442055972032630
         assert p.x == x
         assert p.y == y
         assert abs(p.r - 5.0) < 1e-10
@@ -53,7 +53,7 @@ class PointTest(unittest.TestCase):
         y =  4
         p = Point(x,y)
         r = 5
-        theta = 180.0-53.130102354155978703144387440906589342408428599290442055972032630
+        theta = -180.0+53.130102354155978703144387440906589342408428599290442055972032630
         assert p.x == x
         assert p.y == y
         assert abs(p.r - 5.0) < 1e-10
@@ -64,7 +64,7 @@ class PointTest(unittest.TestCase):
         y = -4
         p = Point(x,y)
         r = 5
-        theta = -180+53.130102354155978703144387440906589342408428599290442055972032630
+        theta = 180-53.130102354155978703144387440906589342408428599290442055972032630
         assert p.x == x
         assert p.y == y
         assert abs(p.r - 5.0) < 1e-10
@@ -75,7 +75,7 @@ class PointTest(unittest.TestCase):
         y = -4
         p = Point(x,y)
         r = 5
-        theta = -53.130102354155978703144387440906589342408428599290442055972032630
+        theta = 53.130102354155978703144387440906589342408428599290442055972032630
         assert p.x == x
         assert p.y == y
         assert abs(p.r - 5.0) < 1e-10
@@ -97,8 +97,8 @@ class PointTest(unittest.TestCase):
         oy = 1
         dx = 3-5
         dy = 4-1
-        assert abs(ox - dy - p.x) < 1e-10
-        assert abs(oy + dx - p.y) < 1e-10
+        assert abs(ox + dy - p.x) < 1e-10
+        assert abs(oy - dx - p.y) < 1e-10
         
 if __name__ == '__main__':
     unittest.main()

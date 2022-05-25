@@ -21,11 +21,11 @@ class Card(SVG):
                 params = self._params.copy()
                 params['shift']=shift
                 self._glyphs[shift]=Glyph.build(params)
-
+        else:
+            self._glyphs['shifter']=Glyph.build(params)
+           
     def suit(self): return str(self._suit)
 
-
-    
     def defs(self):
         return f"""
 <defs>

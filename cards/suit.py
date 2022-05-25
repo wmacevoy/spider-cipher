@@ -61,10 +61,10 @@ class SuitClub(Suit):
         delta=self.delta
         
         return f"""
-<path d="M {pc(r,-(a[0]))}
-        C {pc(R,-(a[0]+delta))} {pc(R,-(a[1]-delta))} {pc(r,-a[1])} 
-        C {pc(R,-(a[1]+delta))} {pc(R,-(a[2]-delta))} {pc(r,-a[2])} 
-        C {pc(R,-(a[2]+delta))} {pc(R,-(a[0]-delta))} {pc(r,-a[0])} 
+<path d="M {pc(r,a[0])}
+        C {pc(R,a[0]+delta)} {pc(R,a[1]-delta)} {pc(r,a[1])} 
+        C {pc(R,a[1]+delta)} {pc(R,a[2]-delta)} {pc(r,a[2])} 
+        C {pc(R,a[2]+delta)} {pc(R,a[0]-delta)} {pc(r,a[0])} 
         Z " />
 """
 

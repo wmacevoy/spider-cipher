@@ -1,4 +1,7 @@
+import math
+
 from svg import SVG
+from geom import Point
 
 def small(x,dy=-3,s=0.75):
     size = 19.04*s
@@ -29,28 +32,38 @@ class Glyph(SVG):
         number=int(params['number'])
         face = number % 10
         suit = number // 10
-        shift = str(params['shift'])
-        if number == 34:
-            if shift == 'up': return GlyphHeartBad(params)
-            if shift == 'none': return GlyphThumbBad(params)
-            if shift == 'down': return GlyphFaceBad(params)
-
-        if number == 35:
-            if shift == 'up': return GlyphHeartGood(params)
-            if shift == 'none': return GlyphThumbGood(params)
-            if shift == 'down': return GlyphFaceGood(params)
-        if number <= 34:
-            if shift == 'up': return GlyphLetter(UPS[number],params)
-            if shift == 'none': return GlyphLetter(PLAINS[number],params)
-            if shift == 'down': return GlyphLetter(DOWNS[number],params)
+        shift = str(params['shift']) if ('shift' in params) else 'none'
+        
+        if number <= 35:
+            if shift == 'up':
+                if number == 34: return GlyphHeartBad(params)
+                if number == 35: return GlyphHeartGood(params)
+                return GlyphLetter(UPS[number],params)
+            if shift == 'none':
+                if number == 34: return GlyphThumbBad(params)
+                if number == 35: return GlyphThumbGood(params)
+                return GlyphLetter(PLAINS[number],params)
+            if shift == 'down':
+                if number == 34: return GlyphFaceBad(params)
+                if number == 35: return GlyphFaceGood(params)
+                return GlyphLetter(DOWNS[number],params)
+        else:
+            params = params.copy()
+            params['shift']='center'
+            params['lines']=False
+            return GlyphShifter(PLAINS[number],params)
             
     def __init__(self,params={}):
         SVG.__init__(self,params)
         self._params['@id']=f"{self.cardId()}-glyph-shift-{self.shift()}"
         self._params['@transform']=f"translate({self.x()},{self.y()})"
         self._params['tag']='g'
+        if not ('lines' in self._params): self._params['lines']=True
         
     def lines(self):
+        if not bool(self._params['lines']):
+            return ""
+    
         return f"""<g style="stroke:#fff;stroke-width:0.25" id="{self.cardId()}-lines" transform="translate(-7,-14)">
 <path d="m 0,0 14,0"/>
 <path style="stroke-dasharray:0.25, 0.75"  d="m 1,7 12,0" />
@@ -62,9 +75,11 @@ class Glyph(SVG):
     
     def x(self):
         shift = self.shift()
-        if shift == 'none': return 37.45
-        if shift == 'up':   return 51
-        if shift == 'down': return 51
+        center = 51
+        if shift == 'none': return center-14.0
+        if shift == 'up':   return center
+        if shift == 'down': return center
+        if shift == 'center': return center
 
     def y(self):
         center=34.0
@@ -72,6 +87,7 @@ class Glyph(SVG):
         if shift == 'none': return center
         if shift == 'up': return   center-14.0
         if shift == 'down': return center+14.0
+        if shift == 'center': return center        
 
 class GlyphThumbGood(Glyph):
     def __init__(self,params={}):
@@ -204,4 +220,76 @@ class GlyphLetter(Glyph):
 {self.lines()}
 {self.hint()}
 {self.letter()}
+"""
+
+class GlyphArrow(SVG):
+    def __init__(self,params={}):
+        SVG.__init__(self,params)
+        self._params['tag']='g'
+        
+    def head(self): return Point.build(self._params['head']) if 'head' in self._params else Point(0,1)
+    def tail(self): return Point.build(self._params['tail']) if 'tail' in self._params else Point(0,0)
+    def tipAngle(self): return float(self._params['tipAngle']) if 'tipAngle' in self._params else 30.0
+    def tipWidth(self): return float(self._params['tipWidth']) if 'tipWidth' in self._params else 0.25
+    def shaftWidth(self): return float(self._params['shaftWidth']) if 'shaftWidth' in self._params else 0.1
+
+    def parts(self):
+        head=self.head()
+        tail=self.tail()
+        tipAngle=self.tipAngle()
+        tipWidth=self.tipWidth()
+        shaftWidth=self.shaftWidth()
+        
+        forward=(head-tail).theta
+
+        length=(head-tail).r
+
+        tipLength=(tipWidth/2)/math.tan(math.radians(tipAngle/2.0))
+        if tipLength >= length:
+            tipLength = length
+            tipWidth=2*tipLength*math.tan(math.radians(tipAngle/2.0))
+        d=[]
+        d.append(Point(0,0))
+        d.append(Point(0,shaftWidth/2.0))
+        d.append(Point(length-tipLength,shaftWidth/2.0))
+        if tipWidth != shaftWidth:
+            d.append(Point(length-tipLength,tipWidth/2.0,))
+        d.append(Point(length,0))
+        tip=len(d)-1
+        for k in range(tip):
+            p = d[tip-1-k]
+            d.append(Point(p.x,-p.y))
+
+        dstr=" ".join([f"{p.x},{p.y}" for p in d])
+        return f"""<path transform="translate({tail.x},{tail.y}) rotate({-forward})" d="M {dstr} Z" />"""
+        
+class GlyphShifter(GlyphLetter):
+    def arrow(self,dir,lock):
+        a = -14*dir
+        b =  14*dir
+        if not lock:
+            arrow = GlyphArrow({'head':{'x':0,'y': a},'tail':{'x':0,'y':b},'tipAngle':60,'tipWidth':7,'shaftWidth':4, '@style':"stroke:none;fill:#fff"})
+            return str(arrow)
+        else:
+            ans = "";
+            for c in [1.0,0.75,0.5]:
+                arrow = GlyphArrow({'head':{'x':0,'y': b+(a-b)*c},'tail':{'x':0,'y':b},'tipAngle':60,'tipWidth':7,'shaftWidth':4, '@style':"stroke:none;fill:#fff"})
+                ans = ans + str(arrow)
+            return ans
+                
+    def __init__(self,letter,params={}):
+        GlyphLetter.__init__(self,letter,params)
+        
+    def hint(self):
+        return f"""
+<text transform="translate(-8,-7) rotate(-90)" xml:space="preserve" text-anchor="middle" style="font-size:4px;line-height:1;font-family:Courier;fill:#000;stroke:none">{self._params['hint']}</text>
+"""
+        
+    def parts(self):
+        dir = 1 if self.number() in [37,39] else -1
+        lock = self.number() >= 38
+        print(f"number={self.number()} dir={dir} lock={lock}")
+        return f"""
+{self.hint()}
+<g tranform="translate(-7,-14)">{self.arrow(dir,lock)}</g>
 """
