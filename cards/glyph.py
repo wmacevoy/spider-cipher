@@ -21,10 +21,10 @@ PLAINS=[('a','alfa'),('b','bravo'),('c','charlie'),('d','delta'),('e','echo'),('
         ('k','kilo'),('l','lima'),('m','mike'),('n','november'),('o','oscar'),('p','papa'),('q','quebec'),('r','romeo'),('s','sierra'),('t','tango'),
         ('u','uniform'),('v','victor'),('w',"<tspan dy=\"0\" x=\"0\">whiskey</tspan>"),('x','xray'),('y','yankee'),('z','zulu'),('&lt;','less'),('&gt;','more'),(small('('),'(paren'),(small(')'),'paren)'),
         (' ','s p a c e'),(',','comma,'),('.','period.'),('&#34;','&#34;double&#34;'),('thumb-down',"<tspan dy=\"22\" x=\"0\">BAD</tspan>"),('thumb-up',"<tspan dy=\"22\" x=\"0\">GOOD</tspan>"),
-        ('',"<tspan dy=\"-7\" x=\"0\">dOWN sHIFT</tspan><tspan x=\"0\" dy=\"3.5\">oNCE</tspan>"),
-        ('',"<tspan dy=\"-7\" x=\"0\">Up Shift</tspan><tspan x=\"0\" dy=\"3.5\">Once</tspan>"),
-        ('',"<tspan dy=\"-9\" x=\"0\">down shift</tspan><tspan x=\"0\" dy=\"3.5\">lock</tspan>"),
-        ('',"<tspan dy=\"-9\" x=\"0\">UP SHIFT</tspan><tspan x=\"0\" dy=\"3.5\">LOCK</tspan>")]
+        ('',"<tspan dy=\"-9\" x=\"0\" >dOWN</tspan><tspan dy=\"3.5\" x=\"0\" >sHIFT</tspan><tspan dy=\"3.5\" x=\"0\" >oNCE</tspan>"),
+        ('',"<tspan dy=\"-9\" x=\"0\" >Up</tspan><tspan dy=\"3.5\" x=\"0\" >Shift</tspan><tspan dy=\"3.5\" x=\"0\" >Once</tspan>"),
+        ('',"<tspan dy=\"-9\" x=\"0\" >down</tspan><tspan dy=\"3.5\" x=\"0\" >shift</tspan><tspan dy=\"3.5\" x=\"0\" >lock</tspan>"),
+        ('',"<tspan dy=\"-9\" x=\"0\" >UP</tspan><tspan dy=\"3.5\" x=\"0\" >SHIFT</tspan><tspan dy=\"3.5\" x=\"0\" >LOCK</tspan>")]
 
 class Glyph(SVG):
     @staticmethod
@@ -50,7 +50,7 @@ class Glyph(SVG):
         else:
             params = params.copy()
             params['shift']='center'
-            params['lines']=False
+            params['lines']=True
             return GlyphShifter(PLAINS[number],params)
             
     def __init__(self,params={}):
@@ -64,7 +64,7 @@ class Glyph(SVG):
         if not bool(self._params['lines']):
             return ""
     
-        return f"""<g style="stroke:#fff;stroke-width:0.25" id="{self.cardId()}-lines" transform="translate(-7,-14)">
+        return f"""<g style="stroke:#fff;stroke-width:0.25" transform="translate(-7,-14)">
 <path d="m 0,0 14,0"/>
 <path style="stroke-dasharray:0.25, 0.75"  d="m 1,7 12,0" />
 <path d="m 0,14 14,0" />
@@ -73,17 +73,19 @@ class Glyph(SVG):
     def shift(self):
         return self._params['shift']
     
-    def x(self):
-        shift = self.shift()
+    def x(self,shift=None):
+        if shift == None:
+            shift = self.shift()
         center = 51
         if shift == 'none': return center-14.0
         if shift == 'up':   return center
         if shift == 'down': return center
         if shift == 'center': return center
 
-    def y(self):
+    def y(self,shift = None):
+        if shift == None:
+            shift = self.shift()
         center=34.0
-        shift = self.shift()        
         if shift == 'none': return center
         if shift == 'up': return   center-14.0
         if shift == 'down': return center+14.0
@@ -209,7 +211,7 @@ class GlyphLetter(Glyph):
         self._params['hint']=letterHint[1]        
     def letter(self):
         return f"""
-<text xml:space=\"preserve\" text-anchor=\"middle\" >{self._params['letter']}</text>
+<text style="font-family:Helvetica; font-size:19.04px;" xml:space="preserve" text-anchor="middle" >{self._params['letter']}</text>
 """
     def hint(self):
         return f"""
@@ -264,16 +266,22 @@ class GlyphArrow(SVG):
         return f"""<path transform="translate({tail.x},{tail.y}) rotate({-forward})" d="M {dstr} Z" />"""
         
 class GlyphShifter(GlyphLetter):
-    def arrow(self,dir,lock):
-        a = -14*dir
-        b =  14*dir
+    def arrow(self,head,tail,lock):
+        pArrow = {'tipAngle':90,
+                  'tipWidth':7,
+                  'shaftWidth':2,
+                  '@style':"stroke:none;fill:#fff"}
         if not lock:
-            arrow = GlyphArrow({'head':{'x':0,'y': a},'tail':{'x':0,'y':b},'tipAngle':60,'tipWidth':7,'shaftWidth':4, '@style':"stroke:none;fill:#fff"})
+            pArrow['head']=head
+            pArrow['tail']=tail
+            arrow = GlyphArrow(pArrow)
             return str(arrow)
         else:
             ans = "";
-            for c in [1.0,0.75,0.5]:
-                arrow = GlyphArrow({'head':{'x':0,'y': b+(a-b)*c},'tail':{'x':0,'y':b},'tipAngle':60,'tipWidth':7,'shaftWidth':4, '@style':"stroke:none;fill:#fff"})
+            for c in [1.0,0.66]:
+                pArrow['head']=head.scale(c,tail)
+                pArrow['tail']=tail
+                arrow = GlyphArrow(pArrow)
                 ans = ans + str(arrow)
             return ans
                 
@@ -282,14 +290,31 @@ class GlyphShifter(GlyphLetter):
         
     def hint(self):
         return f"""
-<text transform="translate(-8,-7) rotate(-90)" xml:space="preserve" text-anchor="middle" style="font-size:4px;line-height:1;font-family:Courier;fill:#000;stroke:none">{self._params['hint']}</text>
+<text xml:space="preserve" text-anchor="middle" style="font-size:4px;line-height:1;font-family:Courier;fill:#000;stroke:none">{self._params['hint']}</text>
 """
-        
+    def locate(self,pos):
+        return Point(self.x(pos)-self.x('center'),self.y(pos)-self.y('center'))
+
     def parts(self):
-        dir = 1 if self.number() in [37,39] else -1
-        lock = self.number() >= 38
-        print(f"number={self.number()} dir={dir} lock={lock}")
+        up = self.number() in [37,39]
+        lock = self.number() in [38,39]
+
+        ends = []
+        ends.append(['none','up'] if up else ['up','none'])
+        ends.append(['down','none'] if up else ['none','down'])
+        
+        arrows = ""
+        for end in ends:
+            b = self.locate(end[0])
+            a = self.locate(end[1])
+            tail=b.scale(0.8,a)
+            head=a
+
+            arrows = arrows + str(self.arrow(head,tail,lock))
         return f"""
+<g transform="translate({self.x('up')-self.x('center')},{self.y('up')-self.y('center')})">{self.lines()}</g>
+<g transform="translate({self.x('none')-self.x('center')},{self.y('none')-self.y('center')})">{self.lines()}</g>
+<g transform="translate({self.x('down')-self.x('center')},{self.y('down')-self.y('center')})">{self.lines()}</g>
+<g transform="translate(0,-7)">{arrows}</g>
 {self.hint()}
-<g tranform="translate(-7,-14)">{self.arrow(dir,lock)}</g>
 """

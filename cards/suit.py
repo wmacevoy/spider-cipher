@@ -25,7 +25,7 @@ class Suit(SVG):
         SVG.__init__(self,params)
         self._params['@id']=f"{self.cardId()}-suit"
         self._params['tag']='g'
-        self._params['@style']=f"stoke:none;fill:{self.color()}"
+        self._params['@style']=f"stroke:none;fill:{self.color()}"
         self._params['@transform']="matrix(2,0,0,2,-6,-6)"
         
 class SuitClub(Suit):
