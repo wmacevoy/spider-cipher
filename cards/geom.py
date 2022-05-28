@@ -4,6 +4,14 @@ from maybe import Maybe
 #
 # in SVG, y points downward, so all the quadrants are funny
 #
+#  (-,-) | (+,-)
+#  -180 ...  0
+#  ------+------
+#   180 ...  0
+#  (-,+) | (+,+)
+#
+# also, rotate(angle) rotates clockwise
+#
 
 class Geom:
     def __init__(self):
@@ -12,7 +20,7 @@ class Geom:
         raise ValueError("unsupported")
     def scale(self,factor,origin):
         raise ValueError("unsuported")
-    def rotate(self,anticlockwise,origin):
+    def rotate(self,clockwise,origin):
         raise ValueError("unsupported")
     def translate(self,offset):
         raise ValueError("unsupported")
@@ -67,7 +75,7 @@ class Point(Geom):
 
     @property
     def theta(self):
-        return -math.degrees(math.atan2(self._y,self._x))
+        return math.degrees(math.atan2(self._y,self._x))
     
     def __add__(self,rhs):
         return Point(self._x+rhs._x,self._y+rhs._y)
@@ -82,8 +90,8 @@ class Point(Geom):
         return Point(self._x+p.x,self._y+p.y)
 
     def scale(self,factor,origin=None):
-        ox = (Maybe(lambda arg : Point.getX(arg)) | Maybe(lambda arg : 0.0)).so(origin)
-        oy = (Maybe(lambda arg : Point.getY(arg)) | Maybe(lambda arg : 0.0)).so(origin)
+        ox = Point.getX(origin) if origin != None else 0.0
+        oy = Point.getY(origin) if origin != None else 0.0
 
         fx = (Maybe(lambda arg : Point.getX(arg))|Maybe(lambda arg : float(arg))).so(factor)
         fy = (Maybe(lambda arg : Point.getY(arg))|Maybe(lambda arg : float(arg))).so(factor)
@@ -93,12 +101,12 @@ class Point(Geom):
         
         return Point(ox+fx*dx,oy+fy*dy)
 
-    def rotate(self,anticlockwise,origin=None):
-        ox = (Maybe(lambda arg : Point.getX(arg)) | Maybe(lambda arg : 0.0)).so(origin)
-        oy = (Maybe(lambda arg : Point.getY(arg)) | Maybe(lambda arg : 0.0)).so(origin)
+    def rotate(self,clockwise,origin=None):
+        ox = Point.getX(origin) if origin != None else 0.0
+        oy = Point.getY(origin) if origin != None else 0.0
         
-        c=math.cos(math.radians(anticlockwise))
-        s=-math.sin(math.radians(anticlockwise))
+        c=math.cos(math.radians(clockwise))
+        s=math.sin(math.radians(clockwise))
 
         dx=self._x - ox
         dy=self._y - oy
@@ -106,4 +114,4 @@ class Point(Geom):
         return Point(ox+c*dx-s*dy,oy+s*dx+c*dy)
 
     def __str__(self):
-        return "(" + str(self._x) + "," + str(self._y) + ")"
+        return f"{self.x},{self.y}"

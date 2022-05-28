@@ -1,3 +1,19 @@
+#
+# Simplify ask for forgiveness instead of permission
+#
+# y = None
+# try:
+#   y = f(x)
+# except:
+#   try:
+#     y = g(x)
+#   except:
+#     ...
+#        y = z(x)
+# y = (Maybe(lambda x : f(x))|Maybe(lambda x : g(x))|...).so(x)
+#
+#
+
 class Maybe:
     def __init__(self,so):
         self._so = [so]

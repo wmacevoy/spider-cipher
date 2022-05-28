@@ -50,7 +50,6 @@ class Glyph(SVG):
         else:
             params = params.copy()
             params['shift']='center'
-            params['lines']=True
             return GlyphShifter(PLAINS[number],params)
             
     def __init__(self,params={}):
@@ -59,6 +58,7 @@ class Glyph(SVG):
         self._params['@transform']=f"translate({self.x()},{self.y()})"
         self._params['tag']='g'
         if not ('lines' in self._params): self._params['lines']=True
+        if not ('hints' in self._params): self._params['hints']=True
         
     def lines(self):
         if not bool(self._params['lines']):
@@ -66,8 +66,8 @@ class Glyph(SVG):
     
         return f"""<g style="stroke:#fff;stroke-width:0.25" transform="translate(-7,-14)">
 <path d="m 0,0 14,0"/>
-<path style="stroke-dasharray:0.25, 0.75"  d="m 1,7 12,0" />
-<path d="m 0,14 14,0" />
+<path style="stroke-dasharray:0.25, 0.75"  d="m 0,7 14,0" />
+<path d="m  0,14 14,0" />
 </g>
 """
     def shift(self):
@@ -214,6 +214,8 @@ class GlyphLetter(Glyph):
 <text style="font-family:Helvetica; font-size:19.04px;" xml:space="preserve" text-anchor="middle" >{self._params['letter']}</text>
 """
     def hint(self):
+        if not self._params['hints']:
+            return ""
         return f"""
 <text transform="translate(-8,-7) rotate(-90)" xml:space="preserve" text-anchor="middle" style="font-size:2.75px;line-height:1;font-family:Courier;fill:#ffffff;stroke:none">{self._params['hint']}</text>
 """
@@ -263,7 +265,7 @@ class GlyphArrow(SVG):
             d.append(Point(p.x,-p.y))
 
         dstr=" ".join([f"{p.x},{p.y}" for p in d])
-        return f"""<path transform="translate({tail.x},{tail.y}) rotate({-forward})" d="M {dstr} Z" />"""
+        return f"""<path transform="translate({tail.x},{tail.y}) rotate({forward})" d="M {dstr} Z" />"""
         
 class GlyphShifter(GlyphLetter):
     def arrow(self,head,tail,lock):
@@ -289,6 +291,8 @@ class GlyphShifter(GlyphLetter):
         GlyphLetter.__init__(self,letter,params)
         
     def hint(self):
+        if not self._params['hints']:
+            return ""
         return f"""
 <text xml:space="preserve" text-anchor="middle" style="font-size:4px;line-height:1;font-family:Courier;fill:#000;stroke:none">{self._params['hint']}</text>
 """
@@ -300,8 +304,11 @@ class GlyphShifter(GlyphLetter):
         lock = self.number() in [38,39]
 
         ends = []
-        ends.append(['none','up'] if up else ['up','none'])
-        ends.append(['down','none'] if up else ['none','down'])
+        if not self._params['lines']:
+            ends.append(['down','up'] if up else ['up','down'])
+        else:
+            ends.append(['none','up'] if up else ['up','none'])
+            ends.append(['down','none'] if up else ['none','down'])
         
         arrows = ""
         for end in ends:
@@ -311,10 +318,15 @@ class GlyphShifter(GlyphLetter):
             head=a
 
             arrows = arrows + str(self.arrow(head,tail,lock))
-        return f"""
-<g transform="translate({self.x('up')-self.x('center')},{self.y('up')-self.y('center')})">{self.lines()}</g>
-<g transform="translate({self.x('none')-self.x('center')},{self.y('none')-self.y('center')})">{self.lines()}</g>
-<g transform="translate({self.x('down')-self.x('center')},{self.y('down')-self.y('center')})">{self.lines()}</g>
-<g transform="translate(0,-7)">{arrows}</g>
-{self.hint()}
+        ans = ""
+        if self._params['lines']:
+            for delta in ['up','none','down']:
+                x = self.x(delta)-self.x('center')
+                y = self.y(delta)-self.y('center')
+                ans = ans + f"""
+<g transform="translate({x},{y})">{self.lines()}</g>
 """
+        ans = ans + f"""<g transform="translate(0,-7)">{arrows}</g>"""
+        ans = ans + self.hint()
+
+        return ans
