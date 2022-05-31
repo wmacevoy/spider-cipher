@@ -227,6 +227,13 @@ class GlyphLetter(Glyph):
 """
 
 class GlyphArrow(SVG):
+    @staticmethod
+    def build(params):
+        if 'lock' in params and params['lock'] == True:
+            return GlyphLockArrow(params)            
+        return GlyphArrow(params)
+
+    
     def __init__(self,params={}):
         SVG.__init__(self,params)
         self._params['tag']='g'
@@ -266,27 +273,27 @@ class GlyphArrow(SVG):
 
         dstr=" ".join([f"{p.x},{p.y}" for p in d])
         return f"""<path transform="translate({tail.x},{tail.y}) rotate({forward})" d="M {dstr} Z" />"""
+
+class GlyphLockArrow(GlyphArrow):
+    def __init__(self,params={}):
+        GlyphArrow.__init__(self,params)
+        params=params.copy()
+        params['head']=self.head().scale(0.66,self.tail())
+        self._subarrow = GlyphArrow(params)
+    def parts(self):
+        return GlyphArrow.parts(self) + str(self._subarrow)
         
 class GlyphShifter(GlyphLetter):
     def arrow(self,head,tail,lock):
-        pArrow = {'tipAngle':90,
+        params = {'head':head,
+                  'tail':tail,
+                  'lock':lock,
+                  'tipAngle':90,
                   'tipWidth':7,
                   'shaftWidth':2,
                   '@style':"stroke:none;fill:#fff"}
-        if not lock:
-            pArrow['head']=head
-            pArrow['tail']=tail
-            arrow = GlyphArrow(pArrow)
-            return str(arrow)
-        else:
-            ans = "";
-            for c in [1.0,0.66]:
-                pArrow['head']=head.scale(c,tail)
-                pArrow['tail']=tail
-                arrow = GlyphArrow(pArrow)
-                ans = ans + str(arrow)
-            return ans
-                
+        return str(GlyphArrow.build(params))
+    
     def __init__(self,letter,params={}):
         GlyphLetter.__init__(self,letter,params)
         
@@ -304,11 +311,13 @@ class GlyphShifter(GlyphLetter):
         lock = self.number() in [38,39]
 
         ends = []
-        if not self._params['lines']:
-            ends.append(['down','up'] if up else ['up','down'])
-        else:
-            ends.append(['none','up'] if up else ['up','none'])
-            ends.append(['down','none'] if up else ['none','down'])
+#        if not self._params['lines']:
+#           ends.append(['down','up'] if up else ['up','down'])
+#        else:
+#            ends.append(['none','up'] if up else ['up','none'])
+#            ends.append(['down','none'] if up else ['none','down'])
+        ends.append(['none','up'] if up else ['up','none'])
+        ends.append(['down','none'] if up else ['none','down'])
         
         arrows = ""
         for end in ends:

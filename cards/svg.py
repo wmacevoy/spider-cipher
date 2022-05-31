@@ -12,6 +12,7 @@ class SVG:
         if pname in self._params:
             value=self._params[pname]
             return f"{name}=\"{value}{suffix}\""
+        return ""
         
     def attrs(self,suffixes={}):
         ans=""
@@ -40,6 +41,7 @@ class SVG:
     def octag(self): return f"<{self.tag()}{self.attrs()}/>"
     def ctag(self): return f"</{self.tag()}>"
     def parts(self): return ""
+
     def __str__(self):
         substr=self.parts()
         if len(substr) == 0:

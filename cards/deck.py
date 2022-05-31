@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
 
 from svg import SVG
+from geom import Point
 from suit import Suit
-from glyph import Glyph
+from glyph import Glyph,GlyphArrow
 
 class Card(SVG):
     @staticmethod
     def build(params):
         number = int(params['number'])
         if number < 40: return CardPlay(params)
-        if number < 44: return CardCodes(params)
+        if number < 42: return CardCodes(params)
+        if number == 42: return CardBackFrontPseudoShuffle(params)
     
     def __init__(self,params={}):
         SVG.__init__(self,params)
@@ -140,15 +142,19 @@ class CardCodes(Card):
         self._params['height']=6
         self._params['gap']=2
 
+        # if self.number() == 40:
+        #     self._params['n'] = [30,20]
+        # elif self.number() == 41:
+        #     self._params['n'] = [10,0]
+        # elif self.number() == 42:
+        #     self._params['n'] = [35,25]
+        # elif self.number() == 43:
+        #     self._params['n'] = [15,5]
+        
         if self.number() == 40:
             self._params['n'] = [30,20]
         elif self.number() == 41:
             self._params['n'] = [10,0]
-        elif self.number() == 42:
-            self._params['n'] = [35,25]
-        elif self.number() == 43:
-            self._params['n'] = [15,5]
-        
     def defs(self):
         return f"""
 <defs>
@@ -174,37 +180,72 @@ class CardCodes(Card):
         height=self._params['height']
         n=self._params['n']
         
-        if n[0] <= code and code < n[0]+5:
-            return center-2.5*gap-1.5*height-height*s
-        if n[1] <= code and code < n[1]+5:
-            return center+2.5*gap+1.5*height-height*s
+        if n[0] <= code and code < n[0]+10:
+            return center-2.5*gap-1.5*height+(height+gap)*s-height/2
+        if n[1] <= code and code < n[1]+10:
+            return center+2.5*gap+1.5*height+(height+gap)*s-height/2
 
         return None
     
     def y(self,code,s):
+        center=44+2
         gap=self._params['gap']
         height=self._params['height']        
-        return (gap+height)*(code % 5)
+        return center+(height+gap)*((code % 10)-4.5)
 
 
     def glyphs(self):
         ans = ""
         shifts = ['down','none','up']
         for n in self._params['n']:
-            for k in range(5):
-                if n+k >= 36: continue
-                for s in [-1,0,1]:
-                    x = self.x(n+k,s)
-                    y = self.y(n+k,s)+20
-                    shift = shifts[s+1]
-                    glyph=Glyph.build({'number':n+k,'shift':shift,'lines':False, 'hint':False})
-                    ans = ans + f"""<g transform="translate({x},{y}) scale(0.2,0.2)">{glyph.parts()}</g>"""
-        return ans;
-                    
+            for k in range(10):
+                nk = n+k                
+                if nk >= 36:
+                    for s in [-1,1]:
+                        up = 1 if nk in [37,39] else -1
+                        lock = nk >= 38
+                        y = self.y(nk,0)
+                        
+                        xa = self.x(nk,0+0.5)
+                        xb = self.x(nk,s+0.5)
+                        xh = xa if s*up == -1 else xb
+                        xt = xb if s*up == -1 else xa
+                        head = Point(xh,y)
+                        tail = Point(xt,y)
+                        tail = tail.scale(0.8,head)
 
-            
-        
-        
+                        params = {'head':head,
+                                  'tail':tail,
+                                  'lock':lock,
+                                  'tipAngle':90,
+                                  'tipWidth':3,
+                                  'shaftWidth':1,
+                                  '@style':"stroke:none;fill:#fff"}
+                        ans = ans + str(GlyphArrow.build(params)) + f" <!-- arrow {n+k} s={s} parms={params} -->"
+                else:
+                    for s in [-1,0,1]:
+                        x = self.x(n+k,s)
+                        y = self.y(n+k,s)
+                        shift = shifts[s+1]
+                        glyph=Glyph.build({'number':n+k,'shift':shift,'lines':False, 'hints':True})
+                        ans = ans + f"""<g transform="translate({x},{y}) scale(0.40) rotate(90)" {glyph.attr('style')}>{glyph.parts()}</g>"""
+        return ans;
+
+    def numbers(self):
+        gap=self._params['gap']        
+        ans=""
+        for n in self._params['n']:
+            for k in range(10):
+                nk=n+k
+                face = nk % 10
+                suit = nk // 10
+                x = self.x(nk,2)-gap
+                y = self.y(nk,0)
+                ans = ans + f"""<g transform="translate({x},{y}) rotate(90)"><text style="font-family:Helvetica;font-size:2.5px;fill:#fff" text-anchor="middle">{suit}{face}</text></g>"""
+#                x = self.x(nk,-1 if nk < 36 else -1)-3.5
+#                ans = ans + f"""<g transform="translate({x},{y}) rotate(90)"><text style="font-family:Helvetica;font-size:3.5px;fill:#fff" text-anchor="middle">{suit}{face}</text></g>"""
+        return ans
+    
     def lines(self):
         center=31.5
         gap=self._params['gap']
@@ -222,10 +263,16 @@ class CardCodes(Card):
 <g transform="translate(-{height+gap},0)">{self.line()}</g>
 </g>
 """
+    def defs(self):
+        return f"""
+<defs>
+</defs>
+"""
     def parts(self):
         return f"""
 {self.bg()}
 {self.lines()}
+{self.numbers()}
 {self.glyphs()}
 """
     def __str__(self):
@@ -236,7 +283,66 @@ class CardCodes(Card):
 </svg>
 """
 
-for number in range(44):
+class CardBackFrontPseudoShuffle(SVG):
+    def __init__(self,params={}):
+        SVG.__init__(self,params)
+        self._params['tag']='g'
+        
+    def words(self):
+        return f"""<h1>BACK-FRONT "SHUFFLE"</h1><br/>
+1) Separate cards to make:<br/>
+    BACK (1<sup>st</sup>, 3<sup>rd</sup>, 5<sup>th</sup>, ...) and FRONT (2<sup>nd</sup>, 4<sup>nd</sup>, 6<sup>nd</sup>, ...).<br/>
+2) Flip BACK stack over.<br/>
+3) Put BACK under FRONT to combine.<br/>
+<br/>
+<h1>"CUT" DECK</h1><br/>
+1) Find cut card.<br/>
+2) Move all cards above cut card to back.<br/>
+<br/>
+CUT=top+plain, TAG=3rd-1<br/>
+                   NOISE is after TAG
+"""
+    def bg(self):
+        return f"""<g id="{self.cardId()}-bg">
+<rect x="-3" y="-3" width="69" height="94" style="fill:#808080" />
+<rect x="-1.5" y="-1.5" width="66" height="91" rx="6.35" opacity="1.0" style="fill:none;stroke:#ffffff;stroke-width:9.0" />
+</g><!-- {self.cardId()}-bg -->
+"""
+
+    def typesetWords(self):
+        words = self.words()
+        lines=words.split("<br/>")
+        ans = ""
+        dy = 0
+        for line in lines:
+            line=line.replace("\r","")
+            line=line.replace("\n","")
+            h1 = False
+            if line.startswith('<h1>'):
+                line = line.replace("<h1>",f"""<tspan font-size="5px" >""").replace("</h1>","""</tspan>""")
+                h1 = True
+#            line = line.replace("<sup>",f"""<tspan dy="-2" font-size="3px" font-style="italic">""").replace("</sup>","""</tspan><tspan dy="+2"></tspan>""")
+            ans = ans + f"""<text dy="{dy}" style="font-family:Helvetica;font-size:4px;fill:#fff" xml:space="preserve">{line}</text>"""
+            dy = dy + (5 if h1 else 4.5)
+        return ans
+            
+    def parts(self):
+        return f"""{self.bg()}<g transform="translate(54,4.5) rotate(90)">{self.typesetWords()}</g>
+"""
+    def defs(self):
+        return f"""
+<defs>
+</defs>
+"""
+    def __str__(self):
+        return f"""<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="69mm" height="94mm" viewBox="-3 -3 69 94" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg"><!-- {self.cardId()} -->
+{self.defs()}
+{SVG.__str__(self)}
+</svg>
+"""
+    
+for number in range(43):
     print(number)
     card = Card.build({'number':number})
     with open(card.cardId() + ".svg","w") as f:
