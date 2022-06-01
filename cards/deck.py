@@ -11,7 +11,11 @@ class Card(SVG):
         number = int(params['number'])
         if number < 40: return CardPlay(params)
         if number < 42: return CardCodes(params)
-        if number == 42: return CardBackFrontPseudoShuffle(params)
+        if number == 42: return CardDefs(params)
+        if number == 43: return CardTranslate(params)
+        if number == 44: return CardPacket(params)
+        if number == 45: return CardScramble(params)
+        if number == 46: return CardClear(params)        
     
     def __init__(self,params={}):
         SVG.__init__(self,params)
@@ -241,7 +245,7 @@ class CardCodes(Card):
                 suit = nk // 10
                 x = self.x(nk,2)-gap
                 y = self.y(nk,0)
-                ans = ans + f"""<g transform="translate({x},{y}) rotate(90)"><text style="font-family:Helvetica;font-size:2.5px;fill:#fff" text-anchor="middle">{suit}{face}</text></g>"""
+                ans = ans + f"""<g transform="translate({x},{y}) rotate(90)"><text style="font-family:Courier;font-size:4px;fill:#fff" text-anchor="middle">{suit}{face}</text></g>"""
 #                x = self.x(nk,-1 if nk < 36 else -1)-3.5
 #                ans = ans + f"""<g transform="translate({x},{y}) rotate(90)"><text style="font-family:Helvetica;font-size:3.5px;fill:#fff" text-anchor="middle">{suit}{face}</text></g>"""
         return ans
@@ -283,25 +287,34 @@ class CardCodes(Card):
 </svg>
 """
 
-class CardBackFrontPseudoShuffle(SVG):
+class CardDefs(SVG):
     def __init__(self,params={}):
         SVG.__init__(self,params)
         self._params['tag']='g'
-        
-    def words(self):
-        return f"""<h1>BACK-FRONT "SHUFFLE"</h1><br/>
+
+    def shuffle(self):
+        words=f"""<h1>"SHUFFLE"</h1><br/>
 1) Separate cards to make:<br/>
-    BACK (1<sup>st</sup>, 3<sup>rd</sup>, 5<sup>th</sup>, ...) and FRONT (2<sup>nd</sup>, 4<sup>nd</sup>, 6<sup>nd</sup>, ...).<br/>
+   BACK (1<sup>st</sup>, 3<sup>rd</sup>, 5<sup>th</sup>, ...) &amp; FRONT (2<sup>nd</sup>, 4<sup>nd</sup>, 6<sup>nd</sup>, ...).<br/>
 2) Flip BACK stack over.<br/>
 3) Put BACK under FRONT to combine.<br/>
-<br/>
-<h1>"CUT" DECK</h1><br/>
-1) Find cut card.<br/>
-2) Move all cards above cut card to back.<br/>
-<br/>
-CUT=top+plain, TAG=3rd-1<br/>
-                   NOISE is after TAG
 """
+        return self.typeset(words)
+        
+    def cut(self):
+        words=f"""<h1>"CUT ON CARD"</h1><br/>
+1) Find <b>card</b> in deck.<br/>
+2) Move any cards above <b>card</b> to back.<br/>
+<br/>
+"""
+        return self.typeset(words)
+
+    def cards(self):
+        words=f"""  <b>CUT</b> is 1st + PLAIN<br/>
+  <b>TAG</b> is 3rd - 1 &amp; <b>NOISE</b> is after <b>TAG</b>
+"""
+        return self.typeset(words)
+    
     def bg(self):
         return f"""<g id="{self.cardId()}-bg">
 <rect x="-3" y="-3" width="69" height="94" style="fill:#808080" />
@@ -309,8 +322,7 @@ CUT=top+plain, TAG=3rd-1<br/>
 </g><!-- {self.cardId()}-bg -->
 """
 
-    def typesetWords(self):
-        words = self.words()
+    def typeset(self,words):
         lines=words.split("<br/>")
         ans = ""
         dy = 0
@@ -319,15 +331,27 @@ CUT=top+plain, TAG=3rd-1<br/>
             line=line.replace("\n","")
             h1 = False
             if line.startswith('<h1>'):
-                line = line.replace("<h1>",f"""<tspan font-size="5px" >""").replace("</h1>","""</tspan>""")
+                line = line.replace("<h1>",f"""<tspan style="fill:#000" font-size="5px" >""").replace("</h1>","""</tspan>""")
                 h1 = True
 #            line = line.replace("<sup>",f"""<tspan dy="-2" font-size="3px" font-style="italic">""").replace("</sup>","""</tspan><tspan dy="+2"></tspan>""")
+            line = line.replace("<b>",f"""<tspan style="fill:#000">""").replace("</b>","""</tspan>""")
+            line = line.replace("<t2>",f"""<tspan style="font-family:Courier;font-size:4px;fill:#fff">""").replace("</t2>","""</tspan>""")
+            line = line.replace("<t1>",f"""<tspan style="font-family:Courier;font-size:6px;fill:#000">""").replace("</t1>","""</tspan>""")            
+            
             ans = ans + f"""<text dy="{dy}" style="font-family:Helvetica;font-size:4px;fill:#fff" xml:space="preserve">{line}</text>"""
             dy = dy + (5 if h1 else 4.5)
         return ans
-            
+
+
+    def rotparts(self):
+        return f"""
+<g transform="translate(0,0)">{self.shuffle()}</g>
+<g transform="translate(0,27)">{self.cut()}</g>
+<g transform="translate(0,44)">{self.cards()}</g>
+"""
     def parts(self):
-        return f"""{self.bg()}<g transform="translate(54,4.5) rotate(90)">{self.typesetWords()}</g>
+        return f"""{self.bg()}
+<g transform="translate(54,4.5) rotate(90)">{self.rotparts()}</g>
 """
     def defs(self):
         return f"""
@@ -341,8 +365,102 @@ CUT=top+plain, TAG=3rd-1<br/>
 {SVG.__str__(self)}
 </svg>
 """
+
+
+class CardTranslate(CardDefs):
+    def __init__(self,params={}):
+        CardDefs.__init__(self,params)
+
+    def overview(self):
+        words=f"""<h1>1 - TRANSLATE</h1><br/>
+1) Shift is <t2>none</t2> to start.<br/>
+2) <t2>00-35</t2> translate according to shift.<br/>
+   Ex: <t2>03</t2> is <t1>d</t1> (<t2>none</t2>) <t1>D</t1> (<t2>up</t2>) or <t1>3</t1> (<t2>down</t2>).<br/>
+3) Cards 36-39 change shift.<br/>
+4) Always pad with <t2>39 39 39</t2><br/>
+5) Pad with more <t2>39</t2> to length 5, 10, 15,...<br/>
+<h1>EXAMPLE: </h1>"<t1>Hi ♥!</t1>"<br/>
+<br/>
+   "<t1>↑ H i</t1><t2>    </t2><t1>⇈ ♥ !</t1>"<br/>
+   "<t2>37 07 08 30 39 35 32 39 39 39</t2>"
+"""
+        return self.typeset(words)
     
-for number in range(43):
+    def rotparts(self):
+        return f"""
+<g transform="translate(0,0)">{self.overview()}</g>
+"""
+
+class CardPacket(CardDefs):
+    def __init__(self,params={}):
+        CardDefs.__init__(self,params)
+
+    def overview(self):
+        words=f"""<h1>2 - PACKET</h1><br/>
+<br/>
+A) Put 1 die-roll card before each card.<br/>
+B) Put 5 die-roll cards before all cards.<br/>
+<br/>
+<h1>EXAMPLE </h1> "<t2>M1 M2 M3 M4 M5</t2>"<br/>
+   "<t2>A1 A2 A3 A4 A5</t2><br/>
+    <t2>B1 M1 B2 M2 B3 M3 B4 M4 B5 M5</t2>"<br/>
+"""
+        return self.typeset(words)
+    
+    def rotparts(self):
+        return f"""
+<g transform="translate(0,0)">{self.overview()}</g>
+"""
+    
+class CardScramble(CardDefs):
+    def __init__(self,params={}):
+        CardDefs.__init__(self,params)
+
+    def overview(self):
+        words=f"""<h1>3 - SCRAMBLE</h1><br/>
+Start with key deck and repeat:<br/>
+A) <b>PLAIN</b> is next card of packet.<br/>
+B) Determine <b>TAG</b> (3rd - 1).<br/>
+C) Determine <b>NOISE</b> (after <b>TAG</b>).<br/>
+D) <b>SCRAMBLE</b> is <b>PLAIN</b> + <b>NOISE</b>.<br/>
+E) Determine <b>CUT</b> (1st + <b>PLAIN</b>).<br/>
+F) <b>CUT ON TAG</b> card<br/>
+G) <b>SHUFFLE</b><br/>
+H) <b>CUT ON CUT</b> card<br/>
+"""
+        return self.typeset(words)
+    
+    def rotparts(self):
+        return f"""
+<g transform="translate(0,0)">{self.overview()}</g>
+"""
+
+class CardClear(CardDefs):
+    def __init__(self,params={}):
+        CardDefs.__init__(self,params)
+
+    def overview(self):
+        words=f"""<h1>4 - CLEAR</h1><br/>
+Start with key deck and repeat:<br/>
+A) <b>SCRAMBLE</b> is next card of code.<br/>
+B) Determine <b>TAG</b> (3rd - 1).<br/>
+C) Determine <b>NOISE</b> (after <b>TAG</b>).<br/>
+D)* <b>PLAIN</b> is <b>SCRAMBLE</b> - <b>NOISE</b>.<br/>
+E) Determine <b>CUT</b> (1st + <b>PLAIN</b>).<br/>
+F) <b>CUT ON TAG</b> card<br/>
+G) <b>SHUFFLE</b><br/>
+H) <b>CUT ON CUT</b> card<br/>
+<br/>
+ *Only step D is different
+"""
+        return self.typeset(words)
+    
+    def rotparts(self):
+        return f"""
+<g transform="translate(0,0)">{self.overview()}</g>
+"""
+    
+for number in range(47):
     print(number)
     card = Card.build({'number':number})
     with open(card.cardId() + ".svg","w") as f:
