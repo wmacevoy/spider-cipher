@@ -1,4 +1,5 @@
 import math
+import info
 
 from svg import SVG
 from geom import Point
@@ -29,9 +30,7 @@ PLAINS=[('a','alfa'),('b','bravo'),('c','charlie'),('d','delta'),('e','echo'),('
 class Glyph(SVG):
     @staticmethod
     def build(params):
-        number=int(params['number'])
-        face = number % 10
-        suit = number // 10
+        number=info.number(params)
         shift = str(params['shift']) if ('shift' in params) else 'none'
         
         if number <= 35:
@@ -54,7 +53,7 @@ class Glyph(SVG):
             
     def __init__(self,params={}):
         SVG.__init__(self,params)
-        self._params['@id']=f"{self.cardId()}-glyph-shift-{self.shift()}"
+        self._params['@id']=f"{info.cardId(params)}-glyph-shift-{self.shift()}"
         self._params['@transform']=f"translate({self.x()},{self.y()})"
         self._params['tag']='g'
         if not ('lines' in self._params): self._params['lines']=True
@@ -307,8 +306,8 @@ class GlyphShifter(GlyphLetter):
         return Point(self.x(pos)-self.x('center'),self.y(pos)-self.y('center'))
 
     def parts(self):
-        up = self.number() in [37,39]
-        lock = self.number() in [38,39]
+        up = info.number(self._params) in [37,39]
+        lock = info.number(self._params) in [38,39]
 
         ends = []
 #        if not self._params['lines']:

@@ -1,4 +1,5 @@
 import math
+import info
 from maybe import Maybe
 from geom import Point
 from svg import SVG
@@ -14,7 +15,7 @@ def cc(x,y):
 class Suit(SVG):
     @staticmethod
     def build(params):
-        suit = int(params['number'])//10
+        suit = info.suitNo(params)
         if suit == 0: return SuitClub(params)
         if suit == 1: return SuitDiamond(params)
         if suit == 2: return SuitHeart(params)
@@ -23,9 +24,9 @@ class Suit(SVG):
 
     def __init__(self,params={}):
         SVG.__init__(self,params)
-        self._params['@id']=f"{self.cardId()}-suit"
+        self._params['@id']=f"{info.cardId(params)}-suit"
         self._params['tag']='g'
-        self._params['@style']=f"stroke:none;fill:{self.color()}"
+        self._params['@style']=f"stroke:none;fill:{info.color(params)}"
         self._params['@transform']="matrix(2,0,0,2,-6,-6)"
         
 class SuitClub(Suit):
@@ -104,3 +105,5 @@ class SuitSpade(Suit):
         return f"<path d=\"M 7,0 C -5.5,10.5 2,17 7,12 12,17 19.5,10.5 7,0 Z\" />"
     def stem(self):
         return f"<path d=\"m 7,14 h -1.5 c 1.5,-1.5 1.5,-7.0 1.5,-7.0 c 0,0 0,5.5 1.5,7.0 z \" />"
+
+    

@@ -1,7 +1,10 @@
 class SVG:
-    def __init__(self,params={}):
+    def __init__(self,params={},defaults={}):
         self._params = params.copy()
-        
+        for name in defaults:
+            if not name in self._params:
+                self._params[name]=defaults[name]
+
     def attr(self,name,suffix=""):
         if name[0] == "@":
             pname = name
@@ -22,19 +25,8 @@ class SVG:
                 ans = ans + " " + self.attr(param,suffix)
         return ans
 
-    def number(self): return int(self._params['number'] if 'number' in self._params else 0)
-    def faceNo(self): return self.number() % 10
-    def suitNo(self): return self.number() // 10
-    def suit(self):
-        suits=['club','diamond','heart','spade']
-        return suits[self.suitNo()]
-    def color(self):
-        colors=['#208020','#202080','#802020','#202020']
-        return colors[self.suitNo()]
-    def cardId(self):
-        return f"card-{self.suitNo()}{self.faceNo()}"
-    
-    def id(self,suffix=""): return self.attr('id',suffix)
+    def param(self,name,defval=None):
+        return self._params[name] if name in self._params else defval
 
     def tag(self): return self._params['tag']
     def otag(self): return f"<{self.tag()}{self.attrs()} >"
@@ -43,8 +35,8 @@ class SVG:
     def parts(self): return ""
 
     def __str__(self):
-        substr=self.parts()
-        if len(substr) == 0:
+        parts=self.parts()
+        if len(parts) == 0:
             return self.octag()
         else:
-            return f"{self.otag()}{self.parts()}{self.ctag()}"
+            return f"{self.otag()}{parts}{self.ctag()}"

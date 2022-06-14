@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import info
 from svg import SVG
 from geom import Point
 from suit import Suit
@@ -17,10 +18,24 @@ class Card(SVG):
         if number == 45: return CardScramble(params)
         if number == 46: return CardClear(params)        
     
-    def __init__(self,params={}):
-        SVG.__init__(self,params)
-        self._params['tag']='g'
-        self._params['@id']=self.cardId()
+    def __init__(self,params={},defaults={}):
+        SVG.__init__(self,params,defaults)
+        if not 'tag' in self._params:
+            self._params['tag']='g'
+        if not '@id' in self._params:
+            self._params['@id']=self.cardId()
+
+    def number(self): return info.number(self._params)
+
+    def faceNo(self): return info.faceNo(self._params)
+
+    def suitNo(self): return info.suitNo(self._params)
+
+    def suit(self): return info.suit(self._params)
+
+    def color(self): return info.color(self._params)
+
+    def cardId(self): return info.cardId(self._params)
 
 class CardPlay(Card):
     def __init__(self,params={}):
@@ -287,7 +302,7 @@ class CardCodes(Card):
 </svg>
 """
 
-class CardDefs(SVG):
+class CardDefs(Card):
     def __init__(self,params={}):
         SVG.__init__(self,params)
         self._params['tag']='g'
