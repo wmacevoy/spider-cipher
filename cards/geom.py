@@ -115,3 +115,4 @@ class Point(Geom):
 
     def __str__(self):
         return f"{self.x},{self.y}"
+

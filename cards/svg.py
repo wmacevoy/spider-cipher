@@ -1,9 +1,6 @@
 class SVG:
-    def __init__(self,params={},defaults={}):
+    def __init__(self,params={}):
         self._params = params.copy()
-        for name in defaults:
-            if not name in self._params:
-                self._params[name]=defaults[name]
 
     def attr(self,name,suffix=""):
         if name[0] == "@":
@@ -33,6 +30,26 @@ class SVG:
     def octag(self): return f"<{self.tag()}{self.attrs()}/>"
     def ctag(self): return f"</{self.tag()}>"
     def parts(self): return ""
+
+    def parts(self):
+        return f"""
+{self.bg()}
+{self.fg()}
+"""
+    def xml(self):
+        return f"""<?xml version="1.0" encoding="UTF-8" standalone="no"?>"""
+    def osvg(self):
+        return f"""<svg width="69mm" height="94mm" viewBox="-3 -3 69 94" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">"""
+    def csvg(self):
+        return f"""</svg>"""
+
+
+    def defs(self):
+        return f"""<defs></defs>"""
+
+    # this includes xml header, svg tag, defs
+    def svg(self):
+        return f"""{self.xml()}{self.osvg()}{self.defs()}{self.__str__()}{self.csvg()}"""
 
     def __str__(self):
         parts=self.parts()

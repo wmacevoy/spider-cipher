@@ -9,9 +9,8 @@
 #     y = g(x)
 #   except:
 #     ...
-#        y = z(x)
-# y = (Maybe(lambda x : f(x))|Maybe(lambda x : g(x))|...).so(x)
 #
+# y = (Maybe(lambda x : f(x))|Maybe(lambda x : g(x))|...).so(x)
 #
 
 class Maybe:

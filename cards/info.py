@@ -1,3 +1,6 @@
+CARDS = 40
+RULES = 7
+
 def number(params):
     return int(params['number'] if 'number' in params else 0)
 
@@ -14,6 +17,7 @@ def suit(params):
 COLORS=['#208020','#202080','#802020','#202020']
 def color(params):
     return COLORS[suitNo(params)]
+
 
 def cardId(params):
     return f"card-{suitNo(params)}{faceNo(params)}"
