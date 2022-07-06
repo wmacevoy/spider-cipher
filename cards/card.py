@@ -185,6 +185,8 @@ class CardRules(Card):
             if "<t1>" in line:                
                 line = line.replace("<t1>",f"""<tspan style="font-family:Menlo;font-size:6px;fill:#000" xml:space="preserve">""").replace("</t1>","""</tspan>""")
                 lh = max(6.0,lh)
+            if "<r>" in line:                
+                line = line.replace("<r>",f"""<tspan style="fill:#f00" xml:space="preserve">""").replace("</r>","""</tspan>""")
             ans = ans + f"""<text dy="{dy}" style="font-family:Helvetica;font-size:4px;fill:#fff" xml:space="preserve">{line}</text>"""
             dy = dy + lh
         return ans
@@ -377,9 +379,9 @@ class CardPacket(CardRules):
 <b>P4</b> Add 10 random cards first.<br/>
 <br/>
 <h1>EXAMPLE hi.</h1>/<t2>07 08 32</t2><br/>
- <t2>P40 P41 P42 P43 P44 P45 P46 P47 P48 P49</t2><br/>
- <t2>P30  07 P31  08 P32  32 P33  39 P34  39</t2><br/>
- <t2>P35  39 P36  39 P37  39 P38 P20 P39 P21</t2><br/>
+ <t2><r>40</r> <r>41</r> <r>42</r> <r>43</r> <r>44</r> <r>45</r> <r>46</r> <r>47</r> <r>48</r> <r>49</r></t2><br/>
+ <t2><r>30</r> 07 <r>31</r> 08 <r>32</r> <r>32</r> <r>33</r> <r>39</r> <r>34</r> <r>39</r></t2><br/>
+ <t2>35 39 36 39 37 39 38 20 39 21</t2><br/>
  """
         tsw=self.typeset(words)
         thumbsUp=str(Glyph.build({'number':35,'shift':'none','lines':False}))
