@@ -4,13 +4,8 @@ from maybe import Maybe
 from geom import Point
 from svg import SVG
 
-def pc(r,theta):
-    p=Point.polar(r,theta)
-    return f"{p.x},{p.y}"
-
-def cc(x,y):
-    p=Point.cartesian(x,y)
-    return f"{p.x},{p.y}"
+def pc(r,theta): return Point.polar(r,theta)
+def cc(x,y): return Point.cartesian(x,y)
 
 class Suit(SVG):
     @staticmethod
@@ -56,7 +51,7 @@ class SuitClub(Suit):
 """
 
     def flower(self):
-        a=[270,270+120,270+240]
+        a=[90,90+120,90+240]
         r=self.r
         R=self.R
         delta=self.delta

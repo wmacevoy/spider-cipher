@@ -54,7 +54,7 @@ class Point(Geom):
 
     @staticmethod    
     def polar(r,theta):
-        return Point(r*math.cos(math.radians(theta)),-r*math.sin(math.radians(theta)))
+        return Point(r*math.cos(math.radians(theta)),r*math.sin(math.radians(theta)))
 
     @staticmethod
     def build(p):

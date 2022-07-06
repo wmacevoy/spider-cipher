@@ -95,7 +95,7 @@ class CardPlay(Card):
     def top(self):
         return f"""<g id="{self.cardId()}-top">
 <use xlink:href="#{self.cardId()}-morse" />
-<use xlink:href="#{self.cardId()}-morse" transform="translate(8,0) rotate(90)" />
+<use xlink:href="#{self.cardId()}-morse" transform="translate(0,33) rotate(-90)" />
 <use xlink:href="#{self.cardId()}-code" />
 <use xlink:href="#{self.cardId()}-glyphs" />
 </g>
@@ -152,9 +152,59 @@ class CardPlay(Card):
 #    def __str__(self):
 #        return f"""{self.xml()}{self.osvg()}{self.defs()}{SVG.__str__(self)}{self.csvg()}"""
 
-class CardCodes(Card):
+class CardRules(Card):
     def __init__(self,params={}):
         Card.__init__(self,params)
+        self._params['tag']='g'
+
+    def bg(self):
+        return f"""<g id="{self.cardId()}-bg">
+<rect x="-3" y="-3" width="69" height="94" style="fill:#808080" />
+<rect x="-1.5" y="-1.5" width="66" height="91" rx="6.35" opacity="1.0" style="fill:none;stroke:#ffffff;stroke-width:9.0" />
+</g><!-- {self.cardId()}-bg -->
+"""
+
+    def typeset(self,words):
+        lines=words.split("<br/>")
+        ans = ""
+        dy = 0
+        for line in lines:
+            lh = 5
+            line=line.replace("\r","")
+            line=line.replace("\n","")
+            h1 = False
+            if line.startswith('<h1>'):
+                line = line.replace("<h1>",f"""<tspan style="fill:#000" font-size="5px" xml:space="preserve">""").replace("</h1>","""</tspan>""")
+                lh = max(5.5,lh)
+            line = line.replace("<sup>",f"""<tspan dy="-2" font-size="3px" font-style="italic" xml:space="preserve">""").replace("</sup>","""</tspan><tspan dy="2">&#8203;</tspan>""")
+            if "<b>" in line:
+                line = line.replace("<b>",f"""<tspan style="fill:#000" xml:space="preserve">""").replace("</b>","""</tspan>""")
+            if "<t2>" in line:
+                line = line.replace("<t2>",f"""<tspan style="font-family:Menlo;font-size:3.9px;fill:#fff" xml:space="preserve">""").replace("</t2>","""</tspan>""")
+                lh = max(4.5,lh)
+            if "<t1>" in line:                
+                line = line.replace("<t1>",f"""<tspan style="font-family:Menlo;font-size:6px;fill:#000" xml:space="preserve">""").replace("</t1>","""</tspan>""")
+                lh = max(6.0,lh)
+            ans = ans + f"""<text dy="{dy}" style="font-family:Helvetica;font-size:4px;fill:#fff" xml:space="preserve">{line}</text>"""
+            dy = dy + lh
+        return ans
+
+
+    def rotparts(self): return ""
+
+    def parts(self):
+        return f"""{self.bg()}
+<g transform="translate(54,4.5) rotate(90)">{self.rotparts()}</g>
+"""
+    def defs(self):
+        return f"""
+<defs>
+</defs>
+"""
+
+class CardCodes(CardRules):
+    def __init__(self,params={}):
+        CardRules.__init__(self,params)
         self._params['height']=6
         self._params['gap']=2
 
@@ -162,17 +212,7 @@ class CardCodes(Card):
             self._params['n'] = [30,20]
         elif self.number() == 41:
             self._params['n'] = [10,0]
-    def defs(self):
-        return f"""
-<defs>
-</defs>
-"""
-    def bg(self):
-        return f"""<g id="{self.cardId()}-bg">
-<rect x="-3" y="-3" width="69" height="94" style="fill:#808080" />
-<rect x="-1.5" y="-1.5" width="66" height="91" rx="6.35" opacity="1.0" style="fill:none;stroke:#ffffff;stroke-width:9.0" />
-</g><!-- {self.cardId()}-bg -->
-"""
+
     def line(self):
         height=self._params['height']                                 
         return f"""<g style="stroke:#fff;stroke-width:0.25">
@@ -268,11 +308,6 @@ class CardCodes(Card):
 <g transform="translate(-{height+gap},0)">{self.line()}</g>
 </g>
 """
-    def defs(self):
-        return f"""
-<defs>
-</defs>
-"""
     def parts(self):
         return f"""
 {self.bg()}
@@ -281,13 +316,12 @@ class CardCodes(Card):
 {self.glyphs()}
 """
 
-class CardDefs(Card):
+class CardDefs(CardRules):
     def __init__(self,params={}):
-        Card.__init__(self,params)
-        self._params['tag']='g'
+        CardRules.__init__(self,params)
 
     def shuffle(self):
-        words=f"""<h1>"SHUFFLE"</h1><br/>
+        words=f"""<h1>BACK FRONT SHUFFLE</h1><br/>
  <b>S1</b> Separate cards into two stacks:<br/>
    BACK is 1<sup>st</sup>,3<sup>rd</sup>,5<sup>th</sup>,...,35<sup>th</sup>,37<sup>th</sup>,39<sup>th</sup>.<br/>
    FRONT is 2<sup>nd</sup>,4<sup>th</sup>,6<sup>th</sup>,...,34<sup>th</sup>,36<sup>th</sup>,38<sup>th</sup>.<br/>
@@ -297,63 +331,20 @@ class CardDefs(Card):
         return self.typeset(words)
         
     def cut(self):
-        words=f"""<h1>"CUT ON CARD"</h1><br/>
+        words=f"""<h1>CUT DECK ON CARD</h1><br/>
  <b>C1</b> Move any cards above <b>card</b> to back.<br/>
 """
         return self.typeset(words)
-
-    def bg(self):
-        return f"""<g id="{self.cardId()}-bg">
-<rect x="-3" y="-3" width="69" height="94" style="fill:#808080" />
-<rect x="-1.5" y="-1.5" width="66" height="91" rx="6.35" opacity="1.0" style="fill:none;stroke:#ffffff;stroke-width:9.0" />
-</g><!-- {self.cardId()}-bg -->
-"""
-
-    def typeset(self,words):
-        lines=words.split("<br/>")
-        ans = ""
-        dy = 0
-        for line in lines:
-            lh = 5
-            line=line.replace("\r","")
-            line=line.replace("\n","")
-            h1 = False
-            if line.startswith('<h1>'):
-                line = line.replace("<h1>",f"""<tspan style="fill:#000" font-size="5px" >""").replace("</h1>","""</tspan>""")
-                lh = max(5.5,lh)
-            line = line.replace("<sup>",f"""<tspan dy="-2" font-size="3px" font-style="italic">""").replace("</sup>","""</tspan><tspan dy="2">&#8203;</tspan>""")
-            if "<b>" in line:
-                line = line.replace("<b>",f"""<tspan style="fill:#000">""").replace("</b>","""</tspan>""")
-            if "<t2>" in line:
-                line = line.replace("<t2>",f"""<tspan style="font-family:Menlo;
-font-size:3.9px;fill:#fff">""").replace("</t2>","""</tspan>""")
-                lh = max(4.5,lh)
-            if "<t1>" in line:                
-                line = line.replace("<t1>",f"""<tspan style="font-family:Menlo;font-size:6px;fill:#000">""").replace("</t1>","""</tspan>""")
-                lh = max(6.0,lh)
-            ans = ans + f"""<text dy="{dy}" style="font-family:Helvetica;font-size:4px;fill:#fff" xml:space="preserve">{line}</text>"""
-            dy = dy + lh
-        return ans
-
 
     def rotparts(self):
         return f"""
 <g transform="translate(0,0)">{self.shuffle()}</g>
 <g transform="translate(0,35)">{self.cut()}</g>
 """
-    def parts(self):
-        return f"""{self.bg()}
-<g transform="translate(54,4.5) rotate(90)">{self.rotparts()}</g>
-"""
-    def defs(self):
-        return f"""
-<defs>
-</defs>
-"""
 
-class CardTranslate(CardDefs):
+class CardTranslate(CardRules):
     def __init__(self,params={}):
-        CardDefs.__init__(self,params)
+        CardRules.__init__(self,params)
 
     def overview(self):
         words=f"""<h1>1 - TRANSLATE RULES</h1><br/>
@@ -374,46 +365,66 @@ class CardTranslate(CardDefs):
 <g transform="translate(0,0)">{self.overview()}</g>
 """
 
-class CardPacket(CardDefs):
+class CardPacket(CardRules):
     def __init__(self,params={}):
-        CardDefs.__init__(self,params)
+        CardRules.__init__(self,params)
 
     def overview(self):
         words=f"""<h1>2 - PACKET</h1><br/>
-<b>P1</b> Add 3 <t2>39</t2> cards last: <t2>39 39 39</t2>.<br/>
-<b>P2</b> Add 1 die-roll card before each card.<br/>
-<b>P3</b> Add 5 random cards first.<br/>
-<b>P4</b> Add die-roll cards so length is 5,10,15,...<br/>
+<b>P1</b> Add 5x <t2>39</t2> cards last: <t2>39 39 39 39 39</t2>.<br/>
+<b>P2</b> Add die-roll cards so length is 10,20,30,...<br/>
+<b>P3</b> Add die-roll cards before each card.<br/>
+<b>P4</b> Add 10 random cards first.<br/>
 <br/>
-<h1>EXAMPLE</h1> <t2>  </t2>/<t2>35</t2><br/>
- <t2>a3 b3 c3 d3 e3</t2><br/>
- <t2>a2 35 b2 39 c2 39 d2 39 a4 b4</t2><br/>
- <t2>ax..ex</t2> random die-roll cards from <b>Px</b>.<br/>
-"""
+<h1>EXAMPLE hi.</h1>/<t2>07 08 32</t2><br/>
+ <t2>P40 P41 P42 P43 P44 P45 P46 P47 P48 P49</t2><br/>
+ <t2>P30  07 P31  08 P32  32 P33  39 P34  39</t2><br/>
+ <t2>P35  39 P36  39 P37  39 P38 P20 P39 P21</t2><br/>
+ """
         tsw=self.typeset(words)
         thumbsUp=str(Glyph.build({'number':35,'shift':'none','lines':False}))
-        return f"""{tsw}<g transform="translate(15.5,20) scale(0.30)">{thumbsUp}</g>"""
+        return f"""{tsw}<g transform="translate(22,20) scale(0.30)">{thumbsUp}</g>"""
     
     def rotparts(self):
         return f"""
 <g transform="translate(0,0)">{self.overview()}</g>
 """
     
-class CardScramble(CardDefs):
+class CardCipher(CardRules):
     def __init__(self,params={}):
-        CardDefs.__init__(self,params)
+        CardRules.__init__(self,params)
+        self._item = 0
+        self._refs = {}
+
+    def title(self):
+        return '3 - ENCRYPT/SCRAMBLE' if self._params['mode'] == 'scramble' else '4 - DECRYPT/CLEAR'
+    def source(self):
+        return 'PLAIN' if self._params['mode'] == 'scramble' else 'SCRAMBLE'
+    def dest(self):
+        return 'SCRAMBLE' if self._params['mode'] == 'scramble' else 'PLAIN'
+    def prefix(self):
+        return 'ES' if self._params['mode'] == 'scramble' else 'DC'
+    def pm(self):
+        return 'plus' if self._params['mode'] == 'scramble' else 'minus'
+
+    def li(self,ref=None):
+        self._item = self._item+1
+        loc = f"""{self.prefix()}{self._item}"""
+        if ref != None:
+            self._refs[ref]=loc
+        return f"""<b>{loc}</b>"""
 
     def overview(self):
-        words=f"""<h1>3 - ENCRYPT/SCRAMBLE</h1><br/>
+        words=f"""<h1>{self.title()}</h1><br/>
 Start with key deck and repeat:<br/>
-<b>E1</b> <b>PLAIN</b> is next card in packet.<br/>
-<b>E2</b> <b>TAG</b> is <b>3<sup>rd</sup> - 1</b>.<br/>
-<b>E3</b> <b>NOISE</b> is <b>after TAG</b>.<br/>
-<b>E4</b> <b>SCRAMBLE</b> is <b>PLAIN + NOISE</b>.<br/>
-<b>E5</b> <b>CUT</b> is <b>1<sup>st</sup> + PLAIN</b>.<br/>
-<b>E6</b> <b>CUT ON TAG</b> card<br/>
-<b>E7</b> <b>SHUFFLE</b><br/>
-<b>E8</b> <b>CUT ON CUT</b> card<br/>
+{self.li()} <b>{self.source()}</b> is next card in packet.<br/>
+{self.li("tag")} <b>TAG</b> is 3<sup>rd</sup> card in deck minus 1.<br/>
+{self.li()} <b>NOISE</b> is card in deck after <b>TAG</b> card.<br/>
+{self.li()} <b>{self.dest()}</b> is <b>{self.source()}</b> {self.pm()} <b>NOISE</b>.<br/>
+{self.li("cut")} <b>CUT</b> is 1<sup>st</sup> card in deck plus PLAIN.<br/>
+{self.li()} Cut deck on <b>TAG</b> card (<b>{self._refs["tag"]}</b>)<br/>
+{self.li()} Back-front shuffle<br/>
+{self.li()} Cut deck on <b>CUT</b> card (<b>{self._refs["cut"]}</b>)<br/>
 """
         return self.typeset(words)
     
@@ -422,25 +433,12 @@ Start with key deck and repeat:<br/>
 <g transform="translate(0,0)">{self.overview()}</g>
 """
 
-class CardClear(CardDefs):
+class CardScramble(CardCipher):
     def __init__(self,params={}):
-        CardDefs.__init__(self,params)
+        CardCipher.__init__(self,params)
+        self._params['mode']='scramble'
 
-    def overview(self):
-        words=f"""<h1>4 - DECRYPT/CLEAR</h1><br/>
-Start with key deck and repeat:<br/>
-<b>D1</b> <b>SCRAMBLE</b> is next card in packet.<br/>
-<b>D2</b> <b>TAG</b> is <b>3<sup>rd</sup> - 1</b>.<br/>
-<b>D3</b> <b>NOISE</b> is <b>after TAG</b>.<br/>
-<b>D4</b> <b>PLAIN</b> is <b>SCRAMBLE - NOISE</b>.<br/>
-<b>D5</b> <b>CUT</b> is <b>1<sup>st</sup> + PLAIN</b>.<br/>
-<b>D6</b> <b>CUT ON TAG</b> card<br/>
-<b>D7</b> <b>SHUFFLE</b><br/>
-<b>D8</b> <b>CUT ON CUT</b> card<br/>
-"""
-        return self.typeset(words)
-    
-    def rotparts(self):
-        return f"""
-<g transform="translate(0,0)">{self.overview()}</g>
-"""
+class CardClear(CardCipher):
+    def __init__(self,params={}):
+        CardCipher.__init__(self,params)
+        self._params['mode']='clear'

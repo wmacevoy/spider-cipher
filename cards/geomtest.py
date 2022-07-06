@@ -5,6 +5,16 @@ import unittest,math
 from geom import Point
 
 class PointTest(unittest.TestCase):
+    def testCartesian(self):
+        p = Point.cartesian(3,4)
+        assert p.x == 3
+        assert p.y == 4
+    
+    def testPolar(self):
+        p = Point.polar(5,math.degrees(math.atan2(4,3)))
+        assert abs(p.x - 3) < 1e-10
+        assert abs(p.y - 4) < 1e-10
+
 
     def testGetX(self):
         assert Point.getX(Point(3,4)) == 3
