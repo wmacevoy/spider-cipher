@@ -373,19 +373,19 @@ class CardPacket(CardRules):
 
     def overview(self):
         words=f"""<h1>2 - PACKET</h1><br/>
-<b>P1</b> Add 5x <t2>39</t2> cards last: <t2>39 39 39 39 39</t2>.<br/>
-<b>P2</b> Add die-roll cards so length is 10,20,30,...<br/>
-<b>P3</b> Add die-roll cards before each card.<br/>
-<b>P4</b> Add 10 random cards first.<br/>
-<br/>
-<h1>EXAMPLE hi.</h1>/<t2>07 08 32</t2><br/>
- <t2><r>40</r> <r>41</r> <r>42</r> <r>43</r> <r>44</r> <r>45</r> <r>46</r> <r>47</r> <r>48</r> <r>49</r></t2><br/>
- <t2><r>30</r> 07 <r>31</r> 08 <r>32</r> <r>32</r> <r>33</r> <r>39</r> <r>34</r> <r>39</r></t2><br/>
- <t2>35 39 36 39 37 39 38 20 39 21</t2><br/>
+<b>P1</b> Add five <t2>39</t2> cards last: <t2>39 39 39 39 39</t2>.<br/>
+<b>P2</b> Add <r>2x</r> die-roll cards so length is 10,20,...<br/>
+<b>P3</b> Add <r>3x</r> die-roll cards before each card.<br/>
+<b>P4</b> Add 10 <r>4x</r> die-roll cards first.<br/>
+<h1>EXAMPLE: hi.</h1> <t2>(07 08 32)</t2><br/>
+ <t2><r>4a</r> <r>4b</r> <r>4c</r> <r>4d</r> <r>4e</r> <r>4f</r> <r>4g</r> <r>4h</r> <r>4i</r> <r>4j</r></t2><br/>
+ <t2><r>3a</r> 07 <r>3b</r> 08 <r>3c</r> 32 <r>3d</r> 39 <r>3e</r> 39</t2><br/>
+ <t2><r>3f</r> 39 <r>3g</r> 39 <r>3h</r> 39 <r>3i</r> <r>2a</r> <r>3j</r> <r>2b</r></t2><br/>
+ <r>#x</r>: random d4(0-3)/d10(0-9) cards.<br/>
  """
         tsw=self.typeset(words)
         thumbsUp=str(Glyph.build({'number':35,'shift':'none','lines':False}))
-        return f"""{tsw}<g transform="translate(22,20) scale(0.30)">{thumbsUp}</g>"""
+        return f"""{tsw}""" # <g transform="translate(22,20) scale(0.30)">{thumbsUp}</g>"""
     
     def rotparts(self):
         return f"""
@@ -423,7 +423,7 @@ Start with key deck and repeat:<br/>
 {self.li("tag")} <b>TAG</b> is 3<sup>rd</sup> card in deck minus 1.<br/>
 {self.li()} <b>NOISE</b> is card in deck after <b>TAG</b> card.<br/>
 {self.li()} <b>{self.dest()}</b> is <b>{self.source()}</b> {self.pm()} <b>NOISE</b>.<br/>
-{self.li("cut")} <b>CUT</b> is 1<sup>st</sup> card in deck plus PLAIN.<br/>
+{self.li("cut")} <b>CUT</b> is 1<sup>st</sup> card in deck plus <b>PLAIN</b>.<br/>
 {self.li()} Cut deck on <b>TAG</b> card (<b>{self._refs["tag"]}</b>)<br/>
 {self.li()} Back-front shuffle<br/>
 {self.li()} Cut deck on <b>CUT</b> card (<b>{self._refs["cut"]}</b>)<br/>

@@ -1,6 +1,6 @@
 #!/bin/bash
 ./deck.py
-for svg in card-[0-3][0-9].svg
+for svg in card-[0-9][0-9].svg
 do
   echo "$svg:"
   /Applications/Inkscape.app/Contents/MacOS/inkscape --export-type=png --export-dpi=600 $svg
