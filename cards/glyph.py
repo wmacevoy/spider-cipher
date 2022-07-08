@@ -88,7 +88,10 @@ class Glyph(SVG):
         if shift == 'none': return center
         if shift == 'up': return   center-14.0
         if shift == 'down': return center+14.0
-        if shift == 'center': return center        
+        if shift == 'center': return center
+    def osvg(self):
+        return f"""<svg width="16mm" height="16mm" viewBox="-8 -15 16 16" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">"""
+       
 
 class GlyphThumbGood(Glyph):
     def __init__(self,params={}):

@@ -1,32 +1,87 @@
 <!DOCTYPE html>
 <style>
-  table {
+  @font-face {
+    font-family: NotoEmoji;
+    src: url(NotoEmoji-VariableFont_wght.ttf);
+  }
+  
+  table.cards {
     border-collapse: collapse;
     table-layout: fixed;
   }
 
-  td {
+  table.cards td {
     position: relative;
     padding: 0;
     margin: 0;
     overflow: hidden;
   }
 
-  div {
+  table.cards td div {
     width: 82mm;
     height: 57mm;
   }
 
-  div.quarter {
+  table.cards td div.quarter {
     width: 41mm;
     height: 28.5mm;
   }
 
-  img {
+  table.cards img {
     position: absolute;
     top: -18.5mm;
     left: 6.5mm;
     transform: rotate(-90deg);
+  }
+
+  button > span {
+    height: 24px;
+    width: 24px;
+  }
+
+  button > span.good-face {
+    background: url(good-face.svg) no-repeat top left;
+    background-size: contain;
+    cursor: pointer;
+    display: inline-block;
+  }
+  button > span.good-thumb {
+    background: url(good-thumb.svg) no-repeat top left;
+    background-size: contain;
+    cursor: pointer;
+    display: inline-block;
+  }
+  button > span.good-heart {
+    background: url(good-heart.svg) no-repeat top left;
+    background-size: contain;
+    cursor: pointer;
+    display: inline-block;
+  }
+
+  button > span.bad-face {
+    background: url(bad-face.svg) no-repeat top left;
+    background-size: contain;
+    cursor: pointer;
+    display: inline-block;
+  }
+  button > span.bad-thumb {
+    background: url(bad-thumb.svg) no-repeat top left;
+    background-size: contain;
+    cursor: pointer;
+    display: inline-block;
+  }
+  button > span.bad-heart {
+    background: url(bad-heart.svg) no-repeat top left;
+    background-size: contain;
+    cursor: pointer;
+    display: inline-block;
+  }
+
+  textarea#words {
+    background-color: #888;
+    color: black;
+    font-family: NotoEmoji, Arial, Helvetica, sans-serif;  
+    font-size: 24px;   
   }
 </style>
 
@@ -35,7 +90,7 @@
 <h2>Step 1: Translate a message.</h2>
 <p>Messages start with English and must be converted (translated) into a sequence of card numbers (00-39) that represents the same message.</p>
 
-<table>
+<table class="cards">
   <tbody>
     <tr>
       <td >
@@ -63,9 +118,55 @@
     </tbody>
   </table>
 
+<p>To translate (local javascript only), type your message below.</p>  
+  <div>
+  <button onclick="return words.click('\u{1F604}')"><span class="good-face"></span></button>
+  <button onclick="return words.click('\u{1f622}')"><span class="bad-face"></span></button>
+  <button onclick="return words.click('\u{1f44d}')"><span class="good-thumb"></span></button>
+  <button onclick="return words.click('\u{1f44e}')"><span class="bad-thumb"></span></button>
+  <button onclick="return words.click('\u{1f90d}')"><span class="good-heart"></span></button>
+  <button onclick="return words.click('\u{1f494}')"><span class="bad-heart"></span></button>
+  </div>
+  <div><textarea cols="20" rows="5" id="words"></textarea></div>
+  
+<script>
+    class Words {
+        constructor() {
+          this._textarea = document.getElementById("words");
+          const me = this;
+          this._textarea.addEventListener('keypress',(event)=>this.key(event));
+        }
+        key(event) {
+          console.log('key code ' + event.keyCode);
+          if (event.keyCode == 32) {
+            this.click('\u{2610}');
+            event.preventDefault();
+          } else if (event.keyCode == 13) {
+            this.click('\u{21a9}');
+          }
+        }
+        click(symbol) {
+          console.log('click(' + symbol + ')')
+          // https://stackoverflow.com/questions/11076975/how-to-insert-text-into-the-textarea-at-the-current-cursor-position
+          const [start, end] = [this._textarea.selectionStart, this._textarea.selectionEnd];
+          this._textarea.setRangeText(symbol, start, end);
+          if (start === end) {
+            const cursor = start + symbol.length;
+            this._textarea.setSelectionRange(cursor,cursor);
+          }
+          this._textarea.focus();
+          return false;
+        }
+    };
+    const words = new Words();
+  </script>
+
+  <textarea id="cards"></textarea>
+
+
 <p> </p>
 
-<table>
+<table class="cards">
   <tbody>
     <tr>
       <td rowspan="2" colspan="2">
