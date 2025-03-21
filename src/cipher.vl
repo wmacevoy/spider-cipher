@@ -1,0 +1,185 @@
+`timescale 1ns / 1ps
+
+module Perm40ControllerWithMessage(
+    input  wire         clk,
+
+    // Operation selector
+    input  wire  [5:0]  op,
+
+    // A simple bus for single-word load/store
+    input wire [5:0] x_in;
+    output reg   [5:0]  x_out;
+);
+
+    //----------------------------------------------
+    // Internally store the permutation and its inverse
+    // p[i]   = which card is at position i
+    // p_inv[x] = which position holds card x
+    //----------------------------------------------
+    reg [5:0] p     [0:39];
+    reg [5:0] p_inv [0:39];
+
+    // A second array of size 40 for "message block"
+    // This also stores values in range 0..39.
+    reg [5:0] m     [0:39];
+    reg [5:0] x;
+    reg [5:0] y;
+
+    // For convenience
+    parameter DECK_SIZE = 40;
+
+    integer idx;
+
+    //----------------------------------------------
+    // Synchronous reset => identity permutation + clear m if you like
+    //----------------------------------------------
+    always @(posedge clk) begin
+            // Main operation dispatch
+            case (op_code)
+                6'd0: begin
+            // Set p[] to identity
+            for (idx = 0; idx < DECK_SIZE; idx = idx + 1) begin
+                p[idx]     <= idx[5:0]; 
+                p_inv[idx] <= idx[5:0]; 
+                m[idx]     <= 6'd0;
+            end
+            x <= 6'd0;
+        end
+                //------------------------------------------------
+                // 1) APPLY_B to p[]
+                //------------------------------------------------
+                6'd1: begin
+                    // no data dependence and fixed time
+
+                    // "Back-front shuffle" b() on p[]
+                    reg [5:0] p_new      [0:39];
+                    reg [5:0] p_inv_new  [0:39];
+                    integer j;
+                    for (j = 0; j < DECK_SIZE/2; j = j + 1) begin
+                        p_new[DECK_SIZE/2 + j ] = p[j >> 1];
+                        p_new[(DECK_SIZE/2-1) - j ] = p[(j >> 1)+1];
+                    end
+                    for (j = 0; j < DECK_SIZE; j = j + 1) begin
+                        integer k = p_inv[j]; // same steps for every data item
+                        integer odd = (k&1);
+                        integer even = (k&1) != 0;
+                        integer sign = even - odd;
+                        p_inv_new[j] = DECK_SIZE/2+ sign*((k >> 1)+odd);
+                    end
+                    for (j = 0; j < DECK_SIZE; j = j + 1) begin
+                        p[j]     <= p_new[j];
+                        p_inv[j] <= p_inv_new[j];
+                    end
+                end
+
+                //------------------------------------------------
+                // 2) APPLY_T_X to p[]: cut/rotate p by x
+                //------------------------------------------------
+                6'd2: begin
+                    // no data dependence and fixed time
+                    reg [5:0] p_new      [0:39];
+                    reg [5:0] p_inv_new  [0:39];
+                    integer j;
+                    for (j = 0; j < DECK_SIZE; j = j + 1) begin
+                        p_new[(j + x) % DECK_SIZE] = p[j];
+                        p_inv[j] = (p_inv[j] + x) % DECK_SIZE;
+                    end
+                    for (j = 0; j < DECK_SIZE; j = j + 1) begin
+                        p[j]     <= p_new[j];
+                        p_inv[j] <= p_inv_new[j];
+                    end
+                end
+
+                //------------------------------------------------
+                // 3) FIND_INDEX_OF_CARD => y = p_inv[x]
+                //------------------------------------------------
+                6'd3: begin
+                    y = p_inv[x];
+                end
+
+                //------------------------------------------------
+                // 4) GET_CARD_AT_INDEX => y = p[x]
+                //------------------------------------------------
+                6'd4: begin
+                    y <= p[x];
+                end
+
+                //------------------------------------------------
+                // 5) WRITE_P: p[0]<=x
+                //------------------------------------------------
+                6'd5: begin
+                    reg [5:0] p_inv_new  [0:39];
+                    p[0] <= x;
+
+                    // constant time update of p_inv
+                    for (j = 0; j < DECK_SIZE; ++j) {
+                        p_inv_new[j] <= (p_inv[j] & -( j != x));
+                    }
+                    for (j = 0; j < DECK_SIZE; j = j + 1) begin
+                        p_inv[j] <= p_inv_new[j];
+                    end
+                en
+
+                //------------------------------------------------
+                // 6) READ_P  y<=p[0]
+                //------------------------------------------------
+                6'd6: begin
+                    y <= p[0]
+                end
+
+                //------------------------------------------------
+                // 7) mod-40 ADD => y += x mod 40
+                //------------------------------------------------
+                6'd7: begin
+                    y <= (y + x) % DECK_SIZE;
+                end
+
+                //------------------------------------------------
+                // 8) mod-40 INCREMENT => y += 1 mod 40
+                //------------------------------------------------
+                6'd8: begin
+                    y <= (y + 1) % DECK_SIZE;
+                    m[0] <= y;
+                end
+
+                //------------------------------------------------
+                // 9) mod-40 NEGATE => y = 40 - y
+                //------------------------------------------------
+                6'd9: begin
+                    y <= (6'd40 - y) % DECK_SIZE;
+                end
+
+
+                //------------------------------------------------
+                // 
+                //------------------------------------------------
+                6'd13: begin
+                    m[0] <= (m[0] + x) % DECK_SIZE;
+                end
+
+                //------------------------------------------------
+                // 14) LOAD_M0:  m[0] = x_in
+                //------------------------------------------------
+                6'd14: begin
+                    m[0] <= x_in;
+                end
+
+                //------------------------------------------------
+                // 15) STORE_M0 => p_out = m[0]
+                //------------------------------------------------
+                6'd15: begin
+                    p_out <= m[0];
+                end
+
+                //------------------------------------------------
+                // Default => no operation
+                //------------------------------------------------
+                default: begin
+                    // no-op
+                end
+
+            endcase
+        end // if !rst
+    end // always @(posedge clk)
+
+endmodule
