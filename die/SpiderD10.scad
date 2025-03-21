@@ -109,30 +109,53 @@ The idea behind doing this pairwise is that if there are any balance issues intr
 
 n1=[0,4,4,8,1,9,3,7,3,7,2,6,2,6,0,8,1,5,5,9];
 n2=[0,4,4,8,1,9,3,7,3,7,2,6,2,6,0,8,1,5,5,9];
-labels = [
-        "0 ", /*  1  2  3 */
+digitLabels = [
+        "0", /*  1  2  3 */
         "1",  /*  5  0  4 */
         "2",  /*  7  0  6 */
         "3",  /*  9  0  8 */
         "4",  /*  1  9 12 */
         "5",  /* 11  6  1 */
-        "6.", /*  2  5 10 */
+        "6", /*  2  5 10 */
         "7",  /* 15  8  2 */
         "8",  /*  3  7 14 */
-        "9.", /* 13  4  3 */
-        "10", /*  6 16 15 */
-        "11", /* 16  5 12 */
-        "12", /*  4 17 11 */
-        "13", /* 17  9 14 */
-        "14", /*  8 18 13 */
-        "15", /* 18  7 10 */
-        "16", /* 10 11 19 */
-        "17", /* 12 13 19 */
-        "18", /* 14 15 19 */
-        "19"  /* 18 16 17 */
+        "9", /* 13  4  3 */
+        "0", /*  6 16 15 */
+        "1", /* 16  5 12 */
+        "2", /*  4 17 11 */
+        "3", /* 17  9 14 */
+        "4", /*  8 18 13 */
+        "5", /* 18  7 10 */
+        "6", /* 10 11 19 */
+        "7", /* 12 13 19 */
+        "8", /* 14 15 19 */
+        "9"  /* 18 16 17 */
+    ];
+
+faceLabels = [
+        "0", /*  1  2  3 */
+        "1",  /*  5  0  4 */
+        "2",  /*  7  0  6 */
+        "3",  /*  9  0  8 */
+        "0",  /*  1  9 12 */
+        "1",  /* 11  6  1 */
+        "2", /*  2  5 10 */
+        "3",  /* 15  8  2 */
+        "0",  /*  3  7 14 */
+        "1", /* 13  4  3 */
+        "2", /*  6 16 15 */
+        "3", /* 16  5 12 */
+        "0", /*  4 17 11 */
+        "1", /* 17  9 14 */
+        "2", /*  8 18 13 */
+        "3", /* 18  7 10 */
+        "0", /* 10 11 19 */
+        "1", /* 12 13 19 */
+        "2", /* 14 15 19 */
+        "3"  /* 18 16 17 */
     ];
 n=n1;
-numbers =[labels[n[0]],labels[n[1]],labels[n[2]],labels[n[3]],labels[n[4]],labels[n[5]],labels[n[6]],labels[n[7]],labels[n[8]],labels[n[9]],labels[n[10]],labels[n[11]],labels[n[12]],labels[n[13]],labels[n[14]],labels[n[15]],labels[n[16]],labels[n[17]],labels[n[18]],labels[n[19]]];
+// numbers =[labels[n[0]],labels[n[1]],labels[n[2]],labels[n[3]],labels[n[4]],labels[n[5]],labels[n[6]],labels[n[7]],labels[n[8]],labels[n[9]],labels[n[10]],labels[n[11]],labels[n[12]],labels[n[13]],labels[n[14]],labels[n[15]],labels[n[16]],labels[n[17]],labels[n[18]],labels[n[19]]];
 
 
 /*==============================================================================
@@ -250,7 +273,7 @@ difference()
                                 // Add the top number.
                                 translate([0, 0, flatsurfaceheightunscaled])
                                 {
-                                    bevelledtext(numbers[19 - i], font, fontsize, insetamount, letteringdepth);
+                                    bevelledtext(digitLabels[n[19 - i]], font, fontsize, insetamount, letteringdepth);
                                 }
                                 
                                 // Add the bottom number.
@@ -258,7 +281,7 @@ difference()
                                 {
                                     translate([0, 0, flatsurfaceheightunscaled])
                                     {
-                                        bevelledtext(numbers[i], font, fontsize, insetamount, letteringdepth);
+                                        bevelledtext(digitLabels[n[i]], font, fontsize, insetamount, letteringdepth);
                                     }
                                 }
                             }

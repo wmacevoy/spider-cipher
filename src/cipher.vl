@@ -1,5 +1,7 @@
 `timescale 1ns / 1ps
 
+// see spider cipher project on chat gpt for more details
+
 module Perm40ControllerWithMessage(
     input  wire         clk,
 
