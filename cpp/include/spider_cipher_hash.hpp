@@ -21,14 +21,15 @@ namespace spider_cipher {
 
   public: void digest(uint8_t len, uint8_t *tag) {
     deck<size,is_perfect> work(state);
-    for (uint8_t i = 0; i < size; ++i) {
-      work.update(i);
-    }
+    /* first pass */
     for (uint8_t i = 0; i < len; ++i) {
       tag[i] = work.scramble(size-1);
-      if (i < len - 1) {
-	work.update(size-1);
-      }
+      work.update(size-1);
+    }
+    /* second pass: mix with additional scramble to prevent cycle-based collisions */
+    for (uint8_t i = 0; i < len; ++i) {
+      tag[i] = (tag[i] + work.scramble(size-1)) % size;
+      work.update(size-1);
     }
   }
 

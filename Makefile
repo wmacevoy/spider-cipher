@@ -56,3 +56,28 @@ check : all
 expected : all
 	bin/spider_cipher_facts >expected/spider_cipher_facts.out
 	echo "message" >expected/message.out
+
+# -------------- LaTeX docs --------------
+ASY?=asy
+ASY_ENGINE?=pdflatex
+ASY_TEXPATH?=$(CURDIR)/tools
+ASYFLAGS?=-tex $(ASY_ENGINE)
+TECTONIC?=tectonic
+TEX_OUT?=build
+
+FIGURES=$(TEX_OUT)/figures/venn.pdf
+
+$(TEX_OUT)/figures/%.pdf: figures/%.asy
+	mkdir -p $(dir $@)
+	$(ASY) $(ASYFLAGS) -f pdf -o $@ $<
+
+$(TEX_OUT)/theory.pdf: theory.ltx $(FIGURES)
+	mkdir -p $(TEX_OUT)
+	$(TECTONIC) -X compile --outdir $(TEX_OUT) $<
+
+.PHONY: theory
+theory: $(TEX_OUT)/theory.pdf
+
+.PHONY: clean-theory
+clean-theory:
+	rm -rf $(TEX_OUT)

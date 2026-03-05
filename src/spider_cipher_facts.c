@@ -370,7 +370,7 @@ FACTS(Encode) {
     CIOArray plain;
     CIOArray encoded;
     CIOArray decoded;
-    CIOArrayConstU32Init(&plain,str,0,strLen);
+    CIOArrayU32Init(&plain,(uint32_t*)str,0,strLen,strLen,strLen);
     CIOArrayU8Init(&encoded,NULL,0,0,0,INT_MAX);
     CIOArrayU32Init(&decoded,NULL,0,0,0,INT_MAX);    
     encodeIO(&plain.base,&encoded.base);
@@ -397,7 +397,7 @@ FACTS(Envelope) {
     int strLen = wstrlen(str);
 
     CIOArray plain;
-    CIOArrayConstU32Init(&plain,str,0,strLen);
+    CIOArrayU32Init(&plain,(uint32_t*)str,0,strLen,strLen,strLen);
     CIONotRand nrcg;
     CIONotRandInit(&nrcg);
     Deck deck;

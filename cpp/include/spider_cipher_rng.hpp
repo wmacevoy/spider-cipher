@@ -1,8 +1,9 @@
 #ifndef SPIDER_CIPHER_RNG_HPP
 #define SPIDER_CIPHER_RNG_HPP
 
-#include <spider_cipher_core.hpp>
 #include <functional>
+#include <random>
+#include <spider_cipher_core.hpp>
 
 namespace spider_cipher {
   
@@ -20,8 +21,19 @@ namespace spider_cipher {
       pool.update(base());
       pool.update(base());
       return scrambled;
-    }
+  }
+  };
 
+  
+  template <uint8_t _size = 40>
+  uint8_t os_base_rng() {
+    static std::random_device urandom;
+    return urandom() % _size;
+  }
+  
+  template <uint8_t _size = 40, bool _is_perfect = false>
+  class os_rng : public rng<_size,_is_perfect> {
+  public: os_rng() : rng<_size,_is_perfect>(std::function<uint8_t()>(os_base_rng<_size>)) {}
   };
 
 }

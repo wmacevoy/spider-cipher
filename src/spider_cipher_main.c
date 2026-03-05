@@ -11,9 +11,9 @@
 void DeckKey(Deck deck, const char *key) {
   CIOArray u8Key;
   int keylen = strlen(key);
-  CIOArrayConstU8Init(&u8Key,(uint8_t*)key,0,keylen);
+  CIOArrayU8Init(&u8Key,(uint8_t*)key,0,keylen,keylen,keylen);
   CIOUTF8 u32Key;
-  CIOUTF8Init(&u32Key,&u8Key.base);
+  CIOUTF8Init(&u32Key,&u8Key.base,0);
   
   CIO null;
   CIOInit(&null);
@@ -35,9 +35,9 @@ int main(int argc, char *argv[]) {
   CIOUTF8  cioU32Stdout;
 
   CIOFILEInit(&cioStdin,stdin,0);
-  CIOUTF8Init(&cioU32Stdin,&cioStdin.base);
+  CIOUTF8Init(&cioU32Stdin,&cioStdin.base,0);
   CIOFILEInit(&cioStdout,stdout,0);
-  CIOUTF8Init(&cioU32Stdout,&cioStdout.base);
+  CIOUTF8Init(&cioU32Stdout,&cioStdout.base,0);
 
   int mode = '#';
   const char *key = NULL;
@@ -88,9 +88,9 @@ int main(int argc, char *argv[]) {
 	CIO *wcIn = NULL;
 
 	CIOArray memPlain;
-	CIOArrayConstU8Init(&memPlain,(uint8_t*)plain,0,strlen(plain));
+	CIOArrayU8Init(&memPlain,(uint8_t*)plain,0,strlen(plain),strlen(plain),strlen(plain));
 	CIOUTF8 memU32Plain;
-	CIOUTF8Init(&memU32Plain,&memPlain.base);
+	CIOUTF8Init(&memU32Plain,&memPlain.base,0);
 	
 	if (strcmp(plain,"-") != 0) {
 	  wcIn=&memU32Plain.base;
@@ -127,9 +127,9 @@ int main(int argc, char *argv[]) {
 	CIO *wcIn = NULL;
 
 	CIOArray memCipher;
-	CIOArrayConstU8Init(&memCipher,(uint8_t*)cipher,0,strlen(cipher));
+	CIOArrayU8Init(&memCipher,(uint8_t*)cipher,0,strlen(cipher),strlen(cipher),strlen(cipher));
 	CIOUTF8 memU32Cipher;
-	CIOUTF8Init(&memU32Cipher,&memCipher.base);
+	CIOUTF8Init(&memU32Cipher,&memCipher.base,0);
 	if (strcmp(cipher,"-") != 0) {
 	  wcIn=&memU32Cipher.base;
 	} else {
