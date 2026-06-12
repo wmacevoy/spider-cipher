@@ -1,0 +1,351 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{book}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\usepackage{graphicx}
+
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={Perfect Spider Cipher Theory},
+  hidelinks,
+  pdfcreator={LaTeX}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[paperwidth=5in,paperheight=8in,margin=0.5in]{geometry}
+\usepackage[normalem]{ulem}
+% Avoid problems with \sout in headers with hyperref
+\pdfstringdefDisableCommands{\renewcommand{\sout}{}}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+
+\title{\protect\hypertarget{perfect-spider-cipher-theory}{}{}Perfect
+Spider Cipher Theory}
+\author{}
+\date{}
+
+\begin{document}
+\frontmatter
+\maketitle
+
+\mainmatter
+
+This is a companion to \emph{Spider Cipher Theory} and uses its
+notation: \(Z_{40}\) is the integers modulo \(40\), \(S_{40}\) the
+arrangements of \(Z_{40}\), \(e = [ 0,1,...,39]\) the
+sorted deck, \(t^{c}\) the cut at index \(c\), \(b_{i,j}\) the swap of
+the cards at indexes \(i\) and \(j\), and {[}count down by odds, then up
+by evens{]}
+
+\(s = [ 39,37,35,33,31,...,9,7,5,3,1,0,2,4,6,8,...30,32,34,36,38]\)
+
+the back-front shuffle. Composition is read right to left, so
+\(s \circ t^{c}\) is a cut at \(c\) followed by a back-front shuffle.
+Cycle notation \((a\ b\ c)\) means the permutation that sends \(a\) to
+\(b\), \(b\) to \(c\), \(c\) to \(a\), and fixes everything else.
+
+Facts written as FACTS(Name) are verified by the computer test suite in
+\texttt{src/spider\_cipher\_facts.c}; each one re-checks on every build.
+
+\hypertarget{the-perfect-shuffle}{%
+\chapter{The Perfect Shuffle}\label{the-perfect-shuffle}}
+
+The plain spider pseudo-shuffle has a short cycle:
+
+\((s \circ t^{2})^{9} = e\)
+
+Nine shuffles at cut index \(2\) return the deck exactly to where it
+started, as demonstrated in FACTS(IReachable). Over all cut indexes, the
+first return to a cut of the starting deck takes at least \(9\) steps,
+and \(9\) is achieved.
+
+Nine is far below what counting permits. The number of distinct
+shuffle words of length at most \(30\) is
+\((40^{31} - 1)/39 > 40! = \# S_{40}\), while for length at most
+\(29\) it is less than \(40!\). So collisions among shuffle words can
+not be forced before length \(30\), and a cycle floor of \(30\) is the
+best that any family of \(40\) single-card-swap variants of this shape
+could hope for.
+
+The perfect spider shuffle adds one swap after the back-front shuffle:
+
+\(q = b_{0,19} \circ s\)
+
+The perfect spider graph has the same vertices \(V = S_{40}\) and, for
+each vertex \(v\), the \(40\) outgoing edges
+\(v \rightarrow q \circ t^{c} \circ v\).
+
+With this one change the cycle floor rises from \(9\) to \(30\), one
+step from the counting bound: for every cut index \(c\), the first
+return of \((q \circ t^{c})^{k}\) to any cut of the starting deck takes
+at least \(30\) steps. This is verified for all \(40\) cut indexes in
+FACTS(Cycles), and the distinctness of all short shuffle words is
+verified to depth \(6\) in FACTS(PerfectNeighborhood6).
+
+\hypertarget{the-human-form}{%
+\section{The Human Form}\label{the-human-form}}
+
+Swapping the cards at indexes \(0\) and \(19\) after the shuffle sounds
+like a job for a machine: nobody wants to count \(19\) cards into a
+deck, twice, without error. But the same permutation has a second form:
+
+\(b_{0,19} \circ s = s \circ b_{1,39}\)
+
+To see this, read the placement off the shuffle \(s\): the back-front
+shuffle delivers the card at index \(1\) (the second card) to index
+\(19\), and the card at index \(39\) (the bottom card) to index \(0\).
+So swapping indexes \(0\) and \(19\) after the shuffle is the same as
+swapping indexes \(1\) and \(39\) before it. This identity is verified
+on evolving decks for every cut index in FACTS(PerfectHumanForm).
+
+The perfect shuffle is therefore the procedure:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \begin{quote}
+  Cut the deck.
+  \end{quote}
+\item
+  \begin{quote}
+  Swap the second card with the bottom card.
+  \end{quote}
+\item
+  \begin{quote}
+  Back-front shuffle.
+  \end{quote}
+\end{enumerate}
+
+No counting to \(19\) is ever required. The second card and the bottom
+card are the two easiest cards to locate in a deck after the top card
+itself.
+
+\hypertarget{perfect-spider-graph-is-vertex-invariant}{%
+\chapter{Perfect Spider Graph is Vertex
+Invariant}\label{perfect-spider-graph-is-vertex-invariant}}
+
+The proof is the same as for the plain spider graph. Every edge composes
+a fixed permutation \(q \circ t^{c}\) on the left, so relabeling all the
+vertices \(x\) by composing on the right, \(x \rightarrow x \circ (w^{- 1} \circ v)\),
+makes vertex \(w\) look like vertex \(v\) and relabels all the edges
+consistently. Nothing in the argument depends on which fixed
+permutations the edges use.
+
+As before, this means no amount of observing movement through the graph
+reveals the starting point, and the structure of the graph can be
+studied from any single vertex.
+
+\hypertarget{perfect-spider-graph-is-fully-connected}{%
+\chapter{Perfect Spider Graph is Fully
+Connected}\label{perfect-spider-graph-is-fully-connected}}
+
+Every vertex reaches every other vertex:
+\(B_{\infty}(v) = S_{40}\). So restricting play to the reachable set
+costs nothing; the active state space really is \(40!\).
+
+The proof follows the same plan as for the plain spider graph, with
+computer-verified waypoints. The plain proof leaned on the \(9\)-cycle
+\((s \circ t^{2})^{9} = e\) at every turn -- the very cycle the perfect
+shuffle exists to destroy -- so the perfect proof must fish with
+different bait: it rides \emph{plain} cycles with \emph{perfect}
+shuffles and keeps what washes back.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \begin{quote}
+  By vertex invariance we need only show \(B_{\infty}(e) = S_{40}\).
+  A path \(e \rightarrow \cdot \cdot \cdot \rightarrow v\) means
+  \(v = (q \circ t^{c_{p - 1}}) \circ \cdot \cdot \cdot \circ (q \circ t^{c_{0}})\)
+  for some sequence of cuts, so each reachable \(v\) is shorthand for a
+  sequence of cuts usable in any path.
+  \end{quote}
+\item
+  \begin{quote}
+  \(e\) and \(q^{- 1}\) are reachable. Choosing \(c = 0\) repeatedly
+  reaches \(q^{k}\) for all \(k > 0\), and \(q\) has order \(36\):
+  \(q^{36} = e\). So \(e\) is reachable as a cycle and
+  \(q^{- 1} = q^{35}\) is reachable.
+  \end{quote}
+\item
+  \begin{quote}
+  \(e\) reaches every cut: \(t^{a} = q^{35} \circ (q \circ t^{a})\).
+  In words: take one step at cut \(a\), then \(35\) steps at cut
+  \(0\); the shuffle-and-swap parts cancel and only the cut survives.
+  Verified for all \(40\) cuts in FACTS(PerfectCuts).
+  \end{quote}
+\item
+  \begin{quote}
+  Trail fishing. For any swap \(b\) and any permutation \(w\),
+  \(b \circ w = w \circ (w^{- 1} \circ b \circ w)\), and
+  \(w^{- 1} \circ b \circ w\) is again a swap. So running the letters of
+  a \emph{plain} cycle with \emph{perfect} shuffles pushes all the
+  \(b_{0,19}\) factors through to one side, where they collect as a
+  product of swaps -- the plain part vanishes entirely. The plain
+  spider fact \((s \circ t^{39})^{24} = e\) (FACTS(InverseCycles))
+  therefore lifts to a pure product of \(24\) swaps:
+
+  \(f = (q \circ t^{39})^{24} = (4\ 38\ 17\ 19\ 29\ 30\ 35)\)
+
+  a \(7\)-cycle, verified in FACTS(PerfectFish).
+  \end{quote}
+\item
+  \begin{quote}
+  \(e\) reaches a \(3\)-cycle. The translate
+  \(\bar{f} = t^{- 1} \circ f \circ t\) is reachable (cuts, then the
+  fish, then cuts), and its support meets the support of \(f\) in
+  exactly one card. Two cycles that share exactly one point have a
+  \(3\)-cycle commutator:
+
+  \(g = \bar{f}^{6} \circ f^{6} \circ \bar{f} \circ f = (30\ 35\ 31)\)
+
+  using \(f^{6} = f^{- 1}\) since \(f\) is a \(7\)-cycle. Verified in
+  FACTS(Perfect3Cycle).
+  \end{quote}
+\item
+  \begin{quote}
+  \(e\) reaches \(a = (0\ 1\ 2)\). Conjugating by reachable elements
+  keeps things reachable, and with \(H = t^{- 1} \circ q^{- 1} \circ t^{2} \circ q^{2}\),
+
+  \(a = H \circ g \circ H^{- 1} = (0\ 1\ 2)\)
+
+  which is a single composition anyone can verify by hand or machine.
+  \end{quote}
+\item
+  \begin{quote}
+  \(e\) reaches every consecutive \(3\)-cycle
+  \(a_{i} = t^{- i} \circ a \circ t^{i} = (i\ \ i \oplus 1\ \ i \oplus 2)\),
+  where \(\oplus\) is \(+\) modulo \(40\).
+  \end{quote}
+\item
+  \begin{quote}
+  \(e\) reaches the adjacent swap \(b_{0,1}\). The odd cut \(t\)
+  composed with \(19\) consecutive \(3\)-cycles is exactly one swap:
+
+  \(b_{0,1} = t \circ a_{2}^{- 1} \circ a_{4}^{- 1} \circ \cdot \cdot \cdot \circ a_{38}^{- 1}\)
+
+  where \(a_{i}^{- 1} = a_{i}^{2}\) is reachable. (Equivalently:
+  \(b_{0,1} \circ t^{- 1}\) is a \(39\)-cycle, and an odd-length cycle
+  is a chain of \(3\)-cycles through every other point.)
+  \end{quote}
+\item
+  \begin{quote}
+  \(e\) reaches every swap, exactly as in the plain proof:
+  \(b_{i,i \oplus 1} = t^{- i} \circ b_{0,1} \circ t^{i}\); then
+  \(b_{0,j} = b_{j - 1,j} \circ b_{0,j - 1} \circ b_{j - 1,j}\) by
+  induction; then \(b_{i,j} = t^{- i} \circ b_{0,j - i} \circ t^{i}\).
+  \end{quote}
+\item
+  \begin{quote}
+  \(e\) reaches \(S_{40}\). Any arrangement can be sorted by swaps;
+  applying the inverse swaps to \(e\) produces it.
+  \end{quote}
+\end{enumerate}
+
+As an independent cross-check, a stabilizer-chain (Schreier--Sims)
+computation of the group generated by
+\(\{ q \circ t^{c}\}\) gives order exactly \(40!\).
+
+\hypertarget{why-not-swap-first-and-last}{%
+\chapter{Why Not Swap First and
+Last}\label{why-not-swap-first-and-last}}
+
+There is a neighboring variant that looks just as good and is easier to
+guess: swap the \emph{first and last} cards after the shuffle,
+
+\(\hat{q} = b_{0,39} \circ s = s \circ b_{38,39}\)
+
+which in human form is ``swap the bottom two cards, then shuffle'' --
+one card away from the perfect shuffle's ``swap the second card with the
+bottom card.'' It was implemented at one point in this project. It is
+wrong, and this chapter records why, so it is not explored again.
+
+\hypertarget{six-shuffles-return-the-deck}{%
+\section{Six shuffles return the
+deck}\label{six-shuffles-return-the-deck}}
+
+\((\hat{q} \circ t^{4})^{6} = e\)
+
+Six shuffles at cut index \(4\) return the deck \emph{exactly} to where
+it started. The cycle floor is \(6\): worse than the plain spider's
+\(9\), and a factor of five below the perfect shuffle's \(30\).
+Verified in FACTS(FirstLastCycleFloor).
+
+The floor matters because returning to (a cut of) the starting deck
+repeats pad structure. The security story depends on the deck making
+long excursions through \(S_{40}\) between any such coincidences; the
+counting bound permits excursions of length \(30\), the perfect shuffle
+achieves \(30\), and the first/last swap squanders the entire margin.
+
+\hypertarget{nine-shuffles-are-one-swap}{%
+\section{Nine shuffles are one
+swap}\label{nine-shuffles-are-one-swap}}
+
+\((\hat{q} \circ t^{2})^{9} = b_{1,39}\)
+
+Nine shuffles at cut index \(2\) amount to swapping two cards and
+changing nothing else, as verified in FACTS(FirstLastFish). A cipher
+step is supposed to scramble; here nine of them barely stir the deck.
+
+The mechanism is the trail fishing of the connectivity proof, working
+against the variant. The plain pseudo-shuffle \(s \circ t^{2}\) has
+orbits of sizes \(9,9,9,9,3\) with the fixed card \(38\), and its lone
+\(3\)-orbit is \(\{ 0,1,39\}\). The trail of a swap rides
+the orbits of its two endpoints. The first/last swap \(b_{0,39}\) has
+\emph{both} endpoints inside the \(3\)-orbit, so its nine-swap trail
+wraps a three-card track and collapses to a single swap. The perfect
+swap \(b_{0,19}\) places only one endpoint there -- index \(19\) rides
+a \(9\)-orbit -- so its trails spread across the deck instead of
+collapsing.
+
+\hypertarget{the-record}{%
+\section{The Record}\label{the-record}}
+
+The first/last graph is, for what it is worth, still fully connected:
+its nine-shuffle swap \(b_{1,39}\) is itself the first rung of a
+complete swap ladder, verified in FACTS(FirstLastCuts),
+FACTS(FirstLastAdjacent), and FACTS(FirstLastSwaps). Connectivity is its
+only virtue.
+
+The lesson, recorded so this ground is not plowed twice: the cycle
+floor is the gate. Any candidate variant of the spider shuffle must
+first demonstrate its floor over all \(40\) cut indexes -- as
+FACTS(Cycles) does for the perfect shuffle and
+FACTS(FirstLastCycleFloor) does for this rejected one -- before any
+other property earns attention. A variant that fails the gate fails,
+no matter how natural the procedure feels in the hands.
+
+\backmatter
+\end{document}

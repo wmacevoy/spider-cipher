@@ -1,4 +1,4 @@
-CSTD?=-std=c11  -D_POSIX_C_SOURCE=199309L
+CSTD?=-std=c11 -D_POSIX_C_SOURCE=200809L
 CDBG?=-g
 COPT?=-O2
 CINC?=-Iinclude -I../utf8/include -I../cio/include -I../facts/include
@@ -77,6 +77,13 @@ $(TEX_OUT)/theory.pdf: theory.ltx $(FIGURES)
 
 .PHONY: theory
 theory: $(TEX_OUT)/theory.pdf
+
+$(TEX_OUT)/perfect-theory.pdf: perfect-theory.ltx
+	mkdir -p $(TEX_OUT)
+	$(TECTONIC) -X compile --outdir $(TEX_OUT) $<
+
+.PHONY: perfect-theory
+perfect-theory: $(TEX_OUT)/perfect-theory.pdf
 
 .PHONY: clean-theory
 clean-theory:
