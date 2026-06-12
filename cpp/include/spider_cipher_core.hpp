@@ -91,9 +91,10 @@ namespace spider_cipher {
       cut_to(cut_at,work);
       work.back_front_shuffle_to(*this);
       if (is_perfect) {
-	// perfect spider shuffle swaps first and last cards
-	cut_card = cards[size-1];
-	cards[size-1]=cards[0];
+	// perfect spider shuffle swaps shuffled positions 0 and size/2-1
+	// (the same as swapping the 2nd and bottom cards before the shuffle)
+	cut_card = cards[size/2-1];
+	cards[size/2-1]=cards[0];
 	cards[0]=cut_card;
       }
       cut_card=0;

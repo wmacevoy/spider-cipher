@@ -39,44 +39,62 @@ src/spider_cipher_facts.c 485: I facts check started
 src/spider_cipher_facts.c 485: I facts check ended
 src/spider_cipher_facts.c 492: IReachable facts check started
 src/spider_cipher_facts.c 492: IReachable facts check ended
-src/spider_cipher_facts.c 513: Q facts check started
-src/spider_cipher_facts.c 513: Q facts check ended
-src/spider_cipher_facts.c 525: QReachable facts check started
-src/spider_cipher_facts.c 525: QReachable facts check ended
-src/spider_cipher_facts.c 549: T facts check started
-src/spider_cipher_facts.c 549: T facts check ended
-src/spider_cipher_facts.c 561: TReachable facts check started
-src/spider_cipher_facts.c 561: TReachable facts check ended
-src/spider_cipher_facts.c 587: R facts check started
-src/spider_cipher_facts.c 587: R facts check ended
-src/spider_cipher_facts.c 597: RReachable facts check started
-src/spider_cipher_facts.c 597: RReachable facts check ended
-src/spider_cipher_facts.c 623: X facts check started
-src/spider_cipher_facts.c 623: X facts check ended
-src/spider_cipher_facts.c 632: XReachable facts check started
-src/spider_cipher_facts.c 632: XReachable facts check ended
-src/spider_cipher_facts.c 654: B facts check started
-src/spider_cipher_facts.c 654: B facts check ended
-src/spider_cipher_facts.c 668: BReachable facts check started
-src/spider_cipher_facts.c 668: BReachable facts check ended
-src/spider_cipher_facts.c 698: S facts check started
-src/spider_cipher_facts.c 698: S facts check ended
-src/spider_cipher_facts.c 714: SReachable facts check started
-src/spider_cipher_facts.c 714: SReachable facts check ended
-src/spider_cipher_facts.c 769: Cycles facts check started
-src/spider_cipher_facts.c 769: Cycles facts check ended
-src/spider_cipher_facts.c 809: InverseCycles facts check started
-src/spider_cipher_facts.c 809: InverseCycles facts check ended
-src/spider_cipher_facts.c 885: Z facts check started
-src/spider_cipher_facts.c 885: Z facts check ended
-src/spider_cipher_facts.c 1139: DeckSet facts check started
-src/spider_cipher_facts.c 1139: DeckSet facts check ended
-src/spider_cipher_facts.c 1309: Neighborhood4 facts check started
-src/spider_cipher_facts.c 1309: Neighborhood4 facts check ended
-src/spider_cipher_facts.c 1316: PerfectNeighborhood4 facts check started
-src/spider_cipher_facts.c 1316: PerfectNeighborhood4 facts check ended
-src/spider_cipher_facts.c 1325: Neighborhood6 facts check [1;31mexcluded[0m.
-src/spider_cipher_facts.c 1334: PerfectNeighborhood6 facts check [1;31mexcluded[0m.
+src/spider_cipher_facts.c 515: Q facts check started
+src/spider_cipher_facts.c 515: Q facts check ended
+src/spider_cipher_facts.c 527: QReachable facts check started
+src/spider_cipher_facts.c 527: QReachable facts check ended
+src/spider_cipher_facts.c 551: T facts check started
+src/spider_cipher_facts.c 551: T facts check ended
+src/spider_cipher_facts.c 563: TReachable facts check started
+src/spider_cipher_facts.c 563: TReachable facts check ended
+src/spider_cipher_facts.c 589: R facts check started
+src/spider_cipher_facts.c 589: R facts check ended
+src/spider_cipher_facts.c 599: RReachable facts check started
+src/spider_cipher_facts.c 599: RReachable facts check ended
+src/spider_cipher_facts.c 625: X facts check started
+src/spider_cipher_facts.c 625: X facts check ended
+src/spider_cipher_facts.c 634: XReachable facts check started
+src/spider_cipher_facts.c 634: XReachable facts check ended
+src/spider_cipher_facts.c 656: B facts check started
+src/spider_cipher_facts.c 656: B facts check ended
+src/spider_cipher_facts.c 670: BReachable facts check started
+src/spider_cipher_facts.c 670: BReachable facts check ended
+src/spider_cipher_facts.c 700: S facts check started
+src/spider_cipher_facts.c 700: S facts check ended
+src/spider_cipher_facts.c 716: SReachable facts check started
+src/spider_cipher_facts.c 716: SReachable facts check ended
+src/spider_cipher_facts.c 771: Cycles facts check started
+src/spider_cipher_facts.c 771: Cycles facts check ended
+src/spider_cipher_facts.c 811: InverseCycles facts check started
+src/spider_cipher_facts.c 811: InverseCycles facts check ended
+src/spider_cipher_facts.c 875: PerfectHumanForm facts check started
+src/spider_cipher_facts.c 875: PerfectHumanForm facts check ended
+src/spider_cipher_facts.c 896: PerfectCuts facts check started
+src/spider_cipher_facts.c 896: PerfectCuts facts check ended
+src/spider_cipher_facts.c 913: PerfectFish facts check started
+src/spider_cipher_facts.c 913: PerfectFish facts check ended
+src/spider_cipher_facts.c 930: Perfect3Cycle facts check started
+src/spider_cipher_facts.c 930: Perfect3Cycle facts check ended
+src/spider_cipher_facts.c 1052: FirstLastFish facts check started
+src/spider_cipher_facts.c 1052: FirstLastFish facts check ended
+src/spider_cipher_facts.c 1061: FirstLastCuts facts check started
+src/spider_cipher_facts.c 1061: FirstLastCuts facts check ended
+src/spider_cipher_facts.c 1073: FirstLastAdjacent facts check started
+src/spider_cipher_facts.c 1073: FirstLastAdjacent facts check ended
+src/spider_cipher_facts.c 1085: FirstLastSwaps facts check started
+src/spider_cipher_facts.c 1085: FirstLastSwaps facts check ended
+src/spider_cipher_facts.c 1106: FirstLastCycleFloor facts check started
+src/spider_cipher_facts.c 1106: FirstLastCycleFloor facts check ended
+src/spider_cipher_facts.c 1191: Z facts check started
+src/spider_cipher_facts.c 1191: Z facts check ended
+src/spider_cipher_facts.c 1445: DeckSet facts check started
+src/spider_cipher_facts.c 1445: DeckSet facts check ended
+src/spider_cipher_facts.c 1615: Neighborhood4 facts check started
+src/spider_cipher_facts.c 1615: Neighborhood4 facts check ended
+src/spider_cipher_facts.c 1622: PerfectNeighborhood4 facts check started
+src/spider_cipher_facts.c 1622: PerfectNeighborhood4 facts check ended
+src/spider_cipher_facts.c 1631: Neighborhood6 facts check [1;31mexcluded[0m.
+src/spider_cipher_facts.c 1640: PerfectNeighborhood6 facts check [1;31mexcluded[0m.
 facts summary.
 facts check FaceAndSuitNo [1;32mpassed[0m
 facts check FaceFromNo [1;32mpassed[0m
@@ -112,6 +130,15 @@ facts check S [1;32mpassed[0m
 facts check SReachable [1;32mpassed[0m
 facts check Cycles [1;32mpassed[0m
 facts check InverseCycles [1;32mpassed[0m
+facts check PerfectHumanForm [1;32mpassed[0m
+facts check PerfectCuts [1;32mpassed[0m
+facts check PerfectFish [1;32mpassed[0m
+facts check Perfect3Cycle [1;32mpassed[0m
+facts check FirstLastFish [1;32mpassed[0m
+facts check FirstLastCuts [1;32mpassed[0m
+facts check FirstLastAdjacent [1;32mpassed[0m
+facts check FirstLastSwaps [1;32mpassed[0m
+facts check FirstLastCycleFloor [1;32mpassed[0m
 facts check Z [1;32mpassed[0m
 facts check DeckSet [1;32mpassed[0m
 facts check Neighborhood4 [1;32mpassed[0m
@@ -119,4 +146,4 @@ facts check PerfectNeighborhood4 [1;32mpassed[0m
 facts check RandStats [1;31mexcluded[0m
 facts check Neighborhood6 [1;31mexcluded[0m
 facts check PerfectNeighborhood6 [1;31mexcluded[0m
-320004663 (100.0%) truths and 0 (0.0%) fictions checked.
+320016185 (100.0%) truths and 0 (0.0%) fictions checked.

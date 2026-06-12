@@ -40,7 +40,9 @@ struct deck : std::array < uint8_t, size > {
       to[size - 1] = (*this)[size - 1];
     }
     if (is_perfect) {
-      to.swap(0,size-1);
+      // swap shuffled positions 0 and size/2-1 (the human form: swap the
+      // 2nd and bottom cards before the shuffle)
+      to.swap(0,size/2-1);
     }
   }
 
