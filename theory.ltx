@@ -1,0 +1,2073 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{book}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\usepackage{graphicx}
+
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={Spider Cipher Theoretical Background},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[paperwidth=5in,paperheight=8in,margin=0.5in]{geometry}
+\usepackage[normalem]{ulem}
+% Avoid problems with \sout in headers with hyperref
+\pdfstringdefDisableCommands{\renewcommand{\sout}{}}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+
+\title{\protect\hypertarget{spider-cipher-theory}{}{}Spider Cipher Theory}
+\author{}
+\date{}
+
+\begin{document}
+\frontmatter
+\maketitle
+
+\mainmatter
+You don't need to understand these things to use spider cipher.
+
+You do need to trust that the cipher is secure and this is the
+background to understand why. The arguments here are based on proofs,
+sometimes assisted by a computer program.
+
+A person with a college background in mathematics or theoretical
+computer science should be able to understand and validate the ideas
+here.
+
+\hypertarget{facts}{%
+\chapter{Facts}\label{facts}}
+
+Carefully stated facts are usually like
+\begin{quote}
+If these assumptions are true, then these ideas are true.    
+\end{quote}
+
+Facts might seem simple, but they are not. It is not possible to know
+everything, and we live in a world of deception, misunderstandings, and
+incomplete information. So a good practical goal is to be wise about
+facts.
+
+The most careful curators of facts are mathematicians. What is nice
+about mathematics is, even if you do not like or trust or know the
+people who have built up a body of facts, they can be verified by anyone
+with the background to understand the arguments, called proofs, and they
+will be facts in any case.
+
+Of course, mathematicians are fallible: what are thought of as
+proofs are sometimes later determined to be incorrect. But the public
+review of facts and their proofs makes the core body of facts, those
+that have been used for decades or even centuries, very likely to be
+true.
+
+For some proofs, following repetitive patterns is impossibly hard for
+humans. Using computer programs can facilitate showing that certain facts are
+true. Running a program means trusting that the program is written
+correctly and that it is running on a correctly working computer. Modern
+computers are very complex, as are modern programming languages. But,
+similar to the proofs of mathematicians, these programs can be reviewed
+by qualified computer scientists, and run repeatedly on multiple
+computers to validate that they are correct.
+
+In order to validate a set of facts, it is helpful that the things that
+those facts depend on are reasonably limited. We keep the mathematical
+background limited to ideas that have a large body of work that validate
+them, and would be accessible to a mathematician or theoretical computer
+scientist with a good undergraduate background in the field.
+
+Similarly, the programs are written in C because this is an old and
+common programming language which can be used on many kinds of
+computers.
+
+\hypertarget{numbers}{%
+\chapter{Numbers}\label{numbers}}
+
+We write numbers in base 10 almost always, but we will write in another
+base occasionally and subscript by the base when a distinction is
+needed. So \(32_{10} = 100000_{2}\). Because the comma is important in
+other notation and has different meanings in different languages, we use
+\_ (underbar) as a digit grouping mark, which is the convention in
+several computer languages, so
+\begin{equation*}
+65\_ 536.062\_ 500_{10}\,,
+\end{equation*}
+\begin{equation*}
+1\_ 0000\_ 0000\_ 0000\_ 0000.0001_{2}\,,
+\end{equation*}
+and
+\begin{equation*}
+1\_ 00\_ 00.1_{16}
+\end{equation*}
+are all ways to write the same number.
+
+For base 16, a common choice for computers, the digit symbols are extended with \(\mathrm{a}\) through \(\mathrm{f}\) to give the 16 needed possibilities, so
+\begin{equation*}
+\mathrm{bee.4}_{16}=11\times 16^2
++14 \times 16^1
++14 \times 16^0
++4 \times 16^{-1} = 3\_ 054.25_{10}\,.
+\end{equation*}
+
+\hypertarget{integers}{%
+\section{Integers}\label{integers}}
+
+Integer numbers are all the counting numbers, including 0, and
+their negatives. So these include \(0\), \(7\), \(- 88\) and
+\begin{equation*}
+10!=10 \times 9 \times 8 \times \cdots \times 3 \times 2 \times 1 = 3\_ 628\_ 800
+\end{equation*}
+but not \(12.345\) nor \(\pi = 3.14159...\). Integers can be thought of as labels of posts along a perfectly regular fence going on forever in either direction.
+
+\hypertarget{reals}{%
+\section{Reals}\label{reals}}
+
+Real numbers are the points on the number line and represent all
+distances, including \(0\), and their negatives. So these include all
+the integers, but also \(12.345\) and \(\pi = 3.14159...\) These can be thought of as positions along a perfectly straight wire strung along the posts of the integers.
+
+\hypertarget{lists}{%
+\chapter{Lists}\label{lists}}
+
+Lists are collections of items where there is an initial one, a next one, etc., and a last one. For example \([]\),
+\([\text{`apple'}]\), and \([ \text{`apple'}, \text{`banana'}]\) are
+lists with 0, 1, and 2 items. Generally a list of \(n\) items we write
+as \([ l(0),l(1),...,l(n - 1)]\). So, for
+\(l = [\text{`apple'},\text{`banana'}]\), \(l(0) = \text{`apple'}\) and
+\(l(1) = \text{`banana'}\). We write \(\# l\) for the number of items in the
+list, so, for this example, \(\# l = 2\).
+
+Order matters and repetition is allowed in lists, so
+\(F_8 = [ 0,1,1,2,3,5,8,13]\) is a perfectly good list of length
+\(\# F_8 = 8\), where \(F_8(1) = 1\) and \(F_8(2) = 1\).
+
+We use \(0\)-based indexing in these notes. This is the convention for
+many common programming languages, and so makes translating ideas into
+code simpler.
+
+\hypertarget{strings}{%
+\chapter{Strings}\label{strings}}
+
+Strings are a shorthand for a list of code points, typically unicode (an
+international standard covering most written languages), so
+\(\text{`apple'} = [ 97,112,112,108,101]\), because latin `a' is unicode codepoint 97, etc. So in the lists
+example, \(l = [\text{`apple'},\text{`banana'}]\) is really a list of
+lists:
+\begin{equation*}
+\begin{aligned}
+l &= [\text{`apple'}, \text{`banana'}] \\
+  &= [[97,112,112,108,101], [98,97,109,97,109,97]]
+\end{aligned}
+\end{equation*}
+
+\hypertarget{sets}{%
+\chapter{Sets}\label{sets}}
+
+Sets are collections of items, and all that matters about a set is if
+something is in it, or not. Here are some basic notations:
+
+\begin{itemize}
+\item
+  We use big letters for sets like \(S\) or \(T\), or
+  \(\{ \text{description} \}\), or just what is in the set
+  in curly braces: 
+  \begin{equation*}
+V = \{ \text{vowels} \} = \{ \text{`a'},\text{`e'},\text{`i'},\text{`o'},\text{`u'},\text{`y'} \}\,.      
+  \end{equation*}
+\item
+  Order and duplication do not matter:
+\begin{equation*}
+\{ \text{`a'},\text{`b'}\} = \{ \text{`b'},\text{`a'}\} = \{ \text{`a'},\text{`a'},\text{`a'},\text{`b'},\text{`b'}\} \,.
+\end{equation*}
+\item
+  Counting the elements in \(S\) we write as \(\# S\), so:
+\begin{equation*}
+\# \{ \text{`a'},\text{`b'}\} = \# \{ \text{`b'},\text{`a'}\} = \# \{ \text{`a'},\text{`a'},\text{`a'},\text{`b'},\text{`b'}\} = 2\,.
+\end{equation*}
+\item
+  The empty set \(\Theta=\{\}\) contains nothing: \( \# \Theta = 0 \).
+\item
+  The largest set depends on the problem, but is the set that contains
+  all the elements of concern for a problem. This is usually called the
+  universal set or just \(U\).
+\item
+  A subset is a set entirely within another: \(A \subseteq B\) if all
+  the elements of \(A\) are in \(B\). It is called a proper subset
+  \(A \subset B\) if there is something in \(B\) that is not in \(A\).
+  So \(B\) is the only subset of \(B\) that is not a proper subset.
+\item
+  ``\(e\ \epsilon\ S\)'', ``\(e\) in \(S\)'', ``\(e:S\)'', and ``\(e\)
+  is an element of \(S\)'' all mean the same thing.
+\end{itemize}
+
+\hypertarget{formal-sets}{%
+\section{Formal Sets}\label{formal-sets}}
+The most formal version of describing a set looks like:
+\begin{equation*}
+X = \{ x : U \ \&\  \text{additional properties of \(x\)}\}
+\end{equation*}
+Think that all the elements of \(X\) are in \(U\), but have additional constraints that may eliminate some or all of them. You can read this as ``\(X\) is all the elements \(x\) of \(U\) with the given properties''. Here are a few useful sets for us:
+
+\begin{itemize}
+\item
+  \(Z = \{ \text{integers} \} = \{..., - 3, - 2, - 1,0,1,2,3,...\}\). The
+  regular counting numbers, including zero and negative values are the integers; \( \# Z = \infty \). The truly formal definition of this is not useful here.
+\item
+  \(R = \{ \text{reals} \}\). All distances, including zero and negative distances.  This includes all the integers, but also things like \(-\frac{1}{3}\), \(\sqrt{2}\) and \(\pi \approx 3.14\ldots \). Again, the formal definition of this is not useful here. 
+\item
+  For any integer \(n\) that is greater than or equal to \(0\),
+  \begin{equation*}
+  Z_{n} = \{0,1,2,\ldots,n - 1\} \,.  
+  \end{equation*}
+  \(\# Z_{n} = n\). For example \(Z_{3} = \{ 0,1,2\}\) and \(\#Z_3 = 3 \).
+\item
+  For any integer \(n\) that is greater than or equal to \(0\),
+  \begin{equation*}
+  S_{n} = \{ \text{all arrangements of \(Z_{n}\)}\} \,.
+  \end{equation*}
+  The arrangements come from \(n\) choices for the first element, then \( n - 1\) choices for the second, etc., so:
+  \begin{equation*}
+\#S_n = n! = (n) \times (n-1) \times (n-2) \times \ldots \times (1)\,.
+  \end{equation*}
+  For example,
+  \begin{equation*}
+S_{3} = \{[ 0,1,2],[ 0,2,1],[ 1,0,2],[ 1,2,0],[ 2,0,1],[ 2,1,0]\}
+  \end{equation*}
+  and
+  \begin{equation*}
+  \# S_3 = 3! = 3 \times 2 \times 1 = 6 \,.
+  \end{equation*}
+\end{itemize}
+
+\hypertarget{venn-diagram}{%
+\section{Venn Diagram}\label{venn-diagram}}
+
+The Venn Diagram (figure~\ref{fig:venn}) is the most important diagram for sets.
+\begin{figure}
+\centering
+\includegraphics[width=0.8\linewidth]{build/figures/venn.pdf}
+\caption{Venn diagram for two generic sets \(A\) and \(B\)}
+\label{fig:venn}
+\end{figure}
+
+The two circles represent two sets \(A\) and \(B\) as two subsets of
+some universal set \(U\) which is the rectangle.
+
+\begin{itemize}
+\item
+  \begin{quote}
+  Intersection (like the intersection of two roads). The elements in
+  both \(A\) and \(B\) is the rugby ball between them. These elements
+  are in the i\(\cap\)tersection of \(A\) with \(B\), and is written
+  \(A \cap B\).
+  \end{quote}
+\item
+  \begin{quote}
+  Union (like the union of marriage). The elements in either \(A\) or
+  \(B\) is the peanut with both of them. These elements are in the
+  \(\cup\)nion of \(A\) with \(B\), and is written \(A \cup B\).
+  \end{quote}
+\item
+  \begin{quote}
+  Notice that the elements in the union (peanut) double counts the
+  elements in the intersection (rugby ball), so
+  \(\#(A \cup B) = (\# A) + (\# B) - \#(A \cap B)\).
+  \end{quote}
+\item
+  \begin{quote}
+  Set subtraction \(A - B\) is all the elements of \(A\) that are not in
+  \(B\) (or \(A\) except the rugby ball).
+  \(\#(A - B) = \# A - \#(A \cap B)\).
+  \end{quote}
+\end{itemize}
+
+\hypertarget{partition}{%
+\section{Partition}\label{partition}}
+
+Suppose some set \(S\) can be written as a union of \(N\) other sets:
+\(S = A_{0} \cup A_{1} \cup A_{2} \cup \cdot \cdot \cdot \cup A_{N - 1}\),
+and that the sets have nothing in common: \(A_{i} \cap A_{j} = \Theta\)
+whenever \(i \neq j\). Then we say the set of subsets
+\(\{ A_{0},A_{1},A_{2},...,A_{N - 1}\}\) is a partition of \(S\). If you
+made a Venn diagram like above for a partition, each subset \(A_{i}\)
+would ``paint'' a part of \(S\) in a way that, in total, all of \(S\) is
+painted, and no paint overlaps (all the rugby balls are empty). Since
+all the rugby balls are empty, there is no double counting and so
+\(\# S = (\# A_{0}) + (\# A_{1}) + (\# A_{2}) + \cdot \cdot \cdot + (\# A_{N - 1})\).
+
+\hypertarget{modular-arithmetic}{%
+\chapter{Modular Arithmetic}\label{modular-arithmetic}}
+
+It is helpful to define a modified set of arithmetic operations that
+restrict the results to \(Z_{n} = \{ 0,1,...n - 1\}\). If normal integer
+arithmetic is walking along a fence that runs to the horizon in either
+direction, then modular arithmetic is walking around a circular pen with
+\(n\) posts labeled \(0\) through \(n - 1\).
+
+\hypertarget{addition}{%
+\section{Addition}\label{addition}}
+
+Modulo-\(n\) addition \(x\  \oplus_{n}\ y\) is the same as \(x + y\),
+except the result is shifted up or down by multiples of \(n\) until the
+result is in the range \(0 \leq x\  \oplus_{n}\ y < n\).
+
+\begin{itemize}
+\item
+  \begin{quote}
+  For example, \(3\  \oplus_{10}\ 9 = 2\), because \(3 + 9 = 12\), but
+  that is above the range \(0 \leq \# < 10\), so it is shifted down
+  (once) to \(2\).
+  \end{quote}
+\item
+  \begin{quote}
+  Using negatives, \(( - 7){\  \oplus}_{10}\ 5 = 8\), because
+  \(( - 7) + 5 = - 2\), is below the range \(0 \leq \# < 10\), so it is
+  shifted up (once) to \(8\).
+  \end{quote}
+\end{itemize}
+
+\hypertarget{multiplication}{%
+\section{Multiplication}\label{multiplication}}
+
+Like addition, modulo-\(n\) multiplication \(x \otimes_{n}y\) is defined
+as normal multiplication, \(x \times y\), except the result is shifted
+up or down by multiples of \(n\) until the result is in the range
+\(0 \leq x\  \otimes_{n}\ y < n\).
+
+\begin{itemize}
+\item
+  \begin{quote}
+  For example \(3{\  \otimes}_{10}\ 9 = 7\), because
+  \(3 \times 9 = 27\), which can be shifted down to \(7\) by subtracting
+  \(20\) which is a multiple of \(10\).
+  \end{quote}
+\item
+  \begin{quote}
+  Similarly \(( - 3){\  \otimes}_{10}\ 9 = 3\), because \(- 27 + 30\)
+  lies in the proper range.
+  \end{quote}
+\end{itemize}
+
+\hypertarget{subtraction}{%
+\section{Subtraction}\label{subtraction}}
+
+Modulo-\(n\) subtraction is defined in terms of addition by
+\(x \ominus_{n}y = x \oplus_{n}(n - y)\). In this way \(\ominus_{n}\)
+undoes \(\oplus_{n}\) as in \(x \ominus x = x \oplus (n - x) = 0\).
+
+\begin{itemize}
+\item
+  \begin{quote}
+  For example
+  \(3{\  \ominus}_{10}\ 9 = 3\  \oplus_{10}\ (10 - 9) = 3\  \oplus_{10}\ 1\  = \ 4\)
+  \end{quote}
+\end{itemize}
+
+\hypertarget{division}{%
+\section{Division}\label{division}}
+
+Analogous to how subtraction undoes addition, modulo-\(n\) division
+\(\oslash_{n}\) is defined to undo modulo-\(n\) multiplication. Thinking
+about \(x/y = z\) means \(x = z \times y\), if it is unique, we define
+\({x \oslash}_{n}y\) to be the only integer, \(0 \leq z < n\), for which
+\(x = z \otimes_{n}y\).
+
+\begin{itemize}
+\item
+  \begin{quote}
+  For example, \(1 \oslash_{3}2 = 2\), because \(2 \otimes_{3}2 = 1\).
+  \end{quote}
+\end{itemize}
+
+Usually the subscript is dropped if the value of \(n\) is understood
+from the context. When talking about \(Z_{40}\), \(\oplus\) means
+\(\oplus_{40}\).
+
+\hypertarget{relations-and-functions}{%
+\chapter{Relations and Functions}\label{relations-and-functions}}
+
+\hypertarget{relation}{%
+\section{Relation}\label{relation}}
+
+A relation is a set of connections between two sets of things.
+
+For example,\(\{\text{`a'} \rightarrow \text{`alpha'},\text{`b'} \rightarrow \text{`bravo'}\}\)
+relates the set of letters \(\{\text{`a'},\text{`b'}\}\) to the set of words
+\(\{\text{`alpha'},\text{`bravo'}\}\).
+
+Familiar relations use familiar symbols like \(<\) or \(\neq\) instead
+of a generic arrow \(\rightarrow\). For example, the less-than relation
+in \(Z_{3}\) would be \(\{ 0 < 1,0 < 2,1 < 2\}\)
+
+\hypertarget{inverse-relation}{%
+\section{Inverse Relation}\label{inverse-relation}}
+
+If all the arrows are flipped, that is the inverse relation, so
+\(\{\text{`alpha'} \rightarrow \text{`a'},\text{`bravo'} \rightarrow \text{`b'}\}\) is the inverse
+relation of \(\{\text{`a'} \rightarrow \text{`alpha'},\text{`b'} \rightarrow \text{`bravo'}\}\). We
+superscript by \(- 1\) to indicate an inverse, so
+
+\(\{\text{`a'} \rightarrow \text{`alpha'},\text{`b'} \rightarrow \text{`bravo'}\}^{- 1} = \{\text{`alpha'} \rightarrow \text{`a'},\text{`bravo'} \rightarrow \text{`b'}\}\)
+
+Clearly the inverse of the inverse is the original relation.
+
+\hypertarget{function}{%
+\section{Function}\label{function}}
+
+Functions are relations where the ``from'' side of the arrow only shows
+up once. This means that for any allowed ``from'' or ``begin'' or
+``input'', there is an unambiguous ``to'' or ``end'' or ``output''. If
+\(x \rightarrow y\) is in some function, then we say the function maps
+\(x\) to \(y\).
+
+For example, \(\{\text{`a'} \rightarrow \text{`alpha'},\text{`b'} \rightarrow \text{`bravo'}\}\) is
+a function that maps \(\text{`a'}\) to \(\text{`apple'}\) and \(\text{`b'}\) to \(\text{`bravo'}\).
+
+As a counter-example,
+\(\{\text{`a'} \rightarrow \text{`alpha'},\text{`a'} \rightarrow \text{`apple'},\text{`b'} \rightarrow \text{`bravo'}\}\)
+is a relation, but not a function, because it maps \(\text{`a'}\) to both
+\(\text{`alpha'}\) and \(\text{`apple'}\).
+
+\hypertarget{domain-and-range}{%
+\section{Domain and Range}\label{domain-and-range}}
+
+For functions, The ``from/begin/input'' set is called the domain and the
+``to/end/output'' set is called the range. So the domain of
+\(\{\text{`a'} \rightarrow \text{`alpha'},\text{`b'} \rightarrow \text{`bravo'}\}\) is
+\(\{\text{`a'},\text{`b'}\}\) and the range is \(\{\text{`alpha'},\text{`bravo'}\}\).
+
+We will take a narrow view of the terms domain and range here. For
+example, the function
+
+\(\{ 0 \rightarrow 0,1 \rightarrow 2\}\) has domain \(\{ 0,1\}\) and
+range \(\{ 0,2\}\). Some would write the domain and range is
+\(Z_{3} = \{ 0,1,2\}\) but this is too large in both cases, since \(2\)
+is never a ``from'' and \(1\) is never a ``to''.
+
+\hypertarget{named-functions}{%
+\section{Named Functions}\label{named-functions}}
+
+Functions can be named, like
+\(c = \{\text{`a'} \rightarrow \text{`alpha'},\text{`b'} \rightarrow \text{`bravo'}\}\), and then
+write \(c(\text{`a'}) = \text{`alpha'}\) and \(c(\text{`b'}) = \text{`bravo'}\). Notice this
+notation would not make sense for relations in general, since for
+\(r = \{\text{`a'} \rightarrow \text{`alpha'},\text{`a'} \rightarrow \text{`apple'},\text{`b'} \rightarrow \text{`bravo'}\}\),
+\(r(\text{`a'})\) could be \(\text{`alpha'}\) or `\(apple'\).
+
+\hypertarget{inverse-function}{%
+\section{Inverse Function}\label{inverse-function}}
+
+Inverting (flipping the arrows) on a function will always produce a
+relation, and may produce a function. If the inverse of a function is a
+function, then that function is called invertible.
+
+Invertible functions are functions that can be backtracked. So, using
+the forward function you can unambiguously move from a ``from'' or
+``begin'' or ``input'' to a ``to'' or ``end'' or ``output'', and by
+using the inverse function, you can also move from any ``to'' or ``end''
+or ``output'' unambiguously to a ``from'' or ``begin'' or ``input''.
+
+For example, the inverse of
+\(c = \{\text{`a'} \rightarrow \text{`alpha'},\text{`b'} \rightarrow \text{`bravo'}\}\) is
+
+\(c^{- 1} = \{\text{`alpha'} \rightarrow \text{`a'},\text{`bravo'} \rightarrow \text{`b'}\}\)
+
+Since this is also a function then \(c\) is an invertible function.
+
+As a counter-example
+\(\{\text{`a'} \rightarrow \text{`x'},\text{`b'} \rightarrow \text{`y'},\text{`c'} \rightarrow \text{`x'}\}\) is a
+function, but it is not invertible because you cannot unambiguously
+backtrack from \(\text{`x'}\). The inverse
+\(\{\text{`x'} \rightarrow \text{`a'},\text{`y'} \rightarrow \text{`b'},\text{`x'} \rightarrow \text{`c'}\}\) is a
+relation, but not a function.
+
+\hypertarget{list-as-a-function}{%
+\section{List as a Function}\label{list-as-a-function}}
+
+We started with describing a list independently from function, but you
+can think of a list as a function with the domain (from set) of
+\(Z_{n} = \{ 0,1,...,n - 1\}\). The following structure is equivalent:
+\(l = [ l(0),l(1),...,l(n - 1)]\) and
+\(l = \{ 0 \rightarrow l(0),\ 1 \rightarrow l(1),...,n - 1 \rightarrow l(n - 1)\}\)
+
+For example, the list \([\text{`apple'},\text{`banana'}]\) is equivalent
+to the function \(\{ 0 \rightarrow \text{`apple'},1 \rightarrow \text{`banana'}\}.\)
+
+Notice \(\# l\) thought of as a list and \(\# l\) thought of as the set
+of mappings gives the same result.
+
+\hypertarget{permutation}{%
+\section{Permutation}\label{permutation}}
+
+If the domain and range are the same finite set, then an invertible
+function is also called a permutation of the domain. For example,
+\(\{\text{`a'} \rightarrow \text{`b'},\text{`b'} \rightarrow \text{`a'},\text{`c'} \rightarrow \text{`c'}\}\) is a
+permutation of \(\{\text{`a'},\text{`b'},\text{`c'}\}\).
+
+Permutations rearrange elements of a set. Since a set of \(\ n\)
+elements can be labeled with \(0\) through \(n - 1\), every permutation
+is equivalently a permutation of \(Z_{n}\). Labeling
+\(\{\text{`a'} \rightarrow 0,\text{`b'} \rightarrow 1,\text{`c'} \rightarrow 2\}\), the
+previous example becomes,
+\(\{ 0 \rightarrow 1,1 \rightarrow 0,2 \rightarrow 2\}\), or
+\([ 1,0,2]\) as a list.
+
+\hypertarget{formulaic-functions}{%
+\section{Formulaic Functions}\label{formulaic-functions}}
+
+A convenient all-in-one notation is
+\(f:\{ domain\} \rightarrow \{ range\} = \{ x \rightarrow\)
+formula\(\}\). Which can be read as ``\(f\) is a function from
+\(\{ domain\}\) to \(\{ range\}\) where \(f(x) =\) formula''. For
+example,
+
+\(t:\ Z_{n} \rightarrow Z_{n} = \{ x \rightarrow x{\  \oplus}_{n}\ 1\}\)
+
+For \(n = 3\), this means
+\(t = \{ 0 \rightarrow 1,1 \rightarrow 2,2 \rightarrow 0\} = [ 1,2,0]\).
+Since the range is the set of values produced by the formula (and so
+implied by the formula), a concise version is
+\(t = \{ x:Z_{n} \rightarrow x \oplus 1\}\), or
+\(t(x:Z_{n}) = x \oplus 1\). If the domain is understood as well, then
+simply \(t = \{ x \rightarrow x \oplus 1\}\) or \(t(x) = x \oplus 1\).
+
+\hypertarget{compose}{%
+\section{Compose}\label{compose}}
+
+Functions can be composed. If \(a\) maps \(x \rightarrow y\) and \(b\)
+maps \(y \rightarrow z\), then the composition \(c = b \circ a\) maps
+\(x \rightarrow z\).
+
+\(b \circ a:\ \{\)subdomain of \(a\} \rightarrow \{\)subrange of
+\(b\} = \{ x \rightarrow b(a(x))\}\)
+
+For example (using the ``list is also a function'' idea)
+
+\begin{quote}
+\([ 2,1,0] \circ [ 1,2,0] = \{ 0 \rightarrow 1 \rightarrow 1,1 \rightarrow 2 \rightarrow 0,2 \rightarrow 0 \rightarrow 2\} = \{ 0 \rightarrow 1,1 \rightarrow 0,2 \rightarrow 2\} = [ 1,0,2]\)
+\end{quote}
+
+The subdomain of \(a\) means some values \(x\) of the original domain of
+\(a\) may not survive, because they may map to a value that is not in
+the domain of \(b\). Similarly subrange of \(b\) means some values of
+the original domain of \(b\) may never be part of the range of \(a\),
+which may limit what the composed function maps to.
+
+For example, let
+
+\(a:\{ x:R \neq 0\} \rightarrow \{ y:R \neq 1\} = \{ x \rightarrow y = 1 + 1/x\}\),
+and
+
+\(b:\{ y:R \neq 0\} \rightarrow \{ z:R > 0\} = {\{ y \rightarrow z = 2}^{1/y}\}\)
+
+Because \(a\) maps \(- 1\) to \(0\), and this is not an allowed input to
+\(b\), it is not in the domain of \(a \circ b\), and because \(1\) is
+never an output of \(a\), the value of \(b(1) = 2\) is not in the range
+of \(a \circ b\) unless that value is mapped to for some other input (it
+is not), so
+
+\(a \circ b:\{ x:R\ \&\ x \neq 0\ \&\ x\  \neq - 1\} \rightarrow \{ z:R\ \&\ z > 0\ \&\ z \neq 2\} = \{ x \rightarrow {z = 2}^{1/(1 + 1/x)}\}\ \)
+
+\hypertarget{multiple-arguments}{%
+\section{Multiple Arguments}\label{multiple-arguments}}
+
+\(m = \{[ x:R,y:R] \rightarrow [ x + y,x - y,x \times y,x \div y]\}\)
+is a perfectly good function that takes a list of 2 real numbers, and
+results in a list of 4 real numbers. Instead of
+\(m([ 1,2]) = [ 3, - 1,2,1/2]\), we usually just
+write \(m(1,2) = [ 3, - 1,2,1/2]\), or generically define
+\(m\) by
+
+\(m(x:R,y:R) = [ x + y,x - y,x \times y,x \div y]\)
+
+\hypertarget{convex-function}{%
+\section{Convex Function}\label{convex-function}}
+
+For a real-valued function \(f\), saying \(f\) is convex means
+
+\(f(px + qy + rz + \cdot \cdot \cdot ) \leq pf(x) + qf(y) + rf(z) + \cdot \cdot \cdot\)
+
+for any values \(x\), \(y\), \(z\), \ldots{} in the domain of \(f\) and
+any non-negative values \(p\), \(q\), \(r\), \ldots{} that sum to \(1\):
+\(p + q + r + \cdot \cdot \cdot = 1\)
+
+A result from calculus is any twice-differentiable function of a single
+variable is convex if and only if its second derivative is nonnegative
+on its entire domain. The negative of a convex function is concave and
+vice versa.
+
+\(f(x) = b^{x}\) for \(b > 0\) and \(f(x) = x^{\alpha}\) for
+\(\alpha \geq 1\) are important convex functions here.
+
+\hypertarget{concave-function}{%
+\section{Concave Function}\label{concave-function}}
+
+For a real-valued function \(f\), saying \(f\) is concave means
+
+\(f(px + qy + rz + \cdot \cdot \cdot ) \geq pf(x) + qf(y) + rf(z) + \cdot \cdot \cdot\)
+
+for any values \(x\), \(y\), \(z\), \ldots{} in the domain of \(f\) and
+any non-negative values \(p\), \(q\), \(r\), \ldots{} that sum to \(1\):
+\(p + q + r + \cdot \cdot \cdot = 1\)
+
+A result from calculus is any twice-differentiable function of a single
+variable is concave if and only if its second derivative is nonpositive
+on its entire domain. The negative of a concave function is convex and
+vice versa.
+
+\(f(x) = log_{b}(x)\) for \(b > 1\) is an important concave function
+here.
+
+\hypertarget{logarithms-and-exponents}{%
+\chapter{Logarithms and Exponents}\label{logarithms-and-exponents}}
+
+When working with large numbers, logarithms represent large numbers with
+smaller ones, they are connected by
+
+\(log_{b}(n) = p\) (log form) is the same as \(n = b^{p}\) (exponent
+form)
+
+Here \(n\) is any positive number, \(b\) is a positive base, and \(p\)
+is the power, which may be positive, negative, or zero. The most common
+bases \(b\) are \(10\) in engineering, \(2\) in computer science, and
+\(e \approx 2.718...\) in mathematics.
+
+\begin{itemize}
+\item
+  \begin{quote}
+  Logarithms roughly ``count digits'' in the given base. For example
+  \(log_{10}(1\_ 000) = 3\) and \(log_{10}(1\_ 000\_ 000) = 6\). Writing
+  \(32\) in binary is \(10\_ 0000_{2}\) and \(log_{2}(32) = 5\).
+  \end{quote}
+\item
+  \begin{quote}
+  Increasing a value by a factor of \(b\) increases the base \(b\)
+  logarithm by \(1\): \(log_{b}(x \times b) = log_{b}(x) + 1\).
+  \end{quote}
+\item
+  \begin{quote}
+  Decreasing a value by a factor of \(b\) decreases the base \(b\)
+  logarithm by \(1\): \(log_{b}(x \div b) = log_{b}(x) - 1\).
+  \end{quote}
+\item
+  \begin{quote}
+  Logarithms convert multiplication into addition:
+  \(log_{b}(x \times y) = log_{b}(x) + log_{b}(y)\).
+  \end{quote}
+\item
+  \begin{quote}
+  Logarithms convert division into subtraction:
+  \(log_{b}(x \div y) = log_{b}(x) - log_{b}(y)\).
+  \end{quote}
+\item
+  \begin{quote}
+  Logarithms convert powers into products:
+  \(log_{b}(x^{y}) = y \times log_{b}(x)\).
+  \end{quote}
+\item
+  \begin{quote}
+  For \(b > 1\), logarithms are concave functions:
+  \(log_{b}(p \times x + q \times y) \geq p \times log_{b}(x) + q \times log_{b}(y)\)
+  so long as \(x > 0\), \(y > 0\). \(p \geq 0\), \(q \geq 0\), and
+  \(p + q = 1\). This can be extended to any number of terms.
+  \end{quote}
+\item
+  \begin{quote}
+  For \(b > 0\), exponents are convex functions:
+  \(b^{p \times x + q \times y} \leq p \times b^{x} + q \times b^{y}\)
+  so long as \(p \geq 0\), \(q \geq 0\), and \(p + q = 1\). This can be
+  extended to any number of terms.
+  \end{quote}
+\end{itemize}
+
+\hypertarget{logic}{%
+\chapter{Logic}\label{logic}}
+
+Logic is a precise notation for making statements and following a chain
+of reasoning. Instead of adopting mathematical notations for these, we
+use a C-like convention which is much easier to remember and translate
+into code.
+
+\hypertarget{logic-not}{%
+\section{Logic not (!)}\label{logic-not}}
+
+Logic not \((!p)\) is true only when \(p\) is false.
+
+If \(l\) is a list of logical statements,
+\([!](l) = [!l(0),!l(1),...]\)
+
+\hypertarget{logic-and}{%
+\section{\texorpdfstring{Logic and
+(\(\&\))}{Logic and (\textbackslash\&)}}\label{logic-and}}
+
+Logic and \((p\ \&\ q\ \&\  \cdot \cdot \cdot )\) is true only when all
+the statements \(p\), \(q\), \ldots{} are true.
+
+If \(l\) is a list of logical statements
+\([\&](l) = (l(0)\ \&\ l(1)\ \&\  \cdot \cdot \cdot )\)
+
+\hypertarget{logic-or}{%
+\section{\texorpdfstring{Logic or
+(\(|\))}{Logic or (\textbar)}}\label{logic-or}}
+
+Logic or \((p\ |\ q\ |\  \cdot \cdot \cdot )\) is false only when all
+the statements \(p\), \(q\), \ldots{} are false.
+
+If \(l\) is a list of logical statements
+\([|](l) = (l(0)\ |\ l(1)\ |\  \cdot \cdot \cdot )\)
+
+\hypertarget{logic-if-then-rightarrow}{%
+\section{\texorpdfstring{Logic if-then
+(\(\Rightarrow )\)}{Logic if-then (\textbackslash Rightarrow )}}\label{logic-if-then-rightarrow}}
+
+Logic if-then (\(p \Rightarrow q)\) is a test of the logic of ``if
+\(p\), then \(q\)''. This is a logical error only when \(p\) is true and
+\(q\) is false. The \(\Rightarrow\) right associates, so
+\(p \Rightarrow q \Rightarrow r \Rightarrow s\) means
+\(p \Rightarrow (q \Rightarrow (r \Rightarrow s)).\)
+
+If \(l\) is a list of logical statements
+\([ \Rightarrow ](l) = (l(0)\  \Rightarrow \ l(1)\  \Rightarrow \cdot \cdot \cdot )\)
+
+\hypertarget{repetition}{%
+\chapter{Repetition}\label{repetition}}
+
+Formulas can require repeated actions, we use several notations to
+convey this.
+
+\hypertarget{patterns}{%
+\section{Patterns}\label{patterns}}
+
+Patterns are an imprecise but typically adequate way of conveying a
+repeated action. For example,
+\(S = (0)^{2} + (1)^{2} + \cdot \cdot \cdot + (n - 1)^{2}\) means to sum
+the squares of the elements of \(Z_{n}\), taken as \(S = 0\) when
+\(n = 0\).
+
+\hypertarget{sums}{%
+\section{Sums}\label{sums}}
+
+A precise notation for the same is
+\(S = [ + ](\{ z:Z_{n} \rightarrow z^{2}\})\) The idea is
+\([ + ]\) is a function that takes a function as an
+argument. \([ + ]\) takes every input element of the domain
+of the function provided, determines the corresponding output element of
+the range, and adds the results together. If the domain is the empty
+set, then we define \([ + ](\Theta) = 0\).
+
+For example
+\([ + ](\{ z:Z_{4} \rightarrow 2z + 1\}) = 1 + 3 + 5 + 7 = 16\)
+and \([ + ](\{ z:Z_{0} \rightarrow 2z + 1\}) = 0\)
+
+A common notation is \(\Sigma_x f(x) = [ + ](f)\).
+
+If \(X\) is a subset of the domain of \(f\), then
+\(\Sigma_{x \in X} f(x) = [ + ](\{ x:X \rightarrow f(x)\}) = [ + ](f(x:X))\)
+
+\hypertarget{products}{%
+\section{Products}\label{products}}
+
+\([ \times ]\) is similarly defined, except the mapped
+elements are multiplied, and we define
+\([ \times ](\Theta) = 1\).
+
+For example
+\([ \times ](\{ z:Z_{4} \rightarrow 2z + 1\} = 1 \times 3 \times 5 \times 7 = 105\)
+and \([ \times ](\{ z:Z_{0} \rightarrow 2z + 1\}) = 1\)
+
+A common notation is \( \Pi_x f(x) = [ \times ](f)\), and similarly \( \Pi_{x \in X} f(x) = [ \times ](f(x:X))\)
+
+\hypertarget{summation-rules}{%
+\section{Summation Rules}\label{summation-rules}}
+
+Generalizing
+\(\left[ a \times y_{0} + b \times z_{0} \right] + \left[ a \times y_{1} + b \times z_{1} \right] = a \times (y_{0} + y_{1}) + b \times (z_{0} + z_{1})\),
+
+\(\left[ af(x) + bg(x) \right] = af(x) + bg(x)\)
+
+\([ + ](a \times f + b \times g) = a \times [ + ](f) + b \times [ + ](g)\)
+
+From the Venn diagram,
+
+\(f(x) = f(x) + f(x) - f(x)\)
+
+\([ + ](f(x:X \cup Y)) = [ + ](f(x:X)) + [ + ](f(x:Y)) - [ + ](f(x:X \cap Y))\)
+
+Because order does not matter when you are adding up terms,
+
+\(\left[ f(x,y) \right] = \left[ f(x,y) \right] = f(x,y)\)
+
+\([ + ](\{ x:X \rightarrow [ + ](f(x,y:Y))\}) = [ + ](\{ y:Y \rightarrow [ + ](f(x:X,y)))\}) = [ + ](f(x:X,y:Y))\)
+
+Generalizing
+\((y_{0} + y_{1})^{2} = y_{0} \times y_{0} + y_{0} \times y_{1} + y_{1} \times y_{0} + y_{1} \times y_{1}\),
+
+\(\left[ f(x) \right]^{2} = \left[ f(x) \times f(x') \right]\)
+
+\(\left[ [ + ](f(x:X)) \right]^{2} = [ + ](f(x:X) \times f(x':X))\)
+
+\hypertarget{summation-formulas}{%
+\section{Summation Formulas}\label{summation-formulas}}
+
+By counting on your fingers,
+
+\(1 = [ + ]\{ x:X \rightarrow 1\} = 1 + 1 + \cdot \cdot \cdot + 1 = \# X\)
+
+By reversing the list and adding again,
+
+\(z = [ + ]\{ z:Z_{n} \rightarrow z\} = 0 + 1 + \cdot \cdot \cdot + (n - 1) = \frac{n \times (n - 1)}{2}\)
+
+By multiplying by \(\frac{b - 1}{b - 1}\) and canceling terms,
+
+\(b^{z} = {[ + ]\{ z:Z_{n} \rightarrow b^{z}\} = b}^{0} + b^{1} + \cdot \cdot \cdot + b^{n - 1} = \frac{b^{n} - 1}{b - 1}\)
+
+\hypertarget{summation-inequalities}{%
+\section{Summation Inequalities}\label{summation-inequalities}}
+
+\(l_{p}\)-norm
+
+We define
+\(\left| |f| \right|_{p} = \left\{ [ + ](|f|^{p}) \right\}^{1/p}\)
+for \(p:R \geq 1\), and
+\(\left| |f| \right|_{\infty} = [ max]\ |f(x)|\). (largest
+absolute value in the range). These are called the \(l_{p}\)-norms and
+for \(1 \leq p \leq \infty\) have the properties of a norm, which means,
+for any finite domain real-valued functions \(f(x:X) \subseteq R\),
+\(g(x:X) \subseteq R\), \(h(x:X) \subseteq R\), and real value \(c\):
+
+\(\left| |cf| \right|_{p} = |c|\left| |f| \right|_{p}\)
+
+\(\left| |f + g| \right|_{p} \leq \left| |f| \right|_{p} + \left| |g| \right|_{p}\)
+
+\(\left| |f - g| \right|_{p} \leq \left| |f - h| \right|_{p} + \left| |h - g| \right|_{p}\)
+
+\hypertarget{huxf6lders-inequality}{%
+\subsection{Hölder's Inequality}\label{huxf6lders-inequality}}
+
+If \(p:R > 1\), \(q:R > 1\), and \(1/p + 1/q = 1\), then
+\(\left| |fg| \right|_{1} \leq \left| |f| \right|_{p}\left| |g| \right|_{q}\)
+
+\hypertarget{counting}{%
+\chapter{Counting}\label{counting}}
+
+\hypertarget{decision-trees}{%
+\section{Decision Trees}\label{decision-trees}}
+
+Suppose an outcome is arrived from \(n\) decisions, with
+\(c(0),c(1), \cdot \cdot \cdot ,c(n - 1)\) choices at each step.
+Multiply all these factors together
+\(c(0) \times c(1) \times \cdot \cdot \cdot \times c(n - 1) = [ \times ](c)\)
+
+\begin{itemize}
+\item
+  \begin{quote}
+  \(\#\{ outcomes\} \leq [ \times ](c)\)
+  \end{quote}
+\item
+  \begin{quote}
+  If each outcome is unique, then
+  \(\#\{ outcomes\} = [ \times ](c)\).
+  \end{quote}
+\end{itemize}
+
+For example, tossing a coin (\(c(0) = 2\)), followed by a six-sided dice
+(\(c(1) = 6\)) has
+\([ \times ](c) = c(0) \times c(1) = 2 \times 6 = 12\)
+outcomes (each choice leads to a unique outcome). This can be visualized
+as a decision tree, where the initial branch is the choice of face on
+coin, followed by the choice of pips on die.
+
+\hypertarget{factorial}{%
+\section{Factorial}\label{factorial}}
+
+If you have \(n\) distinct things, there are
+\(n! = n \times (n - 1) \times (n - 2) \times \cdot \cdot \cdot \times 1\)
+ways to arrange them. This comes from the decisions tree, because you
+have \(c_{0} = n\) choices for the initial element, then
+\(c_{1} = n - 1\) for the next, etc.
+
+This is exactly the situation for choosing arrangements of \(Z_{n}\), so
+\(\# S_{n} = n!\)
+
+\hypertarget{permutations}{%
+\section{Permutations}\label{permutations}}
+
+If you have \(n\ \)things and choose \(k \leq n\) of them, then you only
+have the first \(k\) choices of the factorial idea. You can divide out
+the extra factors of the formula to get just the product of the largest
+\(k\) factors: \(\)
+
+\(P(n,k) = \#\{\)\(n\) things taken \(k\) at a time, where order does
+matter\(\} = \frac{n!}{(n - k)!}\)
+
+\hypertarget{combinations}{%
+\section{Combinations}\label{combinations}}
+
+If order does not matter, then you can start by counting all of them as
+if order did matter (permutations) and then divide by the number of ways
+you can rearrange \(k\) things:
+
+\(C(n,k) = \#\{\)\(n\) things taken \(k\) at a time, where order does
+not matter\(\} = \frac{n!}{(n - k)! \times k!}\)
+
+\hypertarget{groups}{%
+\section{Groups}\label{groups}}
+
+Groups are sets with an action we call compose \(\circ\) that takes two
+(not necessarily different) elements and produces a third (not
+necessarily different) element:
+
+\(z = x \circ y\)
+
+It does not have to be the traditional multiply (it will not be here).
+Here are the main properties of groups.
+
+\begin{itemize}
+\item
+  \begin{quote}
+  The action \(\circ\) does not depend on order parenthesis:
+  \((x \circ y) \circ z = x \circ (y \circ z)\), so we can just as well
+  write \(x \circ y \circ z\) because the result is the same regardless
+  of how the factors are grouped. This works for any number of factors.
+  \end{quote}
+\item
+  \begin{quote}
+  There is a unique element \(e\) that does not change any of the values
+  when composed with any group element: \(e \circ x = x \circ e = x\)
+  \end{quote}
+\item
+  \begin{quote}
+  Every element \(x\) has a unique (not necessarily different) element
+  \(x^{- 1}\) which, when composed in either order, produces \(e\):
+  \(x \circ x^{- 1} = x^{- 1} \circ x = e\). By the previous property,
+  \(e^{- 1} = e\).
+  \end{quote}
+\end{itemize}
+
+A familiar group would be all positive numbers (not just integers) with
+the usual multiply for composition \(\circ = \times\) and \(e = 1\). If
+you look at the list or requirements above you will see they are all
+satisfied.
+
+An important property of a finite group is that composition permutes all
+the elements. Fix either side, say the left and think about the function
+\(l_{a}:G \rightarrow G = \{ x \rightarrow y = a \circ x\}\). Because of
+the inverse property of the group, \(y = a \circ x\) means
+\(x = a^{- 1} \circ y\) so
+\({l_{a}}^{- 1}:G \rightarrow G = \{ y \rightarrow {x = a}^{- 1} \circ y\}\)
+is the inverse function for \(l_{a}\). Since \(G\) is finite and
+\(l_{a}\) is an invertible function, this is the definition of a
+permutation. The same argument works for
+\(r_{a}:G \rightarrow G = \{ x \rightarrow y = x \circ a\}\). So
+\(r_{a}\) and \(l_{a}\) are permutations for any group element \(a\).
+
+\hypertarget{symmetric-group}{%
+\section{Symmetric Group}\label{symmetric-group}}
+
+In the sets section, we noted \(S_{n}\) is the set of all arrangements
+of \(Z_{n} = \{ 0,1,2,...,n - 1\}\), and noted in the counting section
+that there are \(\# S_{n} = n!\) elements this set. For example
+
+\(S_{3} = \{[ 0,1,2],[ 0,2,1],[ 1,0,2],[ 1,2,0],[ 2,0,1],[ 2,1,0]\}\).
+
+Here is a composition rule \(\circ\) for two permutations: if \(x\) and
+\(y\) are permutations, we can make a permutation \(z = x \circ y\) by
+selecting the values of \(y\) in the order of \(x\). So you are using
+\(x\) to shuffle \(y\). For example,
+\([ 2,0,1] \circ [ 1,2,0] = [ 0,1,2]\),
+because the first permutation arranges the second in the order last,
+initial, middle. This is also consistent with the ``list as a function''
+idea and functional composition
+
+\([ 2,0,1] \circ [ 1,2,0]\)
+
+\(\{ 0 \rightarrow 2,1 \rightarrow 0,2 \rightarrow 1\} \circ \{ 0 \rightarrow 1,1 \rightarrow 2,2 \rightarrow 0\}\)
+
+\(\{ 0 \rightarrow 1 \rightarrow 0,1 \rightarrow 2 \rightarrow 1,2 \rightarrow 0 \rightarrow 2\}\)
+
+\(\{ 0 \rightarrow 0,1 \rightarrow 1,2 \rightarrow 2\}\)
+
+\([ 0,1,2]\)
+
+\(S_{n}\) under this composition rule is a group with
+
+\(e = [ 0,1,2,...,n - 1]\),
+
+and
+
+\(x^{- 1} = [\)index of \(0\) in \(x\), index of \(1\) in
+\(x\),..,index of \(n - 1\) in \(x\)\(]\).
+
+\hypertarget{subgroup}{%
+\section{Subgroup}\label{subgroup}}
+
+A subgroup is itself a group but the elements are a subset of some
+group.
+
+A familiar subgroup using normal multiply as composition is the set of
+reduced fractions \(p/q\) where \(p\) and \(q\) are positive integers
+with no common factors; these are the positive fractions. Positive
+fractions are a subgroup of all positive numbers under normal multiply.
+
+\hypertarget{cyclic-subgroup}{%
+\chapter{Cyclic Subgroup}\label{cyclic-subgroup}}
+
+If you choose any element \(g\) of a finite group \(G\), then define
+\(g^{0} = e\), \(g^{1} = g\), \(g^{n}\) for some positive integer \(n\)
+as \(n\) repeated compositions of \(g\), and \(g^{- n}\) as \(n\)
+compositions of \(g^{- 1}\). Since \(G\) is finite \(g^{n}\) must
+eventually repeat, so there are \(m > n\) for which \(g^{n} = g^{m}\)
+but multiplying by \(g^{- n}\) we see \(e = g^{m - n}\). Pick the
+smallest \(l = m - n > 0\) for which this is true. If \(l = 1\) then you
+chose \(g = e\). Otherwise write \(e = g^{l - 1} \circ g\) and so
+\(g^{l - 1} = g^{- 1}\) (notice this also works in the \(l = 1\) case).
+So \(g^{- n} = g^{n \times (l - 1)}\), and any power \(p\) can be
+grouped into multiples \(k\) of \(l\) plus some number \(p_{0}\) in the
+range \(0 \leq p_{0} < l\). By grouping terms we get
+\(g^{p} = g^{kl + p_{0}} = (g^{l})^{k}g^{p_{0}} = e^{k}g^{p_{0}} = g^{p_{0}}\).
+So powers of \(g\) form a cyclic subgroup of \(l\) elements.
+
+They have the nice property \(g^{p + q} = g^{p{\  \oplus}_{l}\ q}\) for
+any integer powers \(p\) and \(q\) and \(+\) is the usual addition and
+\(\oplus_{l}\) is the modulo \(l\) addition.
+
+\hypertarget{lagranges-theorem}{%
+\section{Lagrange's Theorem}\label{lagranges-theorem}}
+
+If \(S\) is a subgroup of a finite group \(G\), then \(\# G\) is a
+multiple of \(\# S\).
+
+Define \(gS\) as the set of elements produced by composing g with every
+element of \(S\): \(gS = \{ gs\ |\ s\ \epsilon\ S\}\). Then
+\(P = \{\ gS\ |\ g\ \epsilon\ G\ \}\) forms a partition of \(G\) (we
+will show this in a moment). Since \(\# gS = \# S\), then we can count
+the elements of \(G\) as \(\# G = \# P \times \# S\).
+
+To show \(P\) is a partition, the subsets have to all be the same or
+distinct (clearly their union is \(G\)). Suppose \(a\epsilon gS\) so and
+\(a = gs_{0}\) But \(aS = \{ gs_{0}s|s\epsilon S\}\) but that's just a
+permutation of \(gS\), so \(aS = gS\). So if any two elements of \(P\)
+(like \(gS\) and \(g'S\)) have any element \(a\) in common, they are the
+same set \(aS\).
+
+\hypertarget{translation-subgroup}{%
+\section{Translation Subgroup}\label{translation-subgroup}}
+
+In the permutation group \(S_{n}\) an important subgroup is \(T_{n}\)
+which are all the circular translations. It is generated by
+\(t = [ 1,2,3,...,n - 2,n - 1,0]\). The other elements are
+
+\(t^{0} = e = [ 0,1,2,3,...,n - 2,n - 1]\),
+
+\(t^{1} = [ 1,2,3,...,n - 2,n - 1,0]\),
+
+\(t^{2} = [ 2,3,...,n - 2,n - 1,0,1]\).
+
+\(t^{n - 1} = [ n - 1,0,1,2,3,...,n - 2]\).
+
+For example,
+\(T_{3} = \{[ 0,1,2],[ 1,2,0],[ 2,1,0]\}\).
+
+The translation group has the nice property
+\(t^{x} \circ t^{y} = t^{x \oplus y}\).
+
+\hypertarget{graph}{%
+\chapter{Graph}\label{graph}}
+
+A graph is a set of elements \(V\) called vertices connected by directed
+edges \(E\), as in
+
+Here \(V = Z_{3} = \{ 0,1,2\}\) and
+\(E = \{ 1 \rightarrow 0,1 \rightarrow 2,2 \rightarrow 2\}\). \(E\) is
+the ``connects to'' relationship for the \textbar graph.
+
+\begin{itemize}
+\item
+  \begin{quote}
+  We call \(V(G)\) the set of all vertices of a graph \(G\), and
+  \(E(G)\) the set of all edges.
+  \end{quote}
+
+  \begin{itemize}
+  \item
+    \begin{quote}
+    For this tiny example, \(V(G) = \{ 0,1,2\}\), and
+    \end{quote}
+  \item
+    \begin{quote}
+    \(E(G) = \{ 1 \rightarrow 0,1 \rightarrow 2,2 \rightarrow 2\}\).
+    \end{quote}
+  \end{itemize}
+\item
+  \begin{quote}
+  We define \(n(x)\) as the neighbors of \(x\), or
+  \(\left\{ y\ |\ x \rightarrow y \right\}\) all the vertices \(y\)
+  directly connected to \(x\).
+  \end{quote}
+
+  \begin{itemize}
+  \item
+    \begin{quote}
+    \(n(0) = \{\}\), \(n(1) = \{ 0,2\}\), and \(n(2) = \{ 0,2\}\) in the
+    tiny example.
+    \end{quote}
+  \end{itemize}
+\end{itemize}
+
+\hypertarget{subgraph}{%
+\section{Subgraph}\label{subgraph}}
+
+A subgraph is itself a graph, but where the vertices and edges are a
+subset of some graph's vertices and edges.
+
+\hypertarget{induced-subgraph}{%
+\section{Induced Subgraph}\label{induced-subgraph}}
+
+An induced subgraph \(G[ S]\) for some subset
+\(S \subseteq V(G)\) is the graph of with all the edges in \(E(G)\) that
+start and end in \(S\): \(V(G[ S]) = S\),
+\(E(G[ S]) = \{ x \rightarrow y\ in\ E(G)\ |\ x\ in\ S\ and\ y\ in\ S\}\).
+
+\hypertarget{path}{%
+\section{Path}\label{path}}
+
+A path is a sequence of allowed edges, for example
+\(1 \rightarrow 2 \rightarrow 2 \rightarrow 0\) above, and the length of
+a path is the number of steps (3 in this example).
+
+\hypertarget{tree-rooted-at-vertex-v}{%
+\section{\texorpdfstring{Tree rooted at vertex
+\(v\)}{Tree rooted at vertex v}}\label{tree-rooted-at-vertex-v}}
+
+A graph is a tree rooted at vertex \(v\) if there is a unique path
+starting from \(v\) to every other vertex.
+
+\hypertarget{distance}{%
+\section{Distance}\label{distance}}
+
+The distance \(dist(start,end)\) between two vertices is the number of
+steps (edges) of the shortest path from the start vertex to the end
+vertex. This distance \(0\) if the two vertices are the same, and
+\(\infty\) if there is no path that connects them. Notice that distance
+does not have to be the same in both directions (because of one-way
+roads, getting somewhere can be different than getting back). In the
+above graph, \(dist(1,0) = 1\), but \(dist(0,1) = \infty\).
+
+\hypertarget{ball}{%
+\section{Ball}\label{ball}}
+
+The open ball of size \(r\) around vertex \(v\), \(B_{r}(v)\) is the set
+of all vertices that are a distance less than \(r\) from the start
+\(v\). So for the example \(B_{0}(v) = \{\}\), \(B_{1}(v) = \{ v\}\),
+\(B_{2}(0) = \{ 0\}\), \(B_{2}(1) = \{ 0,1,2\}\), and
+\(B_{2}(2) = \{ 0,2\}\). We define \(B_{\infty}(v)\) as all the vertices
+that have a finite path from \(v\) to them. For a finite graph, any
+shortest path will visit at most every vertex, so
+\(B_{\infty}(v) = B_{\# V}(v)\), so \(B_{3}\) is \(B_{\infty}\) in the
+example.
+
+\hypertarget{root-ball-size}{%
+\section{Root Ball Size}\label{root-ball-size}}
+
+For each vertex, the root ball size \(R(v)\) is the largest value of
+\(r\) for which the induced subgraph \({G[ B}_{r}(v)]\) is a
+tree rooted at \(v\).
+
+\hypertarget{vertex-invariance}{%
+\section{Vertex Invariance}\label{vertex-invariance}}
+
+A vertex invariant graph looks the same from every vertex. A way to say
+this that for every pair of vertices \(v\) and \(w\), there is at least
+one re-labeling (permutation) of vertices where \(w \rightarrow v\) and
+the edges are identical to the original graph.
+
+\hypertarget{probability}{%
+\chapter{Probability}\label{probability}}
+
+A finite/countable probability space is a finite/countable set of
+possible outcomes \(x\) in \(X\) and a non-negative number associated
+with each outcome \(p(x)\), so that the sum of all probabilities equals
+\(1\). The probability \(p(x)\) of an outcome \(x\) is the fraction of
+times \(x\) is observed compared to some other result as the number of
+independent trials get larger and larger.
+
+\hypertarget{uniform-probability}{%
+\section{Uniform Probability}\label{uniform-probability}}
+
+Fair coins and fair dice have equal probability for every outcome. Since
+the total probability is \(1\), \(p(x) = 1/\# X\). For example a fair
+coin has \(p(H) = 1/2\) and \(p(T) = 1/2\).
+
+\hypertarget{von-neumann-whitening}{%
+\subsection{Von Neumann Whitening}\label{von-neumann-whitening}}
+
+To create a fair coin from an unfair coin, toss any coin and group the
+results in pairs. Delete all \([ H,H]\) and
+\([ T,T]\) pairs, and replace \([ H,T]\) with
+\(T\) and \([ T,H]\) with \(H\). The probability of heads in
+the new sequence is
+\(q(H) = \frac{p(T) \times p(H)}{p(T) \times P(H) + p(H) \times P(T)} = \frac{1}{2}\)
+and similarly \(q(T) = \frac{1}{2}\).\\
+Note that the pairs have to come from the same coin, but different pairs
+can be from different coins to speed up the generation of random bits.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \begin{quote}
+  procedure \(uniform!(Z_{2}) \rightarrow r:Z_{2}\)
+  \end{quote}
+\item
+  \begin{quote}
+  repeat
+  \end{quote}
+\item
+  \begin{quote}
+  \(t \leftarrow unfair!(Z_{2})\)
+  \end{quote}
+\item
+  \begin{quote}
+  \(r \leftarrow unfair!(Z_{2})\)
+  \end{quote}
+\item
+  \begin{quote}
+  until \(t \neq r\)
+  \end{quote}
+\end{enumerate}
+
+It is not a function in the mathematical sense, because the value it
+produces changes each time it is used. We use \(uniform!(Z_{2})\) for
+this because the action is a procedure that produces different results.
+
+\hypertarget{perfect-binning}{%
+\subsection{Perfect Binning}\label{perfect-binning}}
+
+Suppose you have a base \(b\) uniform random number generator. How can
+you create a uniform random number in \(Z_{n}\)? \(\)First choose the
+smallest \(k\) so \(b^{k} \geq n\). Then write
+\({\Delta = b}^{k}{\  \oplus}_{n}\ 0\).
+
+Generate \(k\) random base \(b\) values, which can be thought of as an
+unsigned number in the range \(0 \leq r < b^{k}\). If \(r\) is less than
+\(\Delta\) then repeat this step.
+
+The uniform value is \(r{\  \oplus}_{n}\ 0\).
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \begin{quote}
+  procedure \(uniform!(Z_{n},b) \rightarrow r:Z_{n}\)
+  \end{quote}
+\item
+  \begin{quote}
+  \(k \leftarrow ceil(log_{b}(n))\)
+  \end{quote}
+\item
+  \begin{quote}
+  \(\Delta \leftarrow b^{k}{\  \oplus}_{n}\ 0\)
+  \end{quote}
+\item
+  \begin{quote}
+  repeat
+  \end{quote}
+\item
+  \begin{quote}
+  \(r \leftarrow 0\)
+  \end{quote}
+\item
+  \begin{quote}
+  repeat \(k\) times
+  \end{quote}
+\item
+  \begin{quote}
+  \(r \leftarrow b \times r + uniform!(Z_{b})\)
+  \end{quote}
+\item
+  \begin{quote}
+  until last time
+  \end{quote}
+\item
+  \begin{quote}
+  until \(r \geq \Delta\)
+  \end{quote}
+\item
+  \begin{quote}
+  \(r \leftarrow r{\  \oplus}_{n}\ 0\)
+  \end{quote}
+\end{enumerate}
+
+\hypertarget{uniformz_40}{%
+\subsection{\texorpdfstring{\(uniform!(Z_{40})\)}{uniform!(Z\_\{40\})}}\label{uniformz_40}}
+
+For \(n = 40\), it is useful to think of \(40\) as \(8 \times 5\). A
+random \(3\) bit number perfectly bins the first factor. Then note that
+for \(b = 2\), \(k = 4\), and \(n = 5\) in the perfect binning
+algorithm, \(2^{4} = 3 \times 5 + 1\), so \(\Delta = 1\). So the second
+factor only has to be re-generated \(1/16\) of the time, a fairly
+efficient implementation is
+
+\(uniform!(Z_{40}) = uniform!(Z_{8}) + 8 \times (uniform!(Z_{15}){\  \oplus}_{5}\ 0)\)
+
+\hypertarget{uniforms_n}{%
+\subsection{\texorpdfstring{\(uniform!(S_{n})\)}{uniform!(S\_\{n\})}}\label{uniforms_n}}
+
+Let \([ i \leftrightarrow j]\) be the function that takes a
+list and swaps index \(i\) and \(j\) of the list (this does nothing when
+\(i = j\)). For example
+\([ 0 \leftrightarrow 3]([\text{`a'},\text{`b'},\text{`c'},\text{`d'}]) = [\text{`d'},\text{`b'},\text{`c'},\text{`a'}]\).
+
+The procedure is to randomly walk through the decision tree of choosing
+the initial element, then the next, etc.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \begin{quote}
+  procedure \(uniform!(S_{n}) \rightarrow r:S_{n}\)
+  \end{quote}
+\item
+  \begin{quote}
+  \(r \leftarrow [ 0,1,...,n - 1]\)
+  \end{quote}
+\item
+  \begin{quote}
+  \(m \leftarrow n\)
+  \end{quote}
+\item
+  \begin{quote}
+  while \(m > 1\)
+  \end{quote}
+\item
+  \begin{quote}
+  \(i \leftarrow uniform!(Z_{m})\)
+  \end{quote}
+\item
+  \begin{quote}
+  \(r \leftarrow\)\([ m \leftrightarrow i](r)\)
+  \end{quote}
+\item
+  \begin{quote}
+  \(m \leftarrow m - 1\)
+  \end{quote}
+\end{enumerate}
+
+\hypertarget{shannon-information}{%
+\section{Shannon Information}\label{shannon-information}}
+
+The information (measured in bits) of a certain set \(X\ \)of outcomes
+\(x\) with probabilities \(p(x)\) is the
+\(H(p) = - p(x)\ log_{2}(p(x))\)
+
+For uniform probabilities the information is \(log_{2}(\# X)\), which is
+the largest it can be.
+
+\hypertarget{missing-bits}{%
+\section{\texorpdfstring{Missing Bits
+}{Missing Bits }}\label{missing-bits}}
+
+In security, it is preferable to have uniform distributions since that
+provides the least amount of information to an attacker. So we define
+\(p(x) = 1/\# X + \delta p(x)\). Substituting into the information
+formula, \(M(p) = log_{2}(\# X) - H(p)\) is the number of missing bits
+of information from non-uniformity of the probabilities. We can bound
+\(M(p) \leq \frac{\# X}{log_{e}\ 2}(\delta p(x))^{2}\)
+
+\(H(p) = - (1/\# X + \delta p(x))\ log_{2}(1/\# X + \delta p(x))\)
+
+\(= - (1/\# X + \delta p(x))\ \left[ log_{2}(1/\# X) + log_{2}(1 + \# X\delta p(x)) \right]\)
+
+\(= log_{2}(\# X) - \frac{1}{\# X}(1 + \# X\delta p(x))log_{2}(1 + \# X\delta p(x))\)
+
+\(M(p) = log_{2}(\# X) - H = \frac{1}{\# X}(1 + \# X\delta p(x))log_{2}(1 + \# X\delta p(x))\)
+
+Using \(log_{2}(x) = \frac{log_{e}(x)}{log_{e}(2)}\), and
+\(log_{e}(1 + x) \leq x\)
+
+\(M(p) \leq \frac{1}{\# Xlog_{e}2}(1 + \# X\delta p(x))\# X\delta p(x)\)
+
+\(= \frac{\# X}{log_{e}2}(\delta p(x))^{2}\)
+
+Missing Bits (Improved)
+
+This can sharpened by restricting \(X\) to eliminate where the
+probability is known to be zero. Let \(X'\) be a subset of \(X\) where
+\(p(x) = 0\) outside of \(X'\). The above estimate is correct in the
+restricted domain \(X'\) and for the whole space \(X\) we obtain
+\(log_{2}(\# X') - M'(p) \leq H(p) \leq log_{2}(\# X')\) where
+
+\(M'(p) \leq \frac{\# X'}{log_{e}2}(p(x) - 1/\# X')^{2}\).
+
+\hypertarget{lower-bounds}{%
+\section{Lower Bounds}\label{lower-bounds}}
+
+We show
+\(- \frac{\alpha}{\alpha - 1}log_{2}\left| |p| \right|_{\alpha} \leq H(p)\)
+for \(\alpha > 1\).
+
+From concavity of the logarithm function
+
+\(log_{2}p(x)f(x) \geq p(x)log_{2}(f(x))\)
+
+Choosing
+
+\(f(x) = (p(x))^{\alpha - 1}\), \(\alpha > 1\)
+
+Gives
+
+\(log_{2}(p(x))^{\alpha} \geq (\alpha - 1)p(x)log_{2}(p(x))\)
+
+Or
+
+\(- \frac{\alpha}{\alpha - 1}log_{2}\left[ (p(x))^{\alpha} \right]^{1/\alpha} \leq - p(x)log_{2}(p(x))\)
+
+Or
+
+\(- \frac{\alpha}{\alpha - 1}log_{2}\left| |p| \right|_{\alpha} \leq H(p)\)
+
+In the uniform case \(p(x) = 1/\# X\), this result is sharp,
+
+\(\left| |p| \right|_{\alpha} = \left[ \# X(1/\# X)^{\alpha} \right]^{1/\alpha} = (\# X)^{1/\alpha - 1} = (\# X)^{- \frac{\alpha - 1}{\alpha}}\)
+
+So
+\(- \frac{\alpha}{\alpha - 1}log_{2}\left| |p| \right|_{\alpha} = H(p)\)
+
+\hypertarget{entropy-of-product-in-group}{%
+\section{Entropy of Product in
+Group}\label{entropy-of-product-in-group}}
+
+If \(p(x)\) and \(q(x)\ \) are probability distributions for elements of
+a finite group \(G\), then the probability distribution for the product
+is
+
+\(r(z) = p(x)\ q(x^{- 1} \circ z)\)
+
+Here we show
+
+\(H(r) = - \left[ p(x)q(y)log_{2}(r(x \circ y)) \right]\)
+
+Using the definition,
+
+\(H(r) = - r(z) \times \ log_{2}(r(z))\)
+
+In the first definition for \(r(z)\) we sum over \(x\) and the second we
+sum over \(y\):
+
+\(H(r) = - \left( p(x)\ q(x^{- 1} \circ z) \right) \times log_{2}\left( p(y)\ q(y^{- 1} \circ z) \right)\)
+
+We can distribute the \(log_{2}\) factor into the \(x\)-sum, and then
+switch summation order
+
+\(H(r) = - \left[ p(x)q(x^{- 1} \circ z)log_{2}\left( p(y)\ q(y^{- 1} \circ z) \right) \right]\)
+
+And changing variables in the sum on \(z\) with \(w\) with the
+permutation \(x^{- 1} \circ z = w\),
+
+\(H(r) = - \left[ p(x)q(w)log_{2}\left( p(y)\ q(y^{- 1} \circ x \circ w) \right) \right]\)
+
+\(= - \left[ p(x)q(w)log_{2}(r(x \circ w)) \right]\)
+
+Or, changing summation variables, we have our result
+
+\(H(r) = - \left[ p(x)q(y)log_{2}(r(x \circ y)) \right]\)
+
+\hypertarget{hr-leq-hp-hq}{%
+\section{\texorpdfstring{\(H(r) \leq H(p) + H(q)\)}{H(r) \textbackslash leq H(p) + H(q)}}\label{hr-leq-hp-hq}}
+
+\(r(x \circ y) = p(z)\ q(z^{- 1} \circ x \circ y)\)
+
+We can instead sum over \(w\) with \(z = x \circ w\) or
+\(w = x^{- 1} \circ z\), which is just a permutation of the sum, so
+
+\(r(x \circ y) = p(x \circ w)\ q(w{}^{- 1} \circ y)\)
+
+Now in the \(log_{2}\) of the sum, we can distinguish the \(w = e\)
+term:
+
+\(H(r) = - \left[ p(x)q(y)log_{2}\left( p(x)\ q(y) + p(x \circ w)\ q(w{}^{- 1} \circ y) \right) \right]\)
+
+\(- log_{2}(u)\) is a decreasing function so dropping the remaining
+terms can only increase it's value,
+
+\(H(r) \leq - \left[ p(x)q(y)log_{2}\left( p(x)\ q(y) \right) \right]\)
+
+\(= - \left[ p(x)q(y)[ log_{2}(p(x)) + log_{2}(q(y))] \right]\)
+
+\(= H(p) + H(q)\)
+
+\hypertarget{computation}{%
+\chapter{Computation}\label{computation}}
+
+Cryptography lies in an interesting boundary between mathematics and
+computation. The goal in cryptography is to make practical algorithms
+(functions that can be computed in a reasonable amount of time and a
+high probability of success) that, without certain information usually
+referred to as the key information, are impossible to compute.
+
+So, to prove that a cryptographic idea is secure, you need to prove that
+no human or machine can decipher it without the key information. Which
+means you have to have some idea of how hard it is to compute something.
+Which means you have to have some idea of what a computer is, or, at
+least, what it can do.
+
+\hypertarget{processor-model-of-computation}{%
+\section{Processor Model of
+Computation}\label{processor-model-of-computation}}
+
+These are classical computers, where processing units do basic math and
+logic steps according to instructions written in a program stored in
+memory, and modify data also stored in memory which represents the
+progress of computation. From a function point of view, the initial
+configuration of memory is the input, and, once the processor reaches a
+``finished'' state, the final configuration represents the output.
+
+\hypertarget{neuron-model-of-computation}{%
+\section{Neuron Model of
+Computation}\label{neuron-model-of-computation}}
+
+These mimic the structure of a biological brain, where a neuron behaves
+according to the neurons they are connected to. As a computation model,
+these are graphs where the value at each vertex at time \(t\) is a
+function of the values of the vertices of all incoming edges at time
+\(t - 1\), with some assigned (input) values at \(t = 0\).
+
+These two models of computation represent essentially all non-biological
+computation. From a complexity point of view, either one can be used to
+mimic the other, so there is nothing foundationally better about either.
+But there is another model of computation.
+
+\hypertarget{probabilistic-model-of-computation}{%
+\section{Probabilistic Model of
+Computation}\label{probabilistic-model-of-computation}}
+
+Instead of absolute logic steps like a processor based computer, such as
+in ``if y is 3, then set x to 1'', a probabilistic processor allows
+assignments like ``if y is 3, then set x 3 to with 90\% likelihood, and
+set x to 7 with 10\% likelihood''. Using a large number of processor
+based computers, the behavior of a probabilistic computer can be
+simulated, and similarly a probabilistic neural computer can be
+simulated with a large number of classical neural based computers.
+
+The key is ``large number of classical computers'': a single
+probabilistic computer can compute certain things much more efficiently
+than a traditional processor or neural based computer. Cryptographers
+are particularly nervous about this probabilistic pseudo-code:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \begin{quote}
+  function crack(cipher,plain,keyset) \(\rightarrow\) key
+  \end{quote}
+\item
+  \begin{quote}
+  test\_key \(\leftarrow\) every element of keyset (with equal
+  probability)
+  \end{quote}
+\item
+  \begin{quote}
+  if decode(cipher,test\_key) = plain then
+  \end{quote}
+\item
+  \begin{quote}
+  key \(\leftarrow\) test\_key
+  \end{quote}
+\item
+  \begin{quote}
+  else
+  \end{quote}
+\item
+  \begin{quote}
+  key \(\leftarrow\) 0
+  \end{quote}
+\end{enumerate}
+
+If an attacker possesses a probabilistic computer that can execute this
+program efficiently, then the key can be quickly recovered. Because of
+this potential power there is significant effort to create such a
+computer.
+
+This is an opinion. A useful probabilistic computer will be a state
+secret, used only to crack very high value ciphers because revealing
+such a tool would diminish its value to the possessor. If your secrets
+are this important, then I am humbled by your interest in this cipher,
+and suggest you should be careful indeed. We have a few theorems
+regarding the safety of the cipher with regard to this kind of opponent.
+
+We mostly work to defend against an attacker with a lot of traditional
+computer resources and wants to run this kind of attack (a probabilistic
+computer can do all cases at once, a normal computer has to try each
+case separately):
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \begin{quote}
+  function crack(cipher,plain,keyset) \(\rightarrow\) key
+  \end{quote}
+\item
+  \begin{quote}
+  repeat
+  \end{quote}
+\item
+  \begin{quote}
+  key \(\leftarrow\) next in keyset (in order of likelihood)
+  \end{quote}
+\item
+  \begin{quote}
+  until decode(cipher,test\_key) = plain
+  \end{quote}
+\end{enumerate}
+
+More correctly, this problem is broken up among many computers, each
+searching a portion of the key space, so, if the attacker has
+\(1\_ 000\_ 000\) computers, this can be done about \(1\_ 000\_ 000\)
+times faster than one. Also, if there is a flaw in the design of the
+cipher, it may be possible to extract the key or at least decode the
+cipher with much less effort than finding the key.
+
+Spider Cipher uses the arrangement of a 40 card deck as the key. So the
+key space has
+
+\hypertarget{approx-2159.159}{%
+\section{\texorpdfstring{\(815\_ 915\_ 283\_ 247\_ 897\_ 734\_ 345\_ 611\_ 269\_ 596\_ 115\_ 894\_ 272\_ 000\_ 000\_ 000 \approx 2^{159.159}\)}{815\textbackslash\_ 915\textbackslash\_ 283\textbackslash\_ 247\textbackslash\_ 897\textbackslash\_ 734\textbackslash\_ 345\textbackslash\_ 611\textbackslash\_ 269\textbackslash\_ 596\textbackslash\_ 115\textbackslash\_ 894\textbackslash\_ 272\textbackslash\_ 000\textbackslash\_ 000\textbackslash\_ 000 \textbackslash approx 2\^{}\{159.159\}}}\label{approx-2159.159}}
+
+elements. Here is a version of understanding how big this is
+
+\begin{itemize}
+\item
+  \begin{quote}
+  There are about \(10\_ 000\_ 000\_ 000\) (10 billion) people in the
+  world.
+  \end{quote}
+\item
+  \begin{quote}
+  A person has about \(10\_ 000\_ 000\) (10 million) hairs on their
+  body.
+  \end{quote}
+\end{itemize}
+
+So, if each person had \(1\_ 000\_ 000\) (1 million) computers on every
+hair of their body, and each of these computers were trying to crack
+\(1\_ 000\_ 000\_ 000\) (1 billion) keys per second, then it would take
+more than \(250\_ 000\_ 000\) (250 million) years to try all the keys.
+
+\hypertarget{why-not-larger}{%
+\section{Why not larger?}\label{why-not-larger}}
+
+A key chosen at random from a set of \(2^{159}\) elements is profoundly
+safe. Making the key space larger has no impact on security; since the
+only plausible way to attack such a key space is to use a new technology
+(probabilistic computer) or exploit some flaw in the cipher, or flaw in
+the choice of key. Larger key spaces do not keep flaws from being
+problematic, and only postpone the inevitable in the face of a
+probabilistic computer.
+
+\hypertarget{why-not-smaller}{%
+\section{Why not smaller?}\label{why-not-smaller}}
+
+This is so large that a smaller key also makes sense, but it is natural
+to use \(40\) cards as a subset of a typical \(52\) card playing deck,
+and the arithmetic is easier for humans with a simple modulus like
+\(40\).
+
+\hypertarget{probabilistic-automata}{%
+\section{Probabilistic Automata}\label{probabilistic-automata}}
+
+From the point of view of the manner in which the cipher traverses the
+key space, a useful model is a Probabilistic Automata. In a
+probabilistic automata, the state of the system is a probability
+distribution \(p(x,t)\), which is the probability of the automata being
+in the state \(x:X\) at time \(t\). From each state, according to the
+input, there is a probability of transition to another state, so
+\(T(\sigma,x,y)\) is the transition probability of transitioning from
+state \(x\) to state \(y\) if the input to the automata is signal \(s\).
+We insist that, for any choice of initial state \(x\) and signal \(s\),
+the transition probability sum to \(1\): \(T(s,x,y) = 1\)
+
+If \(s(t)\) is the signal over time, the state of the system evolves
+according to some initial state distribution \(p(x,0) = p_{0}(x)\), and
+then transitions according to
+
+\(p(y,t + 1) = T(s(t),x,y)p(x,t)\)
+
+If the signal is also a probability then we also sum over the signal set
+\(S\) and provide a probability distribution, \(p_{s}(s,t)\), for the
+signal at time \(t\),
+
+\(p(y,t + 1) = p_{s}(s,t)T(s,x,y)p(x,t)\)
+
+\hypertarget{spider-graph}{%
+\chapter{Spider Graph}\label{spider-graph}}
+
+The spider graph has vertices \(V = S_{40}\), the set of all
+arrangements of \(Z_{40}\). For each vertex \(v\) there are \(40\)
+outgoing edges,
+\(\{ v \rightarrow s \circ t^{0} \circ v,v \rightarrow s \circ t^{1} \circ v,v \rightarrow s \circ t^{2} \circ v,...,v \rightarrow s{\circ t}^{39} \circ v\}\).
+Here \(t^{c}\) are the members of \(T_{40}\), and {[}count down by odds,
+then up by evens{]}
+
+\(s = [ 39,37,35,33,31,...,9,7,5,3,1,0,2,4,6,8,...30,32,34,36,38]\).
+
+This is the act of cutting the deck at index \(c\) followed by a
+back-front shuffle.
+
+From a user's point of view, the spider graph is a deterministic finite
+automata. Picking a key is selecting an initial vertex, and encrypting
+or decrypting is moving through the spider graph along edges.
+
+From an attacker's point of view, the randomness of the initial key is
+the initial probability distribution for the probabilistic automata. The
+signal is the envelope, which contains the plain text and the padding.
+The padding is purely random, while the plain text has various degrees
+of information. From the attacker's point of view, the most information
+is a known plaintext attack, where the plain text steps are
+deterministic.
+
+\hypertarget{spider-graph-is-vertex-invariant}{%
+\section{Spider Graph is Vertex
+Invariant}\label{spider-graph-is-vertex-invariant}}
+
+To make vertex \(w\) look like vertex \(v\), relabel all the vertices
+\(x\) by composing on the right by
+\(x \rightarrow x \circ (w^{- 1} \circ v)\). This shifts the labels as
+desired, and, by the same right multiplication, re-labels all the edges
+as required.
+
+This has several important consequences. First, from a security point of
+view, the graph state is so uniform that no amount of observation of
+movement through the graph can reveal any information about the starting
+point (key). An analogy would be trying to figure out where you were on
+a sphere by walking around - all you would know is the path you took but
+without some external reference it reveals nothing about where you are
+or where you started.
+
+Second, the structure of the graph is equal everywhere, so properties of
+the graph can be studied from any vertex. This reduces the computational
+complexity of understanding the graph (but not the security of using it)
+by \(\# S_{40} = 40!\)
+
+\hypertarget{spider-graph-is-fully-connected}{%
+\section{Spider Graph is Fully
+Connected}\label{spider-graph-is-fully-connected}}
+
+That means every vertex \(v\) can reach every other vertex thorough some
+path: \(B_{\infty}(v) = S_{40}\). If \(v\) is some choice of initial
+key, then working the cipher is moving through the spider graph which,
+by definition, limits the active state space to \(B_{\infty}(v)\). If
+this subgraph is smaller than the full graph, then the scheme is really
+not as secure as \(40!\) states.
+
+The proof cannot reasonably be done without some computer assistance.
+Here are the steps.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \begin{quote}
+  Because of the vertex invariance we need only consider one point,
+  \(e = [ 0,1,...,39]\). If \(B_{\infty}(e) = S_{40}\) then
+  \(B_{\infty}(v) = S_{40}\) for every other vertex \(v\).
+  \end{quote}
+\item
+  \begin{quote}
+  Anything \(e\) reaches can be part of the path. Suppose
+  \(e \rightarrow \cdot \cdot \cdot \rightarrow v\) by some path. This
+  means
+  \(v = (s \circ t^{c_{p - 1}}) \circ (s \circ t^{c_{p - 2}}) \circ \cdot \cdot \cdot \circ (s \circ t^{c_{0}})\),
+  where \(p\) is the path length and
+  \([ c_{0},c_{1},...,c_{p - 1}]\) is the sequence of cuts
+  used along the path. So \(v\) is shorthand for this sequence of cuts
+  that can be used in any path.
+  \end{quote}
+\item
+  \begin{quote}
+  \(e\) reaches \(e\) as a cycle, and \(s^{- 1}\). By choosing \(c = 0\)
+  in the edge transition \(x \rightarrow s \circ t^{c} \circ x\) we can
+  reach \(s^{k}\) for any \(k > 0\). Since \(S_{40}\) is finite this
+  must eventually repeat a vertex \(s^{k_{0}} = s^{k_{1}}\). Multiplying
+  by \(s^{- k_{0}}\) we see \(e = s^{k_{1} - k_{0}}\), which shows we
+  can reach \(e\) as a cycle. By splitting one factor of \(s\) from
+  this, we see \(e = s^{k_{1} - k_{0} - 1} \circ s\), which shows
+  \(s^{- 1} = s^{k_{1} - k_{0} - 1}\), so \(s^{- 1}\) is reachable.
+  \end{quote}
+\item
+  \begin{quote}
+  \(e\) reaches \(T_{40}\). First reach \(s^{- 1}\), then move along the
+  edge \(v \rightarrow t^{c} \circ s \circ v\), so
+  \(s^{- 1} \rightarrow t^{c} \circ s \circ s^{- 1} = t^{c}\)
+  \end{quote}
+\item
+  \begin{quote}
+  \(e\) reaches everywhere the inverse spider graph reaches (where all
+  the edges are reversed). The inverse graph uses the transitions
+  \(v \rightarrow t^{40 - c} \circ s^{- 1} \circ v\), but we can reach
+  these since we can reach \(s^{- 1}\) and all of \(T_{40}\).
+  \end{quote}
+\item
+  \begin{quote}
+  \(e\) reaches \(r = [ 39,38,37,...,2,1,0]\), the
+  permutation that reverses the deck.
+  \(r = s^{- 1}{\circ t}^{20} \circ s\). This is verifiable by hand but
+  also done as a computer proof as FACTS(RReachable).
+  \end{quote}
+\item
+  \begin{quote}
+  \(e\) reaches \(x = [ 1,0,3,2,5,4,...,37,36,39,38]\) the
+  permutation that swaps all pairs of the deck.
+  \(x = s^{- 1} \circ r \circ s\), as demonstrated in FACTS(XReachable).
+  \end{quote}
+\item
+  \begin{quote}
+  \(e\) reaches
+  \(b_{i,i \oplus 1} = [ 0,1,2,...,i \oplus 1,i,...,38,39]\)
+  the permutation that swaps \(i\) with \(i \oplus 1\) in the deck
+  (where \(\oplus\) is \(+\) modulo 40).
+  \(b_{i,i \oplus 1} = t^{- (i \oplus 1)} \circ t^{39} \circ x \circ t \circ r \circ s^{- 1} \circ t^{21} \circ s \circ t^{i \oplus 1}\),
+  as demonstrated in FACTS(BReachable).
+  \end{quote}
+\item
+  \begin{quote}
+  \(e\) reaches \(b_{i,j}\) which swaps index \(i\) with index \(j\). We
+  might as well assume \(i < j\). Since
+  \(b_{i,j} = t^{- i}{\circ b}_{0,j - i} \circ t^{i}\), we might as well
+  assume \(i = 0\). \(b_{0,1}\) has already been demonstrated as
+  reachable. For \(j > 1\),
+  \(b_{0,j} = b_{j - 1,j} \circ b_{0,j - 1} \circ b_{j - 1,j}\) . By
+  induction any \(b_{0,j}\) is reachable and so \(b_{i,j}\) is reachable
+  in general. This is demonstrated in FACTS(SReachable)
+  \end{quote}
+\item
+  \begin{quote}
+  \(e\) reaches \(S_{40}\). Any permutation \(v\) can be sorted into
+  \(e\) by a series of swaps. Applying the inverse of these swaps to
+  \(e\) produces \(v\), so any \(v\) is reachable.
+  \end{quote}
+\end{enumerate}
+
+\hypertarget{group-products-hold-entropy}{%
+\chapter{Group Products Hold
+Entropy}\label{group-products-hold-entropy}}
+
+Let \(p(x)\) and \(q(x)\) be two probability distributions on the group
+\(G\), then the distribution of the product is
+
+\(r(x) = p(a)q(a^{- 1} \circ x)\)
+
+Write \(p(x) = 1/\# G + \delta p(x)\) and
+\(q(x) = 1/\# G + \delta q(x)\), then this simplifies to
+
+\(r(x) = 1/\# G + \delta r(x)\), where
+\(\delta r(x) = \delta p(a)\delta q(a^{- 1} \circ x)\),
+\(E(\delta r) = 0\),
+\(E(\delta r^{2}) = \delta p(a)\delta q(a^{- 1} \circ x)\delta p(b)\delta q(b^{- 1} \circ x)\)
+
+\hypertarget{spider-graph-is-a-good-entropy-pool}{%
+\chapter{Spider Graph is a Good Entropy
+Pool}\label{spider-graph-is-a-good-entropy-pool}}
+
+The maximum entropy of spider graph is
+\(log_{2}(\# S_{40}) = log_{2}(40!) \simeq 159.159\). Choosing an
+initial deck at random (choose 1 of 40 cards for the first card, 1 of 39
+cards for the second card, etc.) would have this entropy with
+\(p(v) = 1/\# S_{40} \simeq 2^{- 159.159}\).
+
+An important feature of spider graph it is good at keeping and
+increasing entropy.
+
+R = sum(pq) (chi(pq = r))
+
+e=-sum(rx) (p(x)q(x\^{}-1 r) log p(x)q(x\^{}-1 r) = -sum(xy) (pq log
+p)+-sum(xy)(pq log q) = \textgreater=
+
+Suppose \(p(v)\) is a probability distribution for vertex \(v\) and
+\(q(w)\). Define the mean \(\) and standard deviation \(\sigma_{p}\) as
+\(= E(p) = \frac{1}{\# S_{40}}p(v) = 1/\# S_{40}\), and \(\sigma_{p} =\)
+Since \(\) is constant, only \(\delta p = p -\) is interesting. After
+\(r\) steps of the graph, where \(r < b\), the root ball size of the
+inverse spider graph, the probability distribution is
+
+\(p_{t + r}(v) = prob(path)\  \times p_{t}(path^{- 1}(v))\)
+
+Suppose the probabilities are un-gamed, that the paths were not chosen
+because of the probability distribution \(p_{t}(v)\). In the normal
+application of the cipher, while one plaintext card follows one random
+card, the path probability will be \((1/40)^{r/2}\), assuming no
+randomness from the plain text. Because of vertex-invariance, even
+chosen plaintext has no bearing on the distribution of \(p_{t}(v)\).
+While inside the root ball size, the paths are a random subsample of
+\(p(v)\), which leads to this contraction on the standard deviation:
+
+\(\sigma_{t + r} = \sigma_{t}\), or
+\(\sigma_{t} = 2^{- \lambda t}\sigma_{0}\), where
+\(\lambda = \frac{1}{4}log_{2}(40) \approx 0.92\). For the initial
+cards, which are all random, we improve uniformity at twice this rate.
+The use of 10 initial random cards improves the key uniformity by about
+100\_000\_000.
+
+Let \(b\) be the root ball size of the spider graph (since the graph is
+vertex-invariant, the root ball size is independent of the choice of
+vertex).
+
+\(\# B_{r}(v) = (40^{r} - 1)/(40 - 1)\) for \(r \leq b\). This is the
+decision tree counting problem, with \(40\) choices at each step.
+
+which you can think of as a pair of nodes
+
+It is important that the deck you choose for a key is random; otherwise
+your opponents might use insights as to what you like or don't like to
+narrow the options to something easier to guess.
+
+\href{https://www.dakkadakka.com/wiki/en/That\%27s_How_I_Roll_-_A_Scientific_Analysis_of_Dice\#Results}{\uline{https://www.dakkadakka.com/wiki/en/That\%27s\_How\_I\_Roll\_-\_A\_Scientific\_Analysis\_of\_Dice\#Results}}
+
+\href{https://cameroncounts.wordpress.com/2014/02/27/entropy-and-groups/}{\uline{https://cameroncounts.wordpress.com/2014/02/27/entropy-and-groups/}}
+
+\href{https://link.springer.com/chapter/10.1007/978-1-4419-8608-5_16}{\uline{https://link.springer.com/chapter/10.1007/978-1-4419-8608-5\_16}}
+
+Feet
+
+\(log_{2}p(x)f(x) \geq p(x)log_{2}(f(x))\)
+
+\(f(x) = (p(x))^{\alpha - 1}\), \(\alpha > 1\)
+
+\(log_{2}(p(x))^{\alpha} \geq (\alpha - 1)p(x)log_{2}(p(x))\)
+
+\(- \frac{\alpha}{\alpha - 1}log_{2}\left[ (p(x))^{\alpha} \right]^{1/\alpha} \leq - p(x)log_{2}(p(x))\)
+
+\(- \frac{\alpha}{\alpha - 1}log_{2}\left| |p| \right|_{\alpha} \leq H(p)\)
+
+\(2^{p(x)g(x)} \leq p(x)2^{g(x)}\)
+
+\(g(x) = log_{2}((p(x))^{\alpha - 1})\)
+
+\(2^{(\alpha - 1)p(x)log_{2}(p(x))} \leq (p(x))^{\alpha}\)
+
+\(- (\alpha - 1)H(p) \leq log_{2}((p(x))^{\alpha}))\)
+
+\(H(p) \geq - \frac{\alpha}{\alpha - 1}log_{2}((p(x))^{\alpha}))\)
+
+https://eprint.iacr.org/2017/339.pdf
+
+\hypertarget{mixing-near-saturation}{%
+\chapter{Mixing Near Saturation}\label{mixing-near-saturation}}
+
+The free depth governs entropy capture while the state is far from
+uniform (the capture theorem is stated in the companion \emph{Perfect
+Spider Cipher Theory}). Near saturation -- when the state entropy is
+already close to \(log_{2}(40!)\) -- a different mechanism takes over,
+and it applies equally to the plain and perfect spider: spectral
+contraction. Write the deficit as
+\(\epsilon_{k} = log_{2}(40!) - H(X_{k})\), and call the inputs blind
+when the cut choices are independent of the state, as random padding
+cards are.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \begin{quote}
+  The deficit never increases. Every step is a blind mixture of
+  bijections of the state space, and such a mixture cannot move a
+  distribution away from uniform.
+  \end{quote}
+\item
+  \begin{quote}
+  Any single card's position is exactly uniform after one blind card:
+  the uniform cut already does it, before the shuffle acts at all.
+  \end{quote}
+\item
+  \begin{quote}
+  So the slowest statistics are pairs. A cut preserves the cyclic
+  difference between two cards' positions, and pair statistics
+  therefore evolve by the \emph{difference chain}
+
+  \(K(d,d') = \frac{1}{40}\#\{ x:\pi(x + d) - \pi(x) = d'\}\)
+
+  where \(\pi\) is the position map of one shuffle. This chain is the
+  original design criterion -- after a shuffle, the distances between
+  cards should look random -- in exact form. It is doubly stochastic,
+  so its stationary distribution is uniform, and its contraction rate
+  is the mixing rate of pair statistics.
+  \end{quote}
+\end{enumerate}
+
+The long-run contraction rate of the difference chain, computed
+numerically, is essentially the same for every variant: spectral
+radius about \(0.43\) for plain spider, \(0.43\) for the perfect
+shuffle, \(0.44\) for the rejected first/last swap. Each blind card
+multiplies the pair-level \(\chi^{2}\) deficit by about \(0.19\):
+about \(2.4\) bits of log-deficit per card, or \(1.2\) bits at the
+standard-deviation level, consistent with the contraction estimated in
+the previous chapter.
+
+Two remarks. First, mixing is insensitive to the perfect swap: the
+swap governs cycles and free depth, while the contraction rate belongs
+to the cut-and-back-front structure both ciphers share. Each design
+question has its own knob, and each was tuned by its own instrument.
+Second, the pair level is computed, not proved extremal: higher-order
+correlations are conjectured to mix no slower, as in other
+card-shuffling chains, but the full spectral gap of either spider
+graph is open.
+
+Putting the regimes together, blind inputs give three simultaneous
+lower bounds,
+
+\(H(X_{k}) \geq max\left( H(X_{k - 1}),\ H(class(X_{0})) + k\, log_{2}40,\ log_{2}(40!) - \epsilon_{k} \right)\)
+
+the first always, the second while \(k\) is within the class free
+depth, the third with \(\epsilon_{k}\) contracting at the spectral
+rate once the state is near uniform. The handoff between the second
+and third arms happens near the birthday depth.
+
+Finally, the same object that certifies capture also bounds mixing
+from \emph{arbitrary} starting distributions. The collision mass
+\(\left\| w^{\ast k} \right\|_{2}^{2}\) of the \(k\)-step word
+distribution equals \(40^{- k}\) exactly while \(k\) is within the
+free depth, and by Young's inequality every starting distribution
+satisfies
+\(\left\| p_{k} - u \right\|_{2} \leq 2\left\| w^{\ast k} \right\|_{2}\).
+If the collision mass continues near \(40^{- k}\) to
+\(k \approx 30\) -- the birthday estimate -- the whole graph mixes in
+about thirty blind cards from any start, and the spectral rate above
+scrubs whatever deficit remains. The certified free depth is the
+proven prefix of that estimate; extending it is the open computational
+frontier.
+
+\backmatter
+\end{document}

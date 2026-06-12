@@ -392,6 +392,126 @@ evidence that the perfect spider walk behaves like a random one. The
 collisions that eventually end freeness are statistical, not
 structural -- which is exactly the property a cipher wants.
 
+\hypertarget{the-entropy-capture-theorem}{%
+\chapter{The Entropy Capture
+Theorem}\label{the-entropy-capture-theorem}}
+
+The birthday line says where the free depth probably sits; the free
+depth \(r\) itself is a certified bound. This chapter states the
+entropy theorem in terms of the bound. The birthday appears only as a
+clearly-labeled estimate of where the bound likely extends.
+
+Call an input sequence \emph{blind} if the cut choices
+\(C = (c_{1},...,c_{k})\) are statistically independent of the deck
+state -- the situation of random padding cards, which are drawn without
+reference to the deck.
+
+\hypertarget{capture-from-a-fixed-key}{%
+\section{Capture from a Fixed Key}\label{capture-from-a-fixed-key}}
+
+\textbf{Theorem.} In any vertex-invariant graph of out-degree \(40\)
+with free depth \(r\): from any fixed starting deck, after
+\(k \leq r\) blind steps the state entropy equals the input entropy
+exactly,
+
+\(H(X_{k}) = H(C).\)
+
+With uniform cuts this is \(k\log_{2}40 \simeq 5.32k\) bits, and the
+statement holds for every entropy measure at once (Shannon, collision,
+min-entropy), because the proof is structural: free depth makes the
+word map injective on words of length at most \(r\), vertex invariance
+makes right-translation by the starting deck a bijection, and an
+injective map preserves a distribution wholesale. Deterministic
+(plaintext-driven) steps are bijections too, so entropy never
+decreases at any depth; blind steps add their full measure while the
+total word length stays within \(r\).
+
+\hypertarget{cuts-are-far-away-and-also-adjacent}{%
+\section{Cuts Are Far Away, and Also
+Adjacent}\label{cuts-are-far-away-and-also-adjacent}}
+
+The one obstruction to extending the theorem to arbitrary \emph{key
+distributions} is instructive. First, a proposition that sounds like
+safety: every nontrivial rotation is far away in the word metric.
+If \(t^{\delta} = W\) for a word \(W\) of length \(j\), then by the
+relabeling identity
+
+\(g_{c} \circ t^{\delta} = q \circ t^{c + \delta} = g_{c + \delta}\)
+
+the word \(W\) followed by the cut \(c\) collides with the single cut
+\(c + \delta\), a tree collision at depth \(j + 1\). So free depth
+\(r\) forces \(j \geq r\): \emph{no nontrivial rotation has a word of
+length below \(r\)}.
+
+But the same identity read the other way says rotations are adjacent
+in the \emph{difference} metric:
+\(t^{\delta} = g_{a}^{- 1} \circ g_{a + \delta}\). Consequence: two
+keys differing by an initial cut, \(v\) and \(t^{\delta} \circ v\),
+have identical one-step fans under a blind card --
+\(\{ g_{c} \circ t^{\delta} \circ v\} = \{ g_{c + \delta} \circ v\}\)
+as \(c\) ranges over all cuts -- so one blind card merges them
+completely. Blindness cannot prevent this: a uniform cut shifted by
+\(\delta\) is still uniform. No free-depth hypothesis can repair it,
+because it is not a flaw: keys that are equal up to an initial cut
+ought to be the same key.
+
+\hypertarget{the-class-theorem}{%
+\section{The Class Theorem}\label{the-class-theorem}}
+
+So measure keys the way the merge demands: on \emph{cut classes},
+decks up to an initial cut (\(40!/40 = 39!\) classes,
+\(\log_{2}39! \simeq 153.8\) bits). Two facts make the class-level
+account work.
+
+First, classes branch at the full rate: the \(40\) children of any
+deck lie in \(40\) distinct classes, because
+\(q^{- 1} \circ t^{j} \circ q\) is never a rotation for
+\(j \neq 0\) (a finite check, the depth-\(2\) case of the free
+depth).
+
+Second, class collisions reduce to deck collisions one level deeper:
+if \(W = t^{j} \circ W'\) for words of length \(m\) and \(n\), then
+appending the cut \(c\) to \(W\) and the cut \(c + j\) to \(W'\)
+gives equal decks at lengths \(m + 1\) and \(n + 1\). So the class
+free depth is at least \(r - 1\).
+
+\textbf{Theorem.} For \emph{any} key distribution independent of \(k\)
+uniform blind cards, with \(k\) at most the class free depth,
+
+\(H(X_{k}) = H(class(X_{0})) + k\log_{2}40,\ \) exactly.
+
+The proof absorbs the within-class offset of the key into the first
+blind card by the relabeling identity -- a uniform first cut composed
+with an unknown shift is a uniform first cut, independent of the
+class -- and then applies the injectivity of the class-level word
+map. For non-uniform blind cards the equality relaxes to
+\(H(X_{k}) \geq H(class(X_{0})) + H(C)\).
+
+Nothing is lost in passing to classes. The \(\log_{2}40 \simeq 5.32\)
+bits of within-class position are not destroyed; they are
+\emph{refreshed} by the first blind card, and the ledger balances
+exactly:
+
+\(\log_{2}40! = \log_{2}39! + \log_{2}40.\)
+
+\hypertarget{bound-versus-estimate}{%
+\section{Bound versus Estimate}\label{bound-versus-estimate}}
+
+What the certificates give today: deck free depth \(r \geq 6\)
+(FACTS(PerfectNeighborhood6)), hence class free depth at least \(5\),
+hence the first \(5\) blind cards of the standard \(10\)-card prefix
+are captured \emph{exactly} -- about \(26.6\) bits on top of the class
+entropy of the key, by theorem. Each further certified level of \(r\)
+converts another \(5.32\) bits from estimate to theorem.
+
+What the estimate suggests: the birthday law places the free depth
+near \(\frac{1}{2}\log_{40}40! \approx 15\), so the full \(10\)-card
+prefix (\(53.2\) bits) is expected to be captured exactly, and beyond
+the free depth the loss is governed by collision mass -- of order
+\(40^{k}/40!\), under one bit all the way to saturation. But that is
+an estimate. The theorem is the part that rests on \(r\), and \(r\)
+is the part a machine can certify.
+
 \hypertarget{why-not-swap-first-and-last}{%
 \chapter{Why Not Swap First and
 Last}\label{why-not-swap-first-and-last}}
