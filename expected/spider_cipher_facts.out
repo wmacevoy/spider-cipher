@@ -85,16 +85,20 @@ src/spider_cipher_facts.c 1085: FirstLastSwaps facts check started
 src/spider_cipher_facts.c 1085: FirstLastSwaps facts check ended
 src/spider_cipher_facts.c 1106: FirstLastCycleFloor facts check started
 src/spider_cipher_facts.c 1106: FirstLastCycleFloor facts check ended
-src/spider_cipher_facts.c 1191: Z facts check started
-src/spider_cipher_facts.c 1191: Z facts check ended
-src/spider_cipher_facts.c 1445: DeckSet facts check started
-src/spider_cipher_facts.c 1445: DeckSet facts check ended
-src/spider_cipher_facts.c 1615: Neighborhood4 facts check started
-src/spider_cipher_facts.c 1615: Neighborhood4 facts check ended
-src/spider_cipher_facts.c 1622: PerfectNeighborhood4 facts check started
-src/spider_cipher_facts.c 1622: PerfectNeighborhood4 facts check ended
-src/spider_cipher_facts.c 1631: Neighborhood6 facts check [1;31mexcluded[0m.
-src/spider_cipher_facts.c 1640: PerfectNeighborhood6 facts check [1;31mexcluded[0m.
+src/spider_cipher_facts.c 1293: FreeDepthTen facts check started
+src/spider_cipher_facts.c 1293: FreeDepthTen facts check ended
+src/spider_cipher_facts.c 1315: FreeDepthTwelve facts check started
+src/spider_cipher_facts.c 1315: FreeDepthTwelve facts check ended
+src/spider_cipher_facts.c 1381: Z facts check started
+src/spider_cipher_facts.c 1381: Z facts check ended
+src/spider_cipher_facts.c 1635: DeckSet facts check started
+src/spider_cipher_facts.c 1635: DeckSet facts check ended
+src/spider_cipher_facts.c 1805: Neighborhood4 facts check started
+src/spider_cipher_facts.c 1805: Neighborhood4 facts check ended
+src/spider_cipher_facts.c 1812: PerfectNeighborhood4 facts check started
+src/spider_cipher_facts.c 1812: PerfectNeighborhood4 facts check ended
+src/spider_cipher_facts.c 1821: Neighborhood6 facts check [1;31mexcluded[0m.
+src/spider_cipher_facts.c 1830: PerfectNeighborhood6 facts check [1;31mexcluded[0m.
 facts summary.
 facts check FaceAndSuitNo [1;32mpassed[0m
 facts check FaceFromNo [1;32mpassed[0m
@@ -139,6 +143,8 @@ facts check FirstLastCuts [1;32mpassed[0m
 facts check FirstLastAdjacent [1;32mpassed[0m
 facts check FirstLastSwaps [1;32mpassed[0m
 facts check FirstLastCycleFloor [1;32mpassed[0m
+facts check FreeDepthTen [1;32mpassed[0m
+facts check FreeDepthTwelve [1;32mpassed[0m
 facts check Z [1;32mpassed[0m
 facts check DeckSet [1;32mpassed[0m
 facts check Neighborhood4 [1;32mpassed[0m
@@ -146,4 +152,4 @@ facts check PerfectNeighborhood4 [1;32mpassed[0m
 facts check RandStats [1;31mexcluded[0m
 facts check Neighborhood6 [1;31mexcluded[0m
 facts check PerfectNeighborhood6 [1;31mexcluded[0m
-320016185 (100.0%) truths and 0 (0.0%) fictions checked.
+320016205 (100.0%) truths and 0 (0.0%) fictions checked.
