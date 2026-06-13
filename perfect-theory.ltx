@@ -87,9 +87,23 @@ The plain spider pseudo-shuffle has a short cycle:
 \((s \circ t^{2})^{9} = e\)
 
 Nine shuffles at cut index \(2\) return the deck exactly to where it
-started, as demonstrated in FACTS(IReachable). Over all cut indexes, the
-first return to a cut of the starting deck takes at least \(9\) steps,
-and \(9\) is achieved.
+started, as demonstrated in FACTS(IReachable). Repeating a single cut,
+the first return takes at least \(9\) steps, and \(9\) is achieved.
+
+A sharper question: could some \emph{mixed} sequence of different cuts
+close a loop in fewer than \(9\) shuffles? It cannot. A return of
+length \(L\) is a closed walk \(e \rightarrow X \rightarrow e\); split
+at its midpoint \(X\), reached by \(\lceil L/2 \rceil\) forward
+shuffles and \(\lfloor L/2 \rfloor\) inverse shuffles. Any return of
+length \(\leq 8\) would therefore place a non-identity deck in both the
+radius-\(4\) forward ball and the radius-\(4\) inverse ball. Building
+both balls (about \(2.6\) million decks each -- the full
+\(40^{0} + \cdots + 40^{4}\) tree) and intersecting them by strict
+sort, the only common deck is the identity. So no cut sequence returns
+in fewer than \(9\) steps: the plain spider's first return is exactly
+\(9\), over \emph{all} cut sequences. This meet-in-the-middle check
+runs in a few seconds on a laptop (FACTS(ImperfectGirth)); it needs
+only radius-\(4\) work because the midpoint halves the length.
 
 Nine is far below what counting permits. The number of distinct
 shuffle words of length at most \(30\) is
@@ -318,9 +332,10 @@ reach the same deck. This is a collision at depth \(5\), while the
 girth of that graph is \(6\) and a cycle-induced collision needs
 length \(girth + 1 = 7\). The collapse is a theta -- two paths
 diverging and re-meeting away from the identity -- and no cycle
-analysis can see it. This witness, with the exact floors, free depths,
-and girths of the \(10\)- and \(12\)-card models, is verified in
-FACTS(FreeDepthTen) and FACTS(FreeDepthTwelve).
+analysis can see it. This witness, and the exact floors, free depths,
+and girths of the \(10\)- and \(12\)-card models, are direct
+computations on those small decks -- intuition experiments, run by
+hand rather than carried in the test suite.
 
 \hypertarget{the-birthday-law}{%
 \section{The Birthday Law}\label{the-birthday-law}}

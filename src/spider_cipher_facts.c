@@ -1129,195 +1129,98 @@ FACTS(FirstLastCycleFloor) {
 }
 
 
-/* =================== Small-model free depth ===================
+/* =================== Imperfect first return (girth) ===================
  *
- * The free depth r of a spider graph is the largest r such that all
- * distinct cut sequences of length <= r produce distinct decks.  It is
- * the quantity that matters for entropy capture: while the tree is
- * free, every step contributes log2(40) bits of path entropy
- * faithfully.
+ * FACTS(Cycles) shows the shortest single-cut return is 9: nine c=2
+ * pseudo-shuffles return the deck (P_2^9 = e, FACTS(IReachable)).  But a
+ * mixed sequence of different cuts might close a shorter loop.  This rules
+ * that out by meet-in-the-middle, on a laptop:
  *
- * One might hope the shortest collision factors through a cycle
- * ("meets at the identity"), so that girth and the cycle floor would
- * bound r.  The 10-card perfect model refutes this: its tree collides
- * at depth 5 -- the cut words 9,3,9,3 and 0,1,7,2,0 reach the same
- * deck -- while its girth is 6, and a collision induced by an identity
- * word needs length girth+1 = 7.  The collapse is a theta, not a
- * cycle.
+ *   a return of length L is a closed cut-walk e -> X -> e; split it at its
+ *   midpoint X, reached by ceil(L/2) forward shuffles and floor(L/2)
+ *   inverse shuffles.  So any return of length <= 8 puts a non-identity
+ *   deck in both the forward ball B_4 (cut+shuffle, P) and the backward
+ *   ball B_4 (inverse, Q).  We build both radius-4 balls (about 2.6
+ *   million decks each -- the full 40^0+...+40^4 tree, so free depth is
+ *   also >= 4) and intersect them by strict sort: the only common deck is
+ *   the identity, so there is NO return shorter than 9 by ANY cut
+ *   sequence.  With the 9-cycle above, the imperfect spider's first
+ *   return is exactly 9.
  *
- * The true law is the birthday bound: coincidences among the n^r decks
- * of the depth-r ball become unavoidable near r = log_n(n!)/2, which
- * is 3.28 for n=10, 4.02 for n=12, and 14.98 for n=40.  The measured
- * free depths below sit at that line while the cycle floors vary
- * freely above it.  Consequence for the 40-card design: the floor's
- * job is to exceed the birthday line (about 15) so that cycles never
- * bind before statistics do; plain spider (floor 9) is cycle-bound,
- * the perfect shuffle (floor 30) is birthday-bound, and no shuffle of
- * any design can beat the birthday line.
+ * The perfect (0,19) shuffle lifts this first return to 30 (FACTS(Cycles)
+ * minimum, PerfectCuts/PerfectFish).  The simple forward-only duplicate
+ * search of FACTS(Neighborhood4) is kept as the plain free-depth check;
+ * this fact adds the backward ball only to reach length-8 returns from
+ * radius-4 work.
+ *
+ * Excluded from the fast default suite: two 2.6M-deck balls and two sorts
+ * run a few seconds, past the suite's 10s budget.  Run it on a laptop with
+ *   bin/spider_cipher_facts --facts_include=ImperfectGirth
  */
 
-void smallStep(int n, int perfect, const uint8_t *in, int c, uint8_t *out) {
-  uint8_t tmp[16];
-  int h = n/2;
-  for (int i=0;i<n;++i) tmp[i] = in[(i+c)%n];
-  for (int i=0;i<h;++i) {
-    out[h+i]   = tmp[2*i];
-    out[h-1-i] = tmp[2*i+1];
-  }
-  if (perfect) {
-    uint8_t t = out[0]; out[0] = out[h-1]; out[h-1] = t;
-  }
+int deckcmp_q(const void *a, const void *b) {
+  return memcmp(a,b,CARDS);
 }
 
-uint64_t smallKey(int n, const uint8_t *d) {
-  uint64_t k = 0;
-  for (int i=n-1;i>=0;--i) k = (k<<4) | d[i];
-  return k;
-}
-
-void smallUnkey(int n, uint64_t k, uint8_t *d) {
-  for (int i=0;i<n;++i) { d[i] = k & 15; k >>= 4; }
-}
-
-int smallIsRot(int n, const uint8_t *d) {
-  for (int i=0;i<n;++i) {
-    if (d[i] != (i+d[0])%n) return 0;
-  }
-  return 1;
-}
-
-int smallFloor(int n, int perfect) {
-  int best = -1;
-  for (int c=0;c<n;++c) {
-    uint8_t a[16], b[16];
-    for (int i=0;i<n;++i) a[i]=i;
-    int k = 0;
-    do {
-      smallStep(n,perfect,a,c,b);
-      memcpy(a,b,n);
-      ++k;
-    } while (!smallIsRot(n,a));
-    if (best < 0 || k < best) best = k;
-  }
-  return best;
-}
-
-/* open-addressing set of nonzero uint64 deck keys */
-typedef struct { uint64_t *tab; uint64_t mask; } SmallSet;
-
-void smallSetInit(SmallSet *s, uint64_t cap2) {
-  s->tab = (uint64_t*)calloc(cap2, sizeof(uint64_t));
-  assert(s->tab != NULL);
-  s->mask = cap2 - 1;
-}
-
-int smallSetAdd(SmallSet *s, uint64_t k) {  /* 1 if newly added */
-  uint64_t i = (k * 0x9E3779B97F4A7C15ULL) & s->mask;
-  while (s->tab[i] != 0) {
-    if (s->tab[i] == k) return 0;
-    i = (i+1) & s->mask;
-  }
-  s->tab[i] = k;
-  return 1;
-}
-
-/* largest r with all cut words of length <= r distinct */
-int smallFreeDepth(int n, int perfect) {
-  SmallSet set;
-  size_t cap = ((size_t)1)<<22;
-  uint64_t *cur = (uint64_t*)malloc(cap*sizeof(uint64_t));
-  uint64_t *nxt = (uint64_t*)malloc(cap*sizeof(uint64_t));
-  assert(cur != NULL && nxt != NULL);
-  smallSetInit(&set, ((uint64_t)1)<<23);
-  uint8_t d0[16], d1[16];
-  for (int i=0;i<n;++i) d0[i]=i;
-  cur[0] = smallKey(n,d0);
-  smallSetAdd(&set, cur[0]);
-  size_t ncur = 1;
-  int depth = 0, r = -1;
-  while (r < 0) {
-    ++depth;
-    size_t nnxt = 0;
-    for (size_t j=0;j<ncur && r<0;++j) {
-      smallUnkey(n, cur[j], d0);
-      for (int c=0;c<n;++c) {
-        smallStep(n,perfect,d0,c,d1);
-        uint64_t k = smallKey(n,d1);
-        if (!smallSetAdd(&set,k)) { r = depth-1; break; }
-        assert(nnxt < cap);
-        nxt[nnxt++] = k;
+/* all decks reachable in <= r steps; dir>0 uses P (forward), else Q
+   (inverse).  Returns a strictly sorted, duplicate-free array; *n set. */
+Card (*girthBall(int r, int dir, size_t *n))[CARDS] {
+  size_t cap = 1, p = 1;
+  for (int i=0;i<r;++i) { p *= CARDS; cap += p; }
+  Card (*all)[CARDS] = malloc(sizeof(Card[CARDS]) * cap);
+  assert(all != NULL);
+  size_t na = 0, lvl0 = 0, lvl1 = 1;
+  deckInit(all[na++]);
+  for (int d=0; d<r; ++d) {
+    for (size_t j=lvl0; j<lvl1; ++j) {
+      for (int c=0; c<CARDS; ++c) {
+        Card tmp[CARDS];
+        for (int i=0;i<CARDS;++i) tmp[i]=all[j][i];
+        if (dir>0) P(tmp,c); else Q(tmp,c);
+        for (int i=0;i<CARDS;++i) all[na][i]=tmp[i];
+        ++na;
       }
     }
-    uint64_t *t = cur; cur = nxt; nxt = t; ncur = nnxt;
+    lvl0 = lvl1; lvl1 = na;
   }
-  free(cur); free(nxt); free(set.tab);
-  return r;
-}
-
-/* length of the shortest nonempty cut word equal to the identity */
-int smallGirth(int n, int perfect) {
-  SmallSet set;
-  size_t cap = ((size_t)1)<<22;
-  uint64_t *cur = (uint64_t*)malloc(cap*sizeof(uint64_t));
-  uint64_t *nxt = (uint64_t*)malloc(cap*sizeof(uint64_t));
-  assert(cur != NULL && nxt != NULL);
-  smallSetInit(&set, ((uint64_t)1)<<23);
-  uint8_t d0[16], d1[16];
-  for (int i=0;i<n;++i) d0[i]=i;
-  uint64_t eKey = smallKey(n,d0);
-  cur[0] = eKey;
-  smallSetAdd(&set, eKey);
-  size_t ncur = 1;
-  int depth = 0, girth = -1;
-  while (girth < 0) {
-    ++depth;
-    size_t nnxt = 0;
-    for (size_t j=0;j<ncur && girth<0;++j) {
-      smallUnkey(n, cur[j], d0);
-      for (int c=0;c<n;++c) {
-        smallStep(n,perfect,d0,c,d1);
-        uint64_t k = smallKey(n,d1);
-        if (k == eKey) { girth = depth; break; }
-        if (smallSetAdd(&set,k)) {
-          assert(nnxt < cap);
-          nxt[nnxt++] = k;
-        }
-      }
+  qsort(all, na, sizeof(Card[CARDS]), deckcmp_q);
+  size_t u = 0;
+  for (size_t i=0;i<na;++i)
+    if (i==0 || memcmp(all[i],all[i-1],CARDS)) {
+      if (u!=i) memcpy(all[u],all[i],CARDS);
+      ++u;
     }
-    uint64_t *t = cur; cur = nxt; nxt = t; ncur = nnxt;
+  *n = u;
+  return all;
+}
+
+FACTS_EXCLUDE(ImperfectGirth) {
+  size_t nf, nb;
+  Card (*F)[CARDS] = girthBall(4, +1, &nf);
+  Card (*B)[CARDS] = girthBall(4, -1, &nb);
+
+  /* radius-4 balls are full trees: free depth >= 4 for the imperfect cipher */
+  FACT(nf,==,(size_t)2625641);
+  FACT(nb,==,(size_t)2625641);
+
+  Card id[CARDS];
+  deckInit(id);
+  int nontrivialCommon = 0;
+  size_t i=0, j=0;
+  while (i<nf && j<nb) {
+    int c = memcmp(F[i], B[j], CARDS);
+    if (c==0) {
+      if (memcmp(F[i], id, CARDS)) ++nontrivialCommon;
+      ++i; ++j;
+    } else if (c<0) ++i; else ++j;
   }
-  free(cur); free(nxt); free(set.tab);
-  return girth;
+  /* no closed cut-walk of length <= 8: first return is the 9-cycle */
+  FACT(nontrivialCommon,==,0);
+
+  free(F);
+  free(B);
 }
 
-FACTS(FreeDepthTen) {
-  FACT(smallFloor(10,0),==,4);
-  FACT(smallFreeDepth(10,0),==,3);
-  FACT(smallGirth(10,0),==,4);
-  FACT(smallFloor(10,1),==,6);
-  FACT(smallFreeDepth(10,1),==,4);
-  FACT(smallGirth(10,1),==,6);
-
-  /* theta witness: two distinct cut words of length <= 5 reach the
-     same deck although the girth is 6, so the first collapse does not
-     factor through any cycle */
-  uint8_t a[16], b[16], t[16];
-  int U[4] = {9,3,9,3};
-  int V[5] = {0,1,7,2,0};
-  for (int i=0;i<10;++i) { a[i]=i; b[i]=i; }
-  for (int i=0;i<4;++i) { smallStep(10,1,a,U[i],t); memcpy(a,t,10); }
-  for (int i=0;i<5;++i) { smallStep(10,1,b,V[i],t); memcpy(b,t,10); }
-  for (int i=0;i<10;++i) {
-    FACT(a[i],==,b[i]);
-  }
-}
-
-FACTS(FreeDepthTwelve) {
-  FACT(smallFloor(12,0),==,6);
-  FACT(smallFreeDepth(12,0),==,5);
-  FACT(smallFloor(12,1),==,10);
-  FACT(smallFreeDepth(12,1),==,5);
-}
 
 uint8_t PERMS1[1][1]=
   {
@@ -1880,8 +1783,7 @@ FACTS_REGISTER_ALL() {
     FACTS_REGISTER(FirstLastAdjacent);
     FACTS_REGISTER(FirstLastSwaps);
     FACTS_REGISTER(FirstLastCycleFloor);
-    FACTS_REGISTER(FreeDepthTen);
-    FACTS_REGISTER(FreeDepthTwelve);
+    FACTS_REGISTER(ImperfectGirth);
     FACTS_REGISTER(Z);
     FACTS_REGISTER(DeckSet);
     FACTS_REGISTER(Neighborhood4);
