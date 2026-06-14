@@ -85,6 +85,13 @@ $(TEX_OUT)/perfect-theory.pdf: perfect-theory.ltx
 .PHONY: perfect-theory
 perfect-theory: $(TEX_OUT)/perfect-theory.pdf
 
+$(TEX_OUT)/foundations.pdf: foundations.ltx
+	mkdir -p $(TEX_OUT)
+	$(TECTONIC) -X compile --outdir $(TEX_OUT) $<
+
+.PHONY: foundations
+foundations: $(TEX_OUT)/foundations.pdf
+
 .PHONY: clean-theory
 clean-theory:
 	rm -rf $(TEX_OUT)

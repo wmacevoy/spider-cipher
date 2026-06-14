@@ -1,0 +1,531 @@
+\documentclass[11pt]{article}
+
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{hidelinks,pdftitle={Foundations of the Spider Cipher Graph}}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\Sn}{S_{n}}
+\newcommand{\Zn}{\mathbb{Z}_{n}}
+\newcommand{\id}{e}
+\DeclareMathOperator{\Cay}{Cay}
+
+\title{Foundations of the Spider Cipher Graph:\\
+Vertex Transitivity, Connectivity, and Injectivity Radius}
+\author{Warren MacEvoy}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+The Spider cipher is a manual stream cipher operated with a deck of
+$n=40$ cards. Its state is the deck order, an element of the symmetric
+group $\Sn$, and each step left-multiplies the state by one of $n$
+fixed permutations: a cut at a chosen index followed by a fixed
+``back-front'' (Monge) shuffle, optionally followed by a single
+transposition (the \emph{perfect} variant). The reachable states thus
+form the Cayley graph of the group these permutations generate. We
+prove this graph is vertex-transitive, give a constructive proof that
+the generators generate all of $\Sn$ (so the graph is connected on the
+full $40!$ states), and study its \emph{injectivity radius} or
+\emph{free depth}---the largest $r$ for which all distinct length-$\le
+r$ generator words give distinct states. We establish the girth of the
+plain variant is exactly $9$ by a meet-in-the-middle search over all
+cut sequences, relate the free depth to a counting (birthday) bound
+$\tfrac12\log_n n!\approx 15$, and define the \emph{relation leak
+rate} $\sum_L c_L/n^{L}$, where $c_L$ counts length-$L$ relators; we
+compute $c_9=1,\ c_{10}=0$ for the plain variant and $c_9=c_{10}=0$ for
+the perfect variant. Finite assertions (a specific relator, the
+meet-in-the-middle search, the relator counts, and an independent
+Schreier--Sims order computation) are machine-checked; the structural
+results are proved. The constructions use only standard tools from the
+theory of random walks on the symmetric group, applied to a generator
+set that does not appear to have been studied before.
+\end{abstract}
+
+\section{Introduction}
+
+A deck of cards is a physical element of the symmetric group, and
+shuffling is a walk on that group. This is the classical viewpoint of
+Aldous and Diaconis~\cite{aldous-diaconis}, Bayer and
+Diaconis~\cite{bayer-diaconis}, Diaconis and
+Shahshahani~\cite{diaconis-shahshahani}, and
+Saloff-Coste~\cite{saloff-coste}: repeated shuffling is a random walk
+on $\Sn$, equivalently a walk on a Cayley graph, whose mixing is
+governed by the generators. Hand ciphers in the lineage of Schneier's
+\emph{Solitaire}~\cite{schneier-solitaire} use the same object as a
+keyed state machine rather than a source of randomness; Solitaire is
+known to be statistically distinguishable from
+ideal~\cite{crowley,shiu}, and modern hand ciphers such as
+ElsieFour~\cite{kaminsky} are designed against such weaknesses.
+
+This note isolates the graph-theoretic foundations of one such cipher,
+the Spider cipher, independent of any cryptographic claim. Three
+questions are natural for any deterministic shuffle used as a state
+machine, and each is a property of the underlying Cayley graph:
+
+\begin{enumerate}
+\item \emph{Vertex transitivity.} Does the graph look the same from
+every state? (Section~\ref{sec:vt}.)
+\item \emph{Connectivity.} Do the moves reach every one of the $n!$
+states? (Section~\ref{sec:conn}.)
+\item \emph{Injectivity radius.} How long do distinct move sequences
+stay distinct? (Section~\ref{sec:r}.)
+\end{enumerate}
+
+The first two have clean answers: the graph is vertex-transitive
+(Proposition~\ref{prop:vt}), and for $n=40$ the generators generate
+$\Sn$, so the graph is connected (Theorem~\ref{thm:conn}). For the
+third we give exact small-radius results and relate the general
+behavior to a counting bound. Whether the generic behavior of such
+generators is provable, rather than computational, is an instance of
+open problems on diameters and mixing of $\Sn$ under arbitrary
+generators~\cite{helfgott-seress-zuk,babai-seress}.
+
+\paragraph{Computer assistance.} Several statements below are finite
+computations: a specific relator holds, a bounded search finds no
+collision, a count is exact, or a group order equals $40!$. These are
+machine-checked in an accompanying test suite, cited as
+\textsf{FACTS}($\cdot$); the proofs reduce the structural claims to
+these finite checks.
+
+\section{The Spider Graph}\label{sec:setup}
+
+Fix an even $n$ (the deck size; $n=40$ for the cipher). Identify a
+\emph{deck} with a permutation $d\in\Sn$, writing $d=[d_0,\dots,
+d_{n-1}]$ for the card values in positions $0,\dots,n-1$. The identity
+deck is $\id=[0,1,\dots,n-1]$.
+
+\begin{definition}[Cut]
+For $c\in\Zn$ the \emph{cut} $t^{c}\in\Sn$ acts on positions by
+$(t^{c}d)_i = d_{(i+c)\bmod n}$. The cuts form a cyclic subgroup
+$T_n=\{t^{0},\dots,t^{\,n-1}\}\cong\Zn$.
+\end{definition}
+
+\begin{definition}[Back-front shuffle]
+The \emph{back-front} (Monge) shuffle $\beta\in\Sn$ deals the cut deck
+alternately to the back and front of a new pile:
+\[
+(\beta d)_{\frac n2 + i} = d_{2i},\qquad
+(\beta d)_{\frac n2 - 1 - i} = d_{2i+1},\qquad 0\le i<\tfrac n2 .
+\]
+\end{definition}
+
+\begin{definition}[Spider generators]
+The \emph{plain} spider generators are $g_c = \beta\circ t^{c}$ for
+$c\in\Zn$. The \emph{perfect} spider generators are
+$g'_c=\sigma\circ\beta\circ t^{c}$, where $\sigma=(0\ \tfrac n2-1)$
+transposes positions $0$ and $\tfrac n2-1$ (positions $0$ and $19$ for
+$n=40$). A \emph{step} replaces the state $d$ by $g_c\,d$ (resp.
+$g'_c\,d$); the cut index $c$ is the input.
+\end{definition}
+
+\begin{definition}[Spider graph]
+The \emph{spider graph} $\Gamma$ is the Cayley graph
+$\Cay(\Sn,\{g_c\}_{c\in\Zn})$: its vertices are the decks $\Sn$, and
+for each $c$ there is an arc $d\to g_c\,d$. The \emph{perfect spider
+graph} $\Gamma'$ uses $\{g'_c\}$ in place of $\{g_c\}$. Let
+$H=\langle g_c\rangle$ and $H'=\langle g'_c\rangle$ be the groups they
+generate.
+\end{definition}
+
+Note $g_0=\beta$ (since $t^{0}=\id$), and $g'_0=\sigma\beta$. A path of
+length $p$ from $\id$ spells a word
+$g_{c_{p-1}}\cdots g_{c_0}\in H$, so the set of states reachable from
+$\id$ is exactly $H$, and the graph is connected if and only if
+$H=\Sn$.
+
+\section{Vertex Transitivity}\label{sec:vt}
+
+\begin{proposition}\label{prop:vt}
+The spider graph $\Gamma$ (and likewise $\Gamma'$) is
+vertex-transitive: for any decks $v,w$ there is a graph automorphism
+sending $v$ to $w$. Consequently every vertex has the same local and
+global structure, and all reachability, girth, and injectivity-radius
+questions may be studied from the identity deck $\id$.
+\end{proposition}
+
+\begin{proof}
+For $h\in\Sn$ let $\rho_h$ be right translation, $\rho_h(d)=d\circ h$.
+It is a bijection of the vertex set. It preserves arcs: if $d\to g_c d$
+is an arc then $\rho_h(d)=dh\to g_c(dh)=(g_c d)h=\rho_h(g_c d)$ is an
+arc, because the generators act on the left and right translation acts
+on the right. Thus $\rho_h\in\operatorname{Aut}(\Gamma)$. Taking
+$h=v^{-1}w$ gives $\rho_h(v)=v(v^{-1}w)=w$. The same argument applies
+to $\Gamma'$. The right-translation action is transitive on $\Sn$, so
+$\Gamma$ is vertex-transitive; in particular the rooted neighborhoods
+of any two vertices are isomorphic.
+\end{proof}
+
+Vertex transitivity is what lets every later argument start at $\id$,
+and it has the cryptographic reading that observing motion through the
+graph reveals nothing about the starting vertex; we do not pursue that
+here.
+
+\section{Connectivity}\label{sec:conn}
+
+We show the generators generate $\Sn$, constructively, by exhibiting a
+ladder of named permutations and expressing each as a generator word.
+Throughout, ``reachable'' means ``lies in $H$'' (resp.\ $H'$);
+reachability is closed under composition and, since $\Sn$ is finite,
+under inverses ($h^{-1}=h^{\,\mathrm{ord}(h)-1}$).
+
+\subsection{The plain graph}
+
+\begin{theorem}\label{thm:conn}
+For $n=40$ the plain spider generators generate $\Sn$: $H=\Sn$. Hence
+$\Gamma$ is connected on all $40!$ vertices.
+\end{theorem}
+
+\begin{proof}
+We climb a ladder, each rung a reachable permutation.
+
+\emph{(i) The shuffle and its inverse.} $\beta=g_0$ is a generator,
+hence reachable, and so is $\beta^{-1}=\beta^{\,\mathrm{ord}(\beta)-1}$.
+
+\emph{(ii) All cuts.} For each $c$, $g_c=\beta t^{c}$ is reachable, so
+\[
+t^{c}=\beta^{-1}g_c=\beta^{-1}(\beta t^{c})
+\]
+is reachable. Thus $T_n\subseteq H$.
+
+\emph{(iii) Reversal.} Let $r=[\,n-1,n-2,\dots,0\,]$ reverse the deck.
+Then
+\[
+r=\beta^{-1}\,t^{\,n/2}\,\beta ,
+\]
+a product of reachable elements (\textsf{FACTS(RReachable)}). Indeed
+conjugating the half-deck rotation by the shuffle reverses order.
+
+\emph{(iv) Pair exchange.} Let $x=(0\,1)(2\,3)\cdots(n-2\ n-1)$ swap
+adjacent pairs. Then
+\[
+x=\beta^{-1}\,r\,\beta
+\]
+is reachable (\textsf{FACTS(XReachable)}).
+
+\emph{(v) An adjacent transposition.} Let
+$b_{i,i\oplus 1}$ transpose the cards in positions $i$ and
+$i\oplus 1=(i+1)\bmod n$. Then
+\[
+b_{i,i\oplus1}
+= t^{-(i\oplus1)}\,t^{\,n-1}\,x\,t\,r\,\beta^{-1}\,t^{\,21}\,\beta\,t^{\,i\oplus1},
+\]
+a product of elements from (i)--(iv) and $T_n$
+(\textsf{FACTS(BReachable)}).
+
+\emph{(vi) All transpositions.} For $i<j$, $b_{i,j}=t^{-i}b_{0,j-i}t^{i}$,
+so it suffices to reach $b_{0,k}$. Now $b_{0,1}$ is the case $i=0$ of
+(v), and for $k>1$,
+\[
+b_{0,k}=b_{k-1,k}\,b_{0,k-1}\,b_{k-1,k},
+\]
+so by induction every transposition is reachable
+(\textsf{FACTS(SReachable)}).
+
+\emph{(vii) Conclusion.} The transpositions generate $\Sn$, so
+$H=\Sn$.
+\end{proof}
+
+\begin{remark}
+Steps (i)--(vi) are exact group identities; the only computation is
+verifying each named element equals the stated word in $\Sn$ (a
+composition of fixed permutations), which the cited \textsf{FACTS}
+checks. The argument is the classical one---reach the cut subgroup,
+build an adjacent transposition by conjugation, then all
+transpositions---specialized to these generators.
+\end{remark}
+
+\subsection{The perfect graph}
+
+The perfect generators satisfy the same cut identity, since the extra
+swap cancels:
+\[
+g'^{-1}_0\,g'_c=(\sigma\beta)^{-1}(\sigma\beta t^{c})
+=\beta^{-1}\sigma^{-1}\sigma\beta\,t^{c}=t^{c},
+\]
+so $T_n\subseteq H'$ as before. What changes is the entry point: we can
+no longer isolate $\beta$ (that would require $\sigma$, a transposition,
+which is what we are trying to build), so a transposition must be
+produced directly. It is, by a short relator.
+
+\begin{lemma}\label{lem:fish}
+For the perfect variant with the first-last swap
+$\sigma_{0,n-1}=(0\ n-1)$ (rather than $(0\ \tfrac n2-1)$), the nine-fold
+$c=2$ step is a single transposition:
+\[
+(\,\sigma_{0,n-1}\,\beta\,t^{2}\,)^{9}=(1\ \ n-1)\qquad(n=40).
+\]
+For the design variant $\sigma=(0\ \tfrac n2-1)$, the nine-fold $c=2$
+step is a $7$-cycle, and the commutator of that cycle with a cut
+conjugate of it is a $3$-cycle.
+\end{lemma}
+
+\begin{proof}
+Finite computations (\textsf{FACTS(FirstLastFish)},
+\textsf{FACTS(PerfectFish)}, \textsf{FACTS(Perfect3Cycle)}). The
+mechanism is that the plain step $\beta t^{2}$ has order $9$ on the
+identity deck, and the swap, commuted through the nine equal steps,
+collapses on the short orbit of its support; for $(0\ n-1)$ both swap
+endpoints lie on the length-$3$ orbit of $\beta t^{2}$ and the trail
+collapses to one transposition.
+\end{proof}
+
+\begin{theorem}\label{thm:conn-perfect}
+For $n=40$ the perfect spider generators (either $\sigma=(0\,19)$ or the
+first-last swap) generate $\Sn$, so $\Gamma'$ is connected on all $40!$
+vertices.
+\end{theorem}
+
+\begin{proof}
+By Lemma~\ref{lem:fish} a transposition (resp.\ a $3$-cycle) is
+reachable. Conjugating by the reachable cuts $T_n$ translates it to a
+family of transpositions (resp.\ $3$-cycles); for the first-last swap,
+cut conjugates of $(1\ n-1)$ give every distance-$2$ swap, conjugation
+of $(0\ 2)$ through $g'_0$ gives an adjacent swap, and cuts and the
+bubble identity of Theorem~\ref{thm:conn}(vi) give all transpositions
+(\textsf{FACTS(FirstLastCuts,FirstLastAdjacent,FirstLastSwaps)}). For
+the design swap, translated $3$-cycles generate the alternating group
+$A_n$, and any odd reachable element (a single cut $t^{c}$ with $c$ odd
+is an $n$-cycle, odd for even $n$) lifts $A_n$ to $\Sn$. Either way
+$H'=\Sn$.
+\end{proof}
+
+\begin{proposition}[Independent check]\label{prop:ss}
+A Schreier--Sims stabilizer-chain computation gives
+$|H|=|H'|=40!$ for the plain and both perfect variants. Since $\Sn$ is
+the only subgroup of $\Sn$ of order $n!$, this certifies $H=H'=\Sn$
+independently of the constructive ladder, confirming
+Theorems~\ref{thm:conn} and~\ref{thm:conn-perfect}. The same
+computation shows the action is primitive: no nontrivial block system
+$\bmod\,d$ with $d\mid 40$ is preserved.
+\end{proposition}
+
+\section{Injectivity Radius (Free Depth) and Girth}\label{sec:r}
+
+Connectivity says the moves reach everywhere; the next question is how
+much information a move sequence carries before it begins to repeat
+states.
+
+\begin{definition}[Free depth]
+The \emph{free depth} $r$ of the spider graph is the largest $r$ such
+that the map from cut words of length $\le r$ to $\Sn$,
+$(c_1,\dots,c_k)\mapsto g_{c_k}\cdots g_{c_1}$, is injective. Equivalently,
+the rooted out-tree of depth $r$ is a genuine tree.
+\end{definition}
+
+\begin{definition}[Girth and relators]
+A \emph{relator} of length $L$ is a nonempty cut word equal to the
+identity of $\Sn$ (a closed walk through any, hence every, vertex). The
+\emph{girth} $\gamma$ is the least relator length. Let $c_L$ be the
+number of relators of length $L$.
+\end{definition}
+
+\subsection{A counting bound}
+
+\begin{proposition}\label{prop:count}
+For any out-degree-$n$ vertex-transitive graph on $n!$ vertices,
+$r\le \gamma-1$ and
+$\gamma\le 1+\big\lceil \log_n\!\big((n-1)\,n!+1\big)\big\rceil$. For
+$n=40$ this gives $\gamma\le 31$, and a relator of length below
+$30$ is not forced by counting.
+\end{proposition}
+
+\begin{proof}
+A relator of length $\gamma$ makes the empty word and a length-$\gamma$
+word collide, so $r\le\gamma-1$. The number of words of length $\le L$
+is $(n^{L+1}-1)/(n-1)$; once this exceeds $n!=|\Sn|$ two words must
+collide, giving a relator. The least $L$ with
+$(n^{L+1}-1)/(n-1)>n!$ is the stated bound; for $n=40$,
+$(40^{31}-1)/39>40!>(40^{30}-1)/39$.
+\end{proof}
+
+The birthday heuristic sharpens the typical scale: among the $n^{k}$
+words of length $k$ mapping into $n!$ states, coincidences become
+likely near $n^{2k}\approx n!$, i.e.\
+\[
+r^{\*}\approx \tfrac12\log_n n! \approx 15\quad(n=40).
+\]
+This is an estimate, not a theorem; the certified statements follow.
+
+\subsection{Girth of the plain variant}
+
+\begin{theorem}\label{thm:girth}
+The plain spider graph for $n=40$ has girth exactly $9$: no cut
+sequence of length $\le 8$ is a relator, and
+$(\beta t^{2})^{9}=\id$.
+\end{theorem}
+
+\begin{proof}
+The relator $(\beta t^{2})^{9}=\id$ is a finite computation
+(\textsf{FACTS(IReachable)}), giving $\gamma\le 9$. For $\gamma\ge 9$,
+note a relator of length $L\le 8$ is a closed walk $\id\to X\to\id$;
+splitting it at its midpoint puts a non-identity deck $X$ in both the
+forward ball $B_4$ (reachable in $\le 4$ forward steps) and the
+backward ball $B_4^{-}$ (reachable in $\le 4$ inverse steps), since
+$\lceil L/2\rceil\le 4$. A meet-in-the-middle computation builds both
+balls (about $2.6\times10^{6}$ decks each, the full
+$1+40+\cdots+40^4$ tree, so the forward map is already injective to
+depth $4$) and finds their intersection is $\{\id\}$
+(\textsf{FACTS(ImperfectGirth)}). Hence no relator of length $\le 8$
+exists and $\gamma=9$.
+\end{proof}
+
+\begin{corollary}
+The plain free depth is at most $8$, and at least $4$
+(the depth-$4$ ball is a tree, by the same computation). The perfect
+variant has no relator of length $\le 8$ either; its single-cut first
+return is at least $30$ (\textsf{FACTS(Cycles)}), at the counting bound.
+\end{corollary}
+
+\subsection{Relators and the leak rate}
+
+A single relator $w$ of length $L$ is not an isolated coincidence: for
+any prefix word $s$, the word $s\cdot w$ reaches the same state as
+$s$, so $w$ induces about $n^{r-L}$ collisions among words of length
+$\le r$. Counting these gives a rate independent of $r$.
+
+\begin{proposition}\label{prop:leak}
+The fraction of length-$r$ words involved in a collision induced by
+relators is, to leading order,
+\[
+\sum_{L\ge\gamma} \frac{c_L}{n^{L}} .
+\]
+\end{proposition}
+
+\begin{proof}
+A length-$L$ relator $w$ and each of the $\sum_{m\le r-L} n^{m}\sim
+n^{r-L}$ prefixes $s$ yield the colliding pair $(s,\,s\cdot w)$; summing
+over the $c_L$ relators of each length and dividing by the $\sim n^{r}$
+words of length $r$ gives $\sum_L c_L n^{r-L}/n^{r}=\sum_L c_L/n^{L}$.
+By vertex transitivity $c_L$ is well defined independent of base point.
+\end{proof}
+
+\begin{theorem}\label{thm:counts}
+For $n=40$: the plain variant has $c_9=1$ (the relator
+$(\beta t^{2})^{9}$ is the unique length-$9$ relator; no mixed cut
+sequence returns in $9$) and $c_{10}=0$. The perfect variant
+($\sigma=(0\,19)$) has $c_9=c_{10}=0$. Hence the plain relator leak rate
+is $40^{-9}+O(40^{-12})$ and the perfect rate is below $40^{-10}$
+(certified), with the next single-cut relator near length $30$.
+\end{theorem}
+
+\begin{proof}
+$c_L$ equals the number of distinct decks reachable forward in exactly
+$\lceil L/2\rceil$ steps and backward in $\lfloor L/2\rfloor$ steps,
+counted by intersecting balls. The counts $c_9=|B_5\cap B_4^{-}|$ and
+$2c_9+c_{10}=|B_6\cap B_4^{-}|$ are obtained by storing the small
+backward ball ($B_4^{-}$, strictly sorted) and enumerating the forward
+ball by depth-first search, probing each deck; the searches give the
+stated values (\textsf{FACTS(Relations)}). The plain $c_9=1$ identifies
+$(\beta t^{2})^{9}$ as the only length-$9$ relator; $c_{10}=0$ and the
+perfect zeros follow from empty intersections.
+\end{proof}
+
+\section{Status of the Results and Open Problems}
+
+The structural results---vertex transitivity
+(Proposition~\ref{prop:vt}), the constructive generation of $\Sn$
+(Theorems~\ref{thm:conn},~\ref{thm:conn-perfect}), the counting bound
+(Proposition~\ref{prop:count}), the relator-to-collision amplification
+(Proposition~\ref{prop:leak})---are proofs. The remaining inputs are
+finite computations of three kinds, each machine-checked: (a) a named
+permutation equals a given generator word (the ladder rungs and the
+relators of Lemma~\ref{lem:fish}); (b) a bounded ball search has empty
+intersection (the girth, Theorem~\ref{thm:girth}); (c) an exact count
+or a group order (Theorem~\ref{thm:counts},
+Proposition~\ref{prop:ss}). The birthday scale $r^{\*}\approx15$ is a
+heuristic; the certified free depth is the prefix that exhaustive
+search reaches.
+
+Three questions are open and, we believe, genuinely hard:
+
+\begin{enumerate}
+\item \emph{General $n$.} Do the cut-and-back-front generators generate
+$\Sn$ for all even $n$, or for which $n$? The proof above is specific
+to $n=40$ through its finite checks.
+\item \emph{Exact free depth.} Is the free depth of the perfect variant
+equal to the birthday scale $\approx 15$, and can it be bounded below
+by proof rather than by search? Certifying one more level multiplies
+the search by $40$.
+\item \emph{Deterministic vs.\ random mixing.} The classical results
+\cite{aldous-diaconis,bayer-diaconis,diaconis-shahshahani} concern
+\emph{random} shuffles. Does the deterministic cut-and-back-front walk
+mix on the same scale, and do the spectral and strong-uniform-time
+tools transfer to it? More broadly, the diameter and mixing of $\Sn$
+under arbitrary fixed generators remain open
+\cite{helfgott-seress-zuk,babai-seress}.
+\end{enumerate}
+
+The machinery used here is entirely standard; what appears to be new is
+the object---the Cayley graph of $\Sn$ generated by a cut composed with
+a Monge shuffle---and the explicit determination of its girth, low-order
+relator counts, and a constructive generating ladder, all
+machine-checked.
+
+\begin{thebibliography}{9}
+
+\bibitem{aldous-diaconis}
+D.~Aldous and P.~Diaconis,
+\emph{Shuffling cards and stopping times},
+Amer.\ Math.\ Monthly \textbf{93} (1986), 333--348.
+
+\bibitem{bayer-diaconis}
+D.~Bayer and P.~Diaconis,
+\emph{Trailing the dovetail shuffle to its lair},
+Ann.\ Appl.\ Probab.\ \textbf{2} (1992), 294--313.
+
+\bibitem{diaconis-shahshahani}
+P.~Diaconis and M.~Shahshahani,
+\emph{Generating a random permutation with random transpositions},
+Z.\ Wahrsch.\ Verw.\ Gebiete \textbf{57} (1981), 159--179.
+
+\bibitem{saloff-coste}
+L.~Saloff-Coste,
+\emph{Random walks on finite groups},
+in \emph{Probability on Discrete Structures}, Encyclopaedia Math.\
+Sci.\ \textbf{110}, Springer, 2004, 263--346.
+
+\bibitem{helfgott-seress-zuk}
+H.~A.~Helfgott, \'A.~Seress, and A.~\.Zuk,
+\emph{Random generators of the symmetric group: diameter, mixing time
+and spectral gap},
+J.\ Algebra \textbf{421} (2015), 349--368.
+
+\bibitem{babai-seress}
+L.~Babai and \'A.~Seress,
+\emph{On the diameter of permutation groups},
+European J.\ Combin.\ \textbf{13} (1992), 231--243.
+
+\bibitem{schneier-solitaire}
+B.~Schneier,
+\emph{The Solitaire encryption algorithm} (1999),
+appendix to N.~Stephenson, \emph{Cryptonomicon}.
+
+\bibitem{crowley}
+P.~Crowley,
+\emph{Problems with Bruce Schneier's ``Solitaire''} (1999),
+\url{https://www.ciphergoth.org/crypto/solitaire/}.
+
+\bibitem{shiu}
+D.~Shiu,
+\emph{Analysis of Solitaire}, arXiv:1909.06300 (2019).
+
+\bibitem{kaminsky}
+A.~Kaminsky,
+\emph{ElsieFour: a low-tech authenticated encryption algorithm for
+human-powered ciphers}, IACR ePrint 2017/339.
+
+\end{thebibliography}
+
+\end{document}
