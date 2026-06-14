@@ -582,10 +582,28 @@ transposition---the fish of Lemma~\ref{lem:fish}---is variant- and
 $n$-specific, so a uniform proof would need a different argument (the
 cut subgroup and primitivity carry over, but isolating a transposition
 does not).
-\item \emph{Exact free depth.} Is the free depth of the perfect variant
-equal to the birthday scale $\approx 15$, and can it be bounded below
-by proof rather than by search? Certifying one more level multiplies
-the search by $40$.
+\item \emph{A provable lower bound on the free depth.} A collision at
+depth $m$ is a relation $uv^{-1}=e$ with $u,v$ forward words of length
+$\le m$ and distinct first letters---one forward arm, one backward
+arm. The all-forward case (one empty arm) is a directed cycle, giving
+$r\le\gamma-1$ (Proposition~\ref{prop:count}); but for the perfect
+variant the binding collision is a \emph{balanced} relation (both arms
+$\approx 8$) well below the girth ($\approx 30$), so the bound is not a
+girth bound and cannot be reduced to one. The only clean lower bound we
+have is $r\ge 2$: $\beta$ does not normalize the cut subgroup
+($\beta^{-1}T\beta\cap T=\{1\}$, since $\beta^{-1}\tau\beta$ is not a
+rotation), so no depth-$2$ relation exists; each further depth is a
+finite but rapidly growing coset condition. Can $r$ be bounded below by
+$\Omega(\log n)$, or matched to the birthday scale $\tfrac12\log_n n!$,
+by proof rather than exhaustion? A provable lower bound of this kind
+would be a girth/expansion estimate for an explicit $\Sn$ Cayley graph
+at near-optimal scale---open territory in general
+\cite{helfgott-seress-zuk,babai-seress}. The most promising route may
+be a Bayer--Diaconis/Reeds bit-accumulation argument: each inverse
+back-front step resolves a card to one half (one bit), as each inverse
+riffle does, suggesting injectivity could be tracked through the
+accumulated bits---if the interleaved cut-rotations, which permute the
+bit registers, can be controlled.
 \item \emph{Deterministic vs.\ random mixing.} The classical results
 \cite{aldous-diaconis,bayer-diaconis,diaconis-shahshahani} concern
 \emph{random} shuffles. Does the deterministic cut-and-back-front walk
