@@ -35,9 +35,11 @@ fixed permutations: a cut at a chosen index followed by a fixed
 ``back-front'' (Monge) shuffle, optionally followed by a single
 transposition (the \emph{perfect} variant). The reachable states thus
 form the Cayley graph of the group these permutations generate. We
-prove this graph is vertex-transitive, give a constructive proof that
-the generators generate all of $\Sn$ (so the graph is connected on the
-full $40!$ states), and study its \emph{injectivity radius} or
+prove this graph is vertex-transitive, prove that the plain generators
+generate $\Sn$ for \emph{every even} $n$---so the graph is connected on
+all $n!$ states---by closed-form identities uniform in $n$, with the
+perfect variant handled at $n=40$, and study its \emph{injectivity
+radius} or
 \emph{free depth}---the largest $r$ for which all distinct length-$\le
 r$ generator words give distinct states. We establish the girth of the
 plain variant is exactly $9$ by a meet-in-the-middle search over all
@@ -84,10 +86,12 @@ stay distinct? (Section~\ref{sec:r}.)
 \end{enumerate}
 
 The first two have clean answers: the graph is vertex-transitive
-(Proposition~\ref{prop:vt}), and for $n=40$ the generators generate
-$\Sn$, so the graph is connected (Theorem~\ref{thm:conn}). For the
-third we give exact small-radius results and relate the general
-behavior to a counting bound. Whether the generic behavior of such
+(Proposition~\ref{prop:vt}), and the plain generators generate $\Sn$
+for every even $n$ (Theorem~\ref{thm:all-n}), so the graph is connected;
+the perfect variant is handled at $n=40$
+(Theorem~\ref{thm:conn-perfect}). For the third we give exact
+small-radius results and relate the general behavior to a counting
+bound. Whether the generic behavior of such
 generators is provable, rather than computational, is an instance of
 open problems on diameters and mixing of $\Sn$ under arbitrary
 generators~\cite{helfgott-seress-zuk,babai-seress}.
@@ -311,6 +315,126 @@ computation shows the action is primitive: no nontrivial block system
 $\bmod\,d$ with $d\mid 40$ is preserved.
 \end{proposition}
 
+\subsection{Connectivity for all even deck sizes}\label{sub:alln}
+
+The proof of Theorem~\ref{thm:conn} reduced the plain case to finite
+checks at $n=40$. We now remove $n=40$ entirely: the plain spider
+generates $\Sn$ for \emph{every} even $n$, by closed-form identities
+uniform in $n$. Throughout, $h=n/2$ and $\tau=t^{1}$ is the unit cut,
+$\tau(p)=(p-1)\bmod n$; recall $\beta$ acts by $\beta(2i)=h+i$,
+$\beta(2i+1)=h-1-i$.
+
+\begin{lemma}[Reduction]\label{lem:reduce}
+$H=\langle g_c\rangle=\langle\beta,\tau\rangle$.
+\end{lemma}
+\begin{proof}
+$\beta=g_0\in H$ and $\tau=t^{1}=\beta^{-1}g_1\in H$, so
+$\langle\beta,\tau\rangle\subseteq H$; conversely each
+$g_c=\beta t^{c}=\beta\tau^{c}\in\langle\beta,\tau\rangle$.
+\end{proof}
+
+\begin{lemma}[Reversal]\label{lem:rev}
+For every even $n$, $\ \beta^{-1}\,\tau^{\,h}\,\beta=R$, where $R(p)=n-1-p$.
+\end{lemma}
+\begin{proof}
+The inverse shuffle is
+$\beta^{-1}(q)=2(q-h)$ for $q\ge h$ and $\beta^{-1}(q)=n-1-2q$ for
+$q<h$. Compute $\beta^{-1}\tau^{h}\beta(p)$ with $\tau^{h}(q)=q-h$.
+If $p=2i$ then $\beta(p)=h+i$, $\tau^{h}$ sends it to $i<h$, and
+$\beta^{-1}(i)=n-1-2i=n-1-p$. If $p=2i+1$ then $\beta(p)=h-1-i$,
+$\tau^{h}$ sends it to $h-1-i-h\equiv n-1-i\ge h$, and
+$\beta^{-1}(n-1-i)=2(n-1-i-h)=2(h-1-i)=n-1-p$. In both cases the value
+is $n-1-p$.
+\end{proof}
+
+\begin{lemma}[Pair exchange]\label{lem:x}
+For every even $n$, $\ \beta^{-1}R\,\beta=x$, where
+$x=(0\,1)(2\,3)\cdots(n-2\ n-1)$.
+\end{lemma}
+\begin{proof}
+With $R(q)=n-1-q$: if $p=2i$, $\beta(p)=h+i$, $R$ gives $h-1-i<h$, and
+$\beta^{-1}(h-1-i)=n-1-2(h-1-i)=2i+1$. If $p=2i+1$, $\beta(p)=h-1-i$, $R$
+gives $h+i\ge h$, and $\beta^{-1}(h+i)=2i$. So $x$ swaps $2i\leftrightarrow
+2i+1$.
+\end{proof}
+
+\begin{lemma}[Primitivity]\label{lem:prim}
+For every even $n$, $H=\langle\beta,\tau\rangle$ is primitive.
+\end{lemma}
+\begin{proof}
+$H$ is transitive ($\tau$ is an $n$-cycle), and $\langle\tau\rangle$
+acts regularly, so any block system of $H$ is one of $\langle\tau\rangle$,
+namely the residue partition $\mathcal P_e=\{\,\{p:p\equiv j \bmod e\}\,\}$
+for a divisor $e\mid n$ with $1<e<n$ (these are the cosets of the
+subgroups of $\mathbb Z_n$). It suffices that $\beta$ preserves no
+$\mathcal P_e$. Consider the block $B_0=\{0,e,2e,\dots\}$ (here $e\le
+h<n$, so $e\in B_0$). Then $\beta(0)=h$, while
+\[
+\beta(e)=\begin{cases} h+\tfrac{e}{2}, & e\text{ even},\\[2pt]
+h-1-\tfrac{e-1}{2}, & e\text{ odd},\end{cases}
+\qquad
+\beta(e)-\beta(0)=\begin{cases}\tfrac{e}{2},\\[2pt] -\tfrac{e+1}{2}.\end{cases}
+\]
+Since $0<\tfrac{e}{2}<e$ and $0<\tfrac{e+1}{2}<e$ for $e\ge2$, in either
+case $\beta(e)\not\equiv\beta(0)\pmod e$. Thus $\beta(B_0)$ meets two
+residue classes and is not a block, so $\beta$ does not preserve
+$\mathcal P_e$. Hence $H$ has no nontrivial block system.
+\end{proof}
+
+\begin{lemma}[A transposition]\label{lem:transp}
+Let $\sigma=\beta^{-1}\tau\beta$, which by direct computation acts as
+$\sigma(0)=1$, $\sigma(p)=p-2$ for even $p\in[2,n-2]$, $\sigma(p)=p+2$
+for odd $p\in[1,n-3]$, and $\sigma(n-1)=n-2$. Then for every even $n$,
+\[
+a:=\tau^{\,n-2}\,x\,\tau\,x\,\sigma\,\tau=(0\,1),
+\]
+a single transposition, where $x$ is as in Lemma~\ref{lem:x}.
+\end{lemma}
+\begin{proof}
+All factors are reachable (Lemmas~\ref{lem:reduce}--\ref{lem:x}). Apply
+$a$ rightmost-first, using $\tau(p)=p-1$, $\tau^{\,n-2}(p)=p+2$, the
+closed form of $\sigma$, and $x(2i)=2i+1$, $x(2i+1)=2i$. For even
+$p\in[2,n-2]$: $\tau\!:p\mapsto p-1$ (odd), $\sigma\!:\mapsto p+1$,
+$x\!:\mapsto p$, $\tau\!:\mapsto p-1$, $x\!:\mapsto p-2$,
+$\tau^{n-2}\!:\mapsto p$. For odd $p\in[3,n-1]$: $\tau\!:\mapsto p-1$
+(even), $\sigma\!:\mapsto p-3$, $x\!:\mapsto p-2$, $\tau\!:\mapsto p-3$,
+$x\!:\mapsto p-2$, $\tau^{n-2}\!:\mapsto p$. So $a$ fixes every
+$p\notin\{0,1\}$. Finally $a(0)$: $\tau\!:\!0\mapsto n-1$,
+$\sigma\!:\mapsto n-2$, $x\!:\mapsto n-1$, $\tau\!:\mapsto n-2$,
+$x\!:\mapsto n-1$, $\tau^{n-2}\!:\mapsto 1$; and $a(1)$:
+$\tau\!:\!1\mapsto 0$, $\sigma\!:\mapsto 1$, $x\!:\mapsto 0$,
+$\tau\!:\mapsto n-1$, $x\!:\mapsto n-2$, $\tau^{n-2}\!:\mapsto 0$. Thus
+$a=(0\,1)$.
+\end{proof}
+
+\begin{theorem}\label{thm:all-n}
+For every even $n$ the plain spider generators generate the full
+symmetric group: $\langle\beta,\tau\rangle=\Sn$. Hence the plain spider
+graph is connected on all $n!$ states, for every even deck size.
+\end{theorem}
+\begin{proof}
+By Lemma~\ref{lem:transp}, $(0\,1)\in H$, and by Lemma~\ref{lem:reduce}
+each cut $\tau^{i}\in H$, so the conjugates
+$\tau^{-i}(0\,1)\tau^{\,i}=(i\ \ i{+}1)$ are all in $H$ for
+$i=0,\dots,n-2$. The adjacent transpositions $(0\,1),\dots,(n{-}2\ n{-}1)$
+generate $\Sn$, so $H=\Sn$. (Equivalently, by Lemma~\ref{lem:prim} $H$
+is primitive and contains the transposition $(0\,1)$, and a primitive
+group containing a transposition is $\Sn$ by Jordan's theorem.)
+\end{proof}
+
+\begin{remark}
+Theorem~\ref{thm:all-n} subsumes the plain case of
+Theorem~\ref{thm:conn} ($n=40$) with no finite verification: the
+identities of Lemmas~\ref{lem:rev}--\ref{lem:transp} hold by the
+closed-form computations above for all even $n$. The Schreier--Sims
+order computation (Proposition~\ref{prop:ss}) remains an independent
+cross-check and, for $n=40$, also disposes of the perfect variant,
+whose generation we proved separately
+(Theorem~\ref{thm:conn-perfect}); a uniform-in-$n$ proof for the
+perfect variant is left open (its entry transposition, the fish of
+Lemma~\ref{lem:fish}, is variant- and $n$-specific).
+\end{remark}
+
 \section{Injectivity Radius (Free Depth) and Girth}\label{sec:r}
 
 Connectivity says the moves reach everywhere; the next question is how
@@ -451,9 +575,13 @@ search reaches.
 Three questions are open and, we believe, genuinely hard:
 
 \begin{enumerate}
-\item \emph{General $n$.} Do the cut-and-back-front generators generate
-$\Sn$ for all even $n$, or for which $n$? The proof above is specific
-to $n=40$ through its finite checks.
+\item \emph{General $n$, perfect variant.} Theorem~\ref{thm:all-n}
+settles the plain variant for all even $n$. Does the perfect variant
+(either swap) also generate $\Sn$ for all even $n$? Its entry
+transposition---the fish of Lemma~\ref{lem:fish}---is variant- and
+$n$-specific, so a uniform proof would need a different argument (the
+cut subgroup and primitivity carry over, but isolating a transposition
+does not).
 \item \emph{Exact free depth.} Is the free depth of the perfect variant
 equal to the birthday scale $\approx 15$, and can it be bounded below
 by proof rather than by search? Certifying one more level multiplies
@@ -469,9 +597,9 @@ under arbitrary fixed generators remain open
 
 The machinery used here is entirely standard; what appears to be new is
 the object---the Cayley graph of $\Sn$ generated by a cut composed with
-a Monge shuffle---and the explicit determination of its girth, low-order
-relator counts, and a constructive generating ladder, all
-machine-checked.
+a Monge shuffle---together with the uniform-in-$n$ proof that it is
+connected for every even deck size (Theorem~\ref{thm:all-n}) and the
+explicit determination of its girth and low-order relator counts.
 
 \begin{thebibliography}{9}
 
