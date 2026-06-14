@@ -90,12 +90,14 @@ src/spider_cipher_facts.c 1284: Z facts check started
 src/spider_cipher_facts.c 1284: Z facts check ended
 src/spider_cipher_facts.c 1538: DeckSet facts check started
 src/spider_cipher_facts.c 1538: DeckSet facts check ended
-src/spider_cipher_facts.c 1708: Neighborhood4 facts check started
-src/spider_cipher_facts.c 1708: Neighborhood4 facts check ended
-src/spider_cipher_facts.c 1715: PerfectNeighborhood4 facts check started
-src/spider_cipher_facts.c 1715: PerfectNeighborhood4 facts check ended
-src/spider_cipher_facts.c 1724: Neighborhood6 facts check [1;31mexcluded[0m.
-src/spider_cipher_facts.c 1733: PerfectNeighborhood6 facts check [1;31mexcluded[0m.
+src/spider_cipher_facts.c 1809: RelationsValidate facts check [1;31mexcluded[0m.
+src/spider_cipher_facts.c 1819: Relations facts check [1;31mexcluded[0m.
+src/spider_cipher_facts.c 1834: Neighborhood4 facts check started
+src/spider_cipher_facts.c 1834: Neighborhood4 facts check ended
+src/spider_cipher_facts.c 1841: PerfectNeighborhood4 facts check started
+src/spider_cipher_facts.c 1841: PerfectNeighborhood4 facts check ended
+src/spider_cipher_facts.c 1850: Neighborhood6 facts check [1;31mexcluded[0m.
+src/spider_cipher_facts.c 1859: PerfectNeighborhood6 facts check [1;31mexcluded[0m.
 facts summary.
 facts check FaceAndSuitNo [1;32mpassed[0m
 facts check FaceFromNo [1;32mpassed[0m
@@ -146,6 +148,8 @@ facts check Neighborhood4 [1;32mpassed[0m
 facts check PerfectNeighborhood4 [1;32mpassed[0m
 facts check RandStats [1;31mexcluded[0m
 facts check ImperfectGirth [1;31mexcluded[0m
+facts check RelationsValidate [1;31mexcluded[0m
+facts check Relations [1;31mexcluded[0m
 facts check Neighborhood6 [1;31mexcluded[0m
 facts check PerfectNeighborhood6 [1;31mexcluded[0m
 320016185 (100.0%) truths and 0 (0.0%) fictions checked.

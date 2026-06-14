@@ -1985,6 +1985,57 @@ Feet
 
 https://eprint.iacr.org/2017/339.pdf
 
+\hypertarget{relation-leak-rate}{%
+\chapter{Relation Leak Rate}\label{relation-leak-rate}}
+
+The free depth says how long distinct cut histories stay distinct. This
+chapter quantifies the leak past that point: how fast two different
+histories start to collide, and why the rate is a property of the
+\emph{relations} of the graph.
+
+Two cut words \(u\) and \(v\) collide when they reach the same deck,
+\(u(e) = v(e)\); equivalently \(u^{- 1} \circ v = e\), so every
+collision is built from a \emph{relator} -- a nonempty cut word \(w\)
+with \(w(e) = e\), a closed walk through the deck. Let \(c_{L}\) be the
+number of relators of length \(L\) (the primitive relations of length
+\(L\)). By vertex-invariance \(c_{L}\) is the same counted from any
+vertex, so it is a property of the graph, not of where you start.
+
+A single relator \(w\) of length \(L\) does not leak once; it leaks
+everywhere. For any prefix word \(s\), the word \(s \circ w\) collides
+with \(s\) (both reach the same deck), and there are about
+\(40^{r - L}\) prefixes of length up to \(r\). So among the
+\(40^{r}\) cut words of length \(r\), the number that collide is about
+
+\(\sum_{L} c_{L}\, 40^{r - L}\)
+
+and the fraction that collide -- the leak rate -- is
+
+\(\text{leak} \approx \frac{\sum_{L} c_{L}\, 40^{r - L}}{40^{r}} = \sum_{L} \frac{c_{L}}{40^{L}}\)
+
+independent of \(r\). The factor \(40^{r - L}\) is the branching
+multiply: each primitive relation of length \(L\) is amplified into
+that many collisions by the time the deck has been advanced \(r\)
+times. Any bound on \(c_{L}\) (for instance from the number of closed
+walks of length \(L\)) bounds the leak.
+
+For the plain spider the shortest relator is the nine-cycle
+\((s \circ t^{2})^{9} = e\). Searching all cut sequences by
+meet-in-the-middle (a forward ball intersected with a backward ball)
+shows it is the \emph{only} relator of length \(9\) -- no mixed
+sequence of different cuts returns in nine steps -- and there is no
+relator of length \(10\): \(c_{9} = 1\), \(c_{10} = 0\)
+(FACTS(Relations)). So the leak rate of the plain spider is dominated
+by its single shortest relation,
+
+\(\text{leak} \approx \frac{1}{40^{9}} \approx 3.9 \times 10^{- 15}\)
+
+per step, the next contribution not appearing until length \(12\)
+(where the cuts with cycle length \(12\) first add relators). This is
+the cost of the plain spider's short cycle. The perfect variant pushes
+the first relator far deeper; its leak rate is treated in the companion
+\emph{Perfect Spider Cipher Theory}.
+
 \hypertarget{mixing-near-saturation}{%
 \chapter{Mixing Near Saturation}\label{mixing-near-saturation}}
 

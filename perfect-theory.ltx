@@ -407,6 +407,36 @@ evidence that the perfect spider walk behaves like a random one. The
 collisions that eventually end freeness are statistical, not
 structural -- which is exactly the property a cipher wants.
 
+\hypertarget{the-relation-leak-rate}{%
+\section{The Relation Leak Rate}\label{the-relation-leak-rate}}
+
+The companion \emph{Spider Cipher Theory} shows the leak rate of either
+variant is \(\sum_{L} c_{L}/40^{L}\), where \(c_{L}\) is the number of
+length-\(L\) relators (cut words \(w\) with \(w(e) = e\)) -- the
+primitive relations, each amplified by a branching factor \(40^{r - L}\)
+into that many collisions at depth \(r\). The plain spider's rate is
+dominated by its nine-cycle, \(\approx 40^{- 9} \approx 3.9 \times 10^{- 15}\).
+The perfect shuffle's whole purpose is to push the first relator far
+deeper, and the leak rate measures exactly how much that buys.
+
+A meet-in-the-middle search (forward ball intersected with backward
+ball) certifies that the perfect spider has \emph{no} relator of length
+\(9\) or \(10\): \(c_{9} = c_{10} = 0\) (FACTS(Relations)), against the
+plain spider's \(c_{9} = 1\). So the perfect leak rate has no term until
+well beyond length \(10\):
+
+\(\text{leak}_{\text{perfect}} < 40^{- 10} \approx 10^{- 16}\)
+
+already a certified bound, and the true value is far smaller. The cycle
+floor of \(30\) means the first \emph{single-cut} relator is at length
+\(30\); the birthday estimate puts the first relator of any kind near
+the same scale, so the perfect leak rate is heuristically on the order
+of \(40^{- 30} \approx 10^{- 48}\) -- the plain spider's \(40^{- 9}\)
+leak cut by roughly \(40^{- 21}\). The certified bound (\(< 40^{- 10}\))
+moves outward one factor of \(40\) per extra level of the
+meet-in-the-middle search; depth-first search run for about a week
+reaches a bound near \(40^{- 14}\).
+
 \hypertarget{the-entropy-capture-theorem}{%
 \chapter{The Entropy Capture
 Theorem}\label{the-entropy-capture-theorem}}
@@ -526,6 +556,114 @@ the free depth the loss is governed by collision mass -- of order
 \(40^{k}/40!\), under one bit all the way to saturation. But that is
 an estimate. The theorem is the part that rests on \(r\), and \(r\)
 is the part a machine can certify.
+
+\hypertarget{the-entropy-pool}{%
+\chapter{The Entropy Pool}\label{the-entropy-pool}}
+
+The hardest part of using any cipher well is not the cipher -- it is
+getting good randomness. A person cannot produce cryptographically
+strong randomness in their head. People asked to write a ``random''
+sequence avoid repeats, balance digits, and fall into habits a
+computer detects at once; we are pattern makers, not noise sources.
+Physical aids help but do not solve it: a coin can be biased, a die
+loaded, and a deck is not random until it has been riffle shuffled
+about seven times (Bayer and Diaconis), which almost nobody does. Weak
+randomness is not a small flaw. It is the single most common root of
+real cryptographic failure:
+
+\begin{itemize}
+\tightlist
+\item
+  A 2008 change to Debian's OpenSSL cut the seed entropy to a process
+  id -- a few thousand possible keys -- and every key made for two
+  years was guessable.
+\item
+  Sony's PlayStation~3 signed code with a \emph{fixed} ECDSA nonce; the
+  signing key fell out of two signatures.
+\item
+  A weak system random generator on early Android led to repeated
+  ECDSA nonces and stolen bitcoins.
+\item
+  Surveys of deployed devices have factored large numbers of RSA keys
+  outright because the keys were generated with too little entropy and
+  shared prime factors.
+\end{itemize}
+
+In each case the mathematics of the cipher was sound and the
+randomness behind it was not. So a cipher meant for people should come
+with a way for people to \emph{build} strong randomness out of the weak
+randomness they can actually produce. That is what the deck is.
+
+\hypertarget{the-deck-is-a-pool}{%
+\section{The Deck is a Pool}\label{the-deck-is-a-pool}}
+
+A mixed deck holds \(\log_{2}(40!) \approx 159\) bits of entropy, and
+the perfect spider graph is a near-uniform random walk on it, so the
+deck is an \emph{entropy pool}: a place to pour in whatever imperfect
+randomness you have and stir it until it is uniform. Two readouts of
+the pool are uniform not by luck but by symmetry. Relabel every card
+value by \(+a \pmod{40}\); this is a bijection of \(S_{40}\) that
+preserves the uniform deck, and every single-card readout rides along
+with it. The cut card is \(deck[0] \to deck[0] + a\). The cipher card
+is read by finding the tag \(deck[2] - 1\) (which shifts to
+\(deck[2] - 1 + a\), so its \emph{position} does not move) and taking
+the next card (which shifts to that card \(+ a\)). A quantity that
+shifts by \(a\) under a measure-preserving relabel has a flat marginal:
+the cut pad and the cipher pad are uniform by design, to within the
+pool's deviation from uniform (the leak rate of the previous chapter).
+
+\hypertarget{absorb-stir-squeeze}{%
+\section{Absorb, Stir, Squeeze}\label{absorb-stir-squeeze}}
+
+The pool is used in three motions, the shape of a sponge.
+
+\textbf{Absorb.} Feed in cards carrying whatever entropy you can
+gather -- cut points, die rolls, the position of a coffee stain, the
+low bits of a clock. Each blind card is captured: while within the
+free depth the capture theorem adds its full \(\log_{2}40 \approx 5.32\)
+bits exactly, and past that the deficit only contracts toward zero
+(mixing). Two facts make this safe in the worst case. First, blind
+input \emph{cannot lower} the pool entropy: each step at a fixed input
+is a bijection of \(S_{40}\) (verified directly -- the inverse is
+explicit), so a blind input is a mixture of bijections, a
+doubly-stochastic map, which never moves a distribution away from
+uniform. An adversary feeding chosen but state-blind cards can only
+hold or raise the entropy, never reduce it. Second, by vertex
+invariance there is no weak deck to be herded toward: every vertex has
+the identical cycle and relation structure, so a chosen seed can deny
+you its entropy but cannot find a structurally weak starting point.
+
+\textbf{Stir to saturation.} If the starting deck is a secret random
+key it already \emph{is} the \(159\)-bit pool, and you may extract at
+once. If the starting deck is known to the adversary -- a public order,
+or one they influenced -- you must pour in a full pool's worth before
+extracting: about \(160\) bits, some \(30\) cards, enough for the
+forward image from the known start to spread across \(S_{40}\). The
+\(10\)-card prefix (\(\approx 53\) bits) suffices only when the key is
+already a high-entropy secret; a genuinely adversarial seed is the case
+where you must work harder.
+
+\textbf{Squeeze.} To draw output, advance the deck and report a card.
+The plain reading -- encrypt a constant, report the cipher card -- emits
+\(5.32\) uniform bits per step but reveals the pad to anyone reading the
+stream, so the pool's \(159\) bits are spent against observation at that
+rate. The conservative reading spends them more slowly: pump two
+entropy-bearing cards in and report the mod-\(40\) sum of the two
+ciphertexts (no separate step). This is a duplex -- absorbing while it
+squeezes -- and it lowers the rate the way a sponge's capacity does. It
+halves the observation rate, hides both pads behind their sum (a
+known-plaintext attacker recovers only the sum, leaving a card of
+ambiguity), and convolves any residual bias toward uniform. The shift
+symmetry leaves the two-card sum free only in its parity, and that one
+bit is measured flat over five hundred million trials -- the two pads
+are parity-independent because a full advance separates them -- so the
+summed output is uniform to the limit of measurement.
+
+None of this manufactures entropy; nothing can. It \emph{conserves and
+concentrates} the entropy you supply, wastes none of it per card, and
+cannot be degraded by blind play. For a method worked by hand, where
+strong randomness is otherwise out of reach, an accumulator with those
+guarantees is the practical heart of the design.
 
 \hypertarget{why-not-swap-first-and-last}{%
 \chapter{Why Not Swap First and

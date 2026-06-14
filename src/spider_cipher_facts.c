@@ -1626,7 +1626,7 @@ void Neighbors(DeckSet *ds,Deck deck, int perfect, int dir, int dist, int count,
 	  next[0]=save;
 	}
         deckBackFrontUnshuffle(next,tmp);
-	deckCut(tmp,CARDS-c,next);
+	deckCut(tmp,(CARDS-c)%CARDS,next);
       }
 
       if (progress != NULL) {
@@ -1703,6 +1703,132 @@ int dups(int perfect, int dir, int dist) {
   fprintf(stderr,"sorting took %f seconds\n",t3-t2);  
   datetime(t3);
   return dups;
+}
+
+/* =================== Primitive relation counts ===================
+ *
+ * count_L = the number of length-L relators: cut-words w of length L with
+ * w(e)=e (the primitive relations / shortest identity words at each length).
+ * By vertex-invariance count_L is the same through every vertex, so it is the
+ * coefficient of the cipher's leading-order entropy-loss rate: a relator w of
+ * length L, prefixed by any of ~40^(r-L) words s, makes s.w collide with s, so
+ * forward-tree collisions at depth r number ~ sum_L count_L * 40^(r-L), and the
+ * loss ratio (collisions / 40^r words) is sum_L count_L / 40^L, independent of r.
+ *
+ * We read count_L off intersections of a forward and a backward ball.  A
+ * length-L cycle e -> ... -> e has interior vertex X_i at forward-distance i and
+ * backward-distance L-i, so
+ *     |fwd<=5  ∩  bwd<=4| = count9              (length-9 cycle: only i=5 fits)
+ *     |fwd<=6  ∩  bwd<=4| = 2*count9 + count10  (len-9: i=5,6 ; len-10: i=6)
+ * hence count10 = |fwd<=6 ∩ bwd<=4| - 2*count9.
+ *
+ * IMPLEMENTATION: the clearest version would build BOTH balls and intersect
+ * them, but the forward ball at radius 5-6 is 10^8-10^9 decks (gigabytes).  So
+ * we store only the SMALL backward ball (<=4: 2.6M decks, ~100MB, strictly
+ * sorted) and enumerate the forward ball by depth-first search -- a constant
+ * size depth stack -- probing each forward deck against the sorted backward
+ * ball.  RAM stays ~100MB and each call runs in well under an hour on a laptop,
+ * which is fine for a dubious mind to re-run.  It could be made faster (parallel
+ * DFS, a hashed probe, pruning); DFS run for about a week reaches depth ~8
+ * (relators up to length ~12, loss < ~40^-12 on a laptop / < ~40^-14 on a
+ * server with the larger bwd<=5 ball), but clarity and a sub-hour, low-memory
+ * run win here.  Excluded from the default suite; run with --facts_include and
+ * a raised --facts_timeout. */
+
+void relFwd(Deck out, Deck in, int c, int perfect) {
+  Deck tmp;
+  deckCut(in,c,tmp);
+  deckBackFrontShuffle(tmp,out);
+  if (perfect) { Card t=out[0]; out[0]=out[19]; out[19]=t; }
+}
+
+void relBwd(Deck out, Deck in, int c, int perfect) {
+  Deck v,tmp;
+  for (int i=0;i<CARDS;++i) v[i]=in[i];
+  if (perfect) { Card t=v[0]; v[0]=v[19]; v[19]=t; }
+  deckBackFrontUnshuffle(v,tmp);
+  deckCut(tmp,(CARDS-c)%CARDS,out);
+}
+
+/* sorted-unique backward ball of radius r (small r: r<=4 is ~2.6M decks) */
+Card (*relBwdBall(int perfect, int r, size_t *n))[CARDS] {
+  size_t cap=1, p=1;
+  for (int i=0;i<r;++i) { p*=CARDS; cap+=p; }
+  Card (*all)[CARDS] = malloc(sizeof(Card[CARDS])*cap);
+  assert(all != NULL);
+  size_t na=0, l0=0, l1=1;
+  deckInit(all[na++]);
+  for (int d=0; d<r; ++d) {
+    for (size_t j=l0;j<l1;++j) for (int c=0;c<CARDS;++c) relBwd(all[na++],all[j],c,perfect);
+    l0=l1; l1=na;
+  }
+  qsort(all,na,sizeof(Card[CARDS]),deckcmp_q);
+  size_t u=0;
+  for (size_t i=0;i<na;++i)
+    if (i==0 || memcmp(all[i],all[i-1],CARDS)) { if (u!=i) memcpy(all[u],all[i],CARDS); ++u; }
+  *n=u; return all;
+}
+
+/* DFS-probe state (the forward DFS is the streaming part) */
+static Card (*REL_B)[CARDS]; static size_t REL_NB; static int REL_PERF;
+static Card (*REL_HIT)[CARDS]; static size_t REL_NH, REL_HITCAP;
+
+static int relMember(Deck d) {
+  size_t lo=0, hi=REL_NB;
+  while (lo<hi) { size_t m=(lo+hi)/2; int c=memcmp(REL_B[m],d,CARDS);
+    if (c<0) lo=m+1; else if (c>0) hi=m; else return 1; }
+  return 0;
+}
+
+static void relDFS(Deck cur, int depth, int maxd, Deck id) {
+  for (int c=0;c<CARDS;++c) {
+    Deck o; relFwd(o,cur,c,REL_PERF);
+    if (memcmp(o,id,CARDS) && relMember(o)) { if (REL_NH<REL_HITCAP) memcpy(REL_HIT[REL_NH++],o,CARDS); }
+    if (depth+1<maxd) relDFS(o,depth+1,maxd,id);
+  }
+}
+
+/* |B_{<=distF}^fwd  ∩  B_{<=distB}^bwd|, non-identity, counted distinctly */
+int relIntersect(int perfect, int distF, int distB) {
+  REL_B = relBwdBall(perfect,distB,&REL_NB);
+  REL_PERF = perfect;
+  REL_HITCAP = 1<<16;
+  REL_HIT = malloc(sizeof(Card[CARDS])*REL_HITCAP);
+  REL_NH = 0;
+  Deck id; deckInit(id);
+  relDFS(id,0,distF,id);
+  qsort(REL_HIT,REL_NH,sizeof(Card[CARDS]),deckcmp_q);
+  int distinct=0;
+  for (size_t i=0;i<REL_NH;++i) if (i==0 || memcmp(REL_HIT[i],REL_HIT[i-1],CARDS)) ++distinct;
+  free(REL_B); free(REL_HIT);
+  return distinct;
+}
+
+/* Validation: at radius 4 there is no return <= 8 (girth 9), so the
+   intersection is empty for both ciphers.  Fast (depth-4 DFS, ~2.6M nodes). */
+FACTS_EXCLUDE(RelationsValidate) {
+  FACT(relIntersect(0,4,4),==,0);
+  FACT(relIntersect(1,4,4),==,0);
+}
+
+/* The primitive-relation counts at length 9 and 10.  count9 is fast (depth-5
+   DFS, ~10^8 nodes, seconds); count10 is the depth-6 DFS (~4.2x10^9 nodes,
+   tens of minutes).  Imperfect: count9=1 (the all-cut-2 nine-cycle, the only
+   length-9 relator -- no mixed cut sequence returns in 9), count10=0.
+   Perfect (0,19): both 0 (its first relator is near length 30). */
+FACTS_EXCLUDE(Relations) {
+  int i5 = relIntersect(0,5,4);          /* count9 */
+  int i6 = relIntersect(0,6,4);          /* 2*count9 + count10 */
+  int p5 = relIntersect(1,5,4);
+  int p6 = relIntersect(1,6,4);
+  int count9 = i5,  count10 = i6 - 2*i5;
+  int pcount9 = p5, pcount10 = p6 - 2*p5;
+  fprintf(stderr,"=== relations: imperfect count9=%d count10=%d ; perfect count9=%d count10=%d ===\n",
+          count9,count10,pcount9,pcount10);
+  FACT(count9, ==,1);
+  FACT(count10, ==,0);
+  FACT(pcount9, ==,0);
+  FACT(pcount10,==,0);
 }
 
 FACTS(Neighborhood4) {
@@ -1786,6 +1912,8 @@ FACTS_REGISTER_ALL() {
     FACTS_REGISTER(ImperfectGirth);
     FACTS_REGISTER(Z);
     FACTS_REGISTER(DeckSet);
+    FACTS_REGISTER(RelationsValidate);
+    FACTS_REGISTER(Relations);
     FACTS_REGISTER(Neighborhood4);
     FACTS_REGISTER(PerfectNeighborhood4);
     FACTS_REGISTER(Neighborhood6);
