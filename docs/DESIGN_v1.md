@@ -75,6 +75,10 @@ today by reading the includes *(inferred)*.
 - **`make check` passes `--facts_timeout=$(FACTS_TIMEOUT)`, default 300 s** — REQ1/TH-1 — facts' own
   10 s default is shorter than an unoptimized run — source: 2026-10-29, see FINDINGS.
 - **Browser decks share `docs/talk/talk.js`** — rather than a copy per deck — source: 2026-10-29.
+- **Papers build with latexmk + LuaLaTeX in Docker on `devcontainer-latex`, as `../luck` does** —
+  REQ1/TH-1 — one toolchain across the owner's TeX projects, and `tools/check-log.sh` fails a build
+  that silently loses content; rather than tectonic, whose `pdflatex` shim cannot answer `asy`'s
+  interactive label queries, so `make theory` hung — source: the owner, 2026-10-30.
 - **Decrypt holds the message until the run of 39s arrives** — REQ2/PK-2 — the CLI decodes into a
   buffer and prints it only if `decodeIO` succeeds, so a changed packet prints nothing; rather than
   printing as it reads and reporting at the end, which shows the garbage — source: 2026-10-30. The

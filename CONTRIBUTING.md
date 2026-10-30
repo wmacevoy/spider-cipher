@@ -12,8 +12,10 @@ it short and true: a change that makes a line here untrue updates it in the same
 - **Prerequisites:** a C11 compiler and `make`; the sibling repositories
   [facts](https://github.com/wmacevoy/facts), [utf8](https://github.com/wmacevoy/utf8), and
   [cio](https://github.com/wmacevoy/cio) checked out next to this one (`../facts`, `../utf8`,
-  `../cio`). The Makefile compiles their sources directly. Optional: `tectonic` and `asy` for the
-  papers, `node` for the browser demos' cross-check, Python 3.9+ for `./se`.
+  `../cio`). The Makefile compiles their sources directly. Optional: Docker and
+  [devcontainer-latex](https://github.com/wmacevoy/devcontainer-latex) checked out at
+  `../devcontainer-latex` for the papers (or a local TeX Live with `latexmk`, LuaLaTeX, and `asy`),
+  `node` for the browser demos' cross-check, Python 3.9+ for `./se`.
 - **Build:** `make all` — builds `bin/spider_cipher` (the CLI) and `bin/spider_cipher_facts` (the
   tests).
 - **Run:** `bin/spider_cipher --cards --key='secret' --encrypt='message'` prints a scrambled packet
@@ -31,8 +33,11 @@ it short and true: a change that makes a line here untrue updates it in the same
 - **Other implementations:** `make -C cpp all` builds `cpp/bin/test_spider_cipher_{core,rng,hash}`;
   run each directly. `make -C core-tests-old CARDS=40 PERFECT=0 …` builds the minimal C core with a
   chosen deck size and variant. Neither is part of the check yet (see `docs/QUEUE.md`).
-- **Papers:** `make theory` (needs `tectonic`, `asy`) builds `build/theory.pdf`; `make -C theory`
-  builds the `theory/` paper with `latexmk`.
+- **Papers:** `./build.sh` builds `build/theory.pdf`, `build/perfect-theory.pdf`, and
+  `build/foundations.pdf` in Docker, on the `devcontainer-latex` image, as `../luck` does
+  (`./build.sh theory` for one). With a local TeX Live, `make papers` (or `make theory`) does the
+  same. Each runs `latexmk -lualatex`, then `tools/check-log.sh`, which fails the build on silent
+  content loss. `make -C theory` builds the `theory/` paper with `latexmk`.
 - **Cards and tooling:** `cards/deck.py` generates `card-NN.svg` from the template;
   `cards/deck-export` renders 600 dpi PNGs with Inkscape (macOS app path hard-coded). `./setup.sh`
   creates a conda/mamba environment at `.venv` from `environment.yml` for the Python and document
