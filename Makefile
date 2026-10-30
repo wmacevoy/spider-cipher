@@ -73,39 +73,32 @@ expected : all
 	echo "message" >expected/message.out
 
 # -------------- LaTeX docs --------------
-ASY?=asy
-ASY_ENGINE?=pdflatex
-ASY_TEXPATH?=$(CURDIR)/tools
-ASYFLAGS?=-tex $(ASY_ENGINE)
-TECTONIC?=tectonic
+# The papers build with latexmk + LuaLaTeX, and figures with plain asy, as in ../luck. Without a
+# local TeX Live, ./build.sh runs these targets in the devcontainer-latex Docker image.
+LATEXMK?=latexmk
+LUALATEX_FLAGS?=-lualatex -interaction=nonstopmode -halt-on-error -file-line-error -shell-escape
 TEX_OUT?=build
 
 FIGURES=$(TEX_OUT)/figures/venn.pdf $(TEX_OUT)/figures/graph.pdf $(TEX_OUT)/figures/tree.pdf
 
 $(TEX_OUT)/figures/%.pdf: figures/%.asy
 	mkdir -p $(dir $@)
-	$(ASY) $(ASYFLAGS) -f pdf -o $@ $<
+	asy -f pdf -o $@ $<
 
-$(TEX_OUT)/theory.pdf: theory.ltx $(FIGURES)
+# check-log.sh fails the build, and deletes the PDF, on silent content loss (missing glyphs,
+# undefined references or fonts)
+$(TEX_OUT)/%.pdf: %.ltx
 	mkdir -p $(TEX_OUT)
-	$(TECTONIC) -X compile --outdir $(TEX_OUT) $<
+	$(LATEXMK) $(LUALATEX_FLAGS) -outdir=$(TEX_OUT) $<
+	@'$(CURDIR)/tools/check-log.sh' '$(TEX_OUT)/$*.log' '$@'
 
-.PHONY: theory
+$(TEX_OUT)/theory.pdf: $(FIGURES)
+
+.PHONY: theory perfect-theory foundations papers
 theory: $(TEX_OUT)/theory.pdf
-
-$(TEX_OUT)/perfect-theory.pdf: perfect-theory.ltx
-	mkdir -p $(TEX_OUT)
-	$(TECTONIC) -X compile --outdir $(TEX_OUT) $<
-
-.PHONY: perfect-theory
 perfect-theory: $(TEX_OUT)/perfect-theory.pdf
-
-$(TEX_OUT)/foundations.pdf: foundations.ltx
-	mkdir -p $(TEX_OUT)
-	$(TECTONIC) -X compile --outdir $(TEX_OUT) $<
-
-.PHONY: foundations
 foundations: $(TEX_OUT)/foundations.pdf
+papers: theory perfect-theory foundations
 
 .PHONY: clean-theory
 clean-theory:

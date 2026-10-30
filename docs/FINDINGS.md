@@ -7,6 +7,21 @@ Blameless: say what would have found it, not who should have asked
 ([SE1/H12](https://github.com/wmacevoy/software-engineering/blob/v1.3/guide/09-people.md#h12)).
 Started 2026-10-29; earlier entries are reconstructed from the history.
 
+## 2026-10-30 — `make theory` hung forever on its first figure
+
+- **What happened:** `asy -tex pdflatex` keeps `pdflatex` open and asks it to measure each label,
+  one at a time. With no TeX Live installed, `tools/pdflatex` (untracked) stood in for it by passing
+  the job to tectonic, which first reads its whole input: each side waited on the other, at 0% CPU.
+  Without the shim, `asy` failed at once (no `pdflatex`). The Makefile's `ASY_TEXPATH` was never
+  passed to `asy`.
+- **Kind:** K2 (surprise)
+- **Cost:** the papers could not be built on the maintainer's machine; the figures and the edits
+  to `theory.ltx` were uncommitted.
+- **Findable by:** building the papers from a clean checkout, with a time limit.
+- **Changed:** the papers build with latexmk + LuaLaTeX in Docker (`./build.sh`), as `../luck`
+  does. The first clean build showed `figures/venn.asy` drawing at the wrong scale (no
+  `unitsize`), with the overlap shaded the long way round and a `\\cap` label; fixed.
+
 ## 2026-10-30 — Decrypt ignores its own check for a changed packet
 
 - **What happened:** the run of five 39s that ends every message is a check: change one card and the

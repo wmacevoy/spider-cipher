@@ -1,5 +1,6 @@
 // Venn diagram for two generic sets A and B
 import graph;
+unitsize(1cm);
 
 // Geometry
 real r = 2.2;
@@ -31,8 +32,9 @@ if(inter.length >= 2) {
   real b_top = degrees(top - B_center);
   real b_bottom = degrees(bottom - B_center);
 
-  path overlap = arc(A_center, r, a_top, a_bottom) --
-                 arc(B_center, r, b_bottom, b_top) -- cycle;
+  // clockwise: the short arcs that bound the overlap, not the long way around each circle
+  path overlap = arc(A_center, r, a_top, a_bottom, CW) --
+                 arc(B_center, r, b_bottom, b_top, CW) -- cycle;
   fill(overlap, gray(0.78));
 }
 
@@ -43,10 +45,10 @@ draw(cB, outline);
 // Labels
 defaultpen(fontsize(14pt));
 
-label("$U$", (4.8, 3.4), NE);
+label("$U$", (4.8, 3.4), SW);
 label("$A$", A_center + (0, r+0.3));
 label("$B$", B_center + (0, r+0.3));
 
-label("$A \\cap B$", (0,0));
-label("$A - B$", (-3.7, 0));
-label("$B - A$", ( 3.7, 0));
+label("$A \cap B$", (0,0));
+label("$A - B$", (-2.8, 0));
+label("$B - A$", ( 2.8, 0));
