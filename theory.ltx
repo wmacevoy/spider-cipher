@@ -193,7 +193,7 @@ lists:
 \begin{equation*}
 \begin{aligned}
 l &= [\text{`apple'}, \text{`banana'}] \\
-  &= [[97,112,112,108,101], [98,97,109,97,109,97]]
+  &= [[97,112,112,108,101], [98,97,110,97,110,97]]
 \end{aligned}
 \end{equation*}
 
@@ -458,7 +458,7 @@ up once. This means that for any allowed ``from'' or ``begin'' or
 \(x\) to \(y\).
 
 For example, \(\{\text{`a'} \rightarrow \text{`alpha'},\text{`b'} \rightarrow \text{`bravo'}\}\) is
-a function that maps \(\text{`a'}\) to \(\text{`apple'}\) and \(\text{`b'}\) to \(\text{`bravo'}\).
+a function that maps \(\text{`a'}\) to \(\text{`alpha'}\) and \(\text{`b'}\) to \(\text{`bravo'}\).
 
 As a counter-example,
 \(\{\text{`a'} \rightarrow \text{`alpha'},\text{`a'} \rightarrow \text{`apple'},\text{`b'} \rightarrow \text{`bravo'}\}\)
@@ -598,12 +598,12 @@ and
 \(b:\{ y:R \neq 0\} \rightarrow \{ z:R > 0\} = {\{ y \rightarrow z = 2}^{1/y}\}\)
 
 Because \(a\) maps \(- 1\) to \(0\), and this is not an allowed input to
-\(b\), it is not in the domain of \(a \circ b\), and because \(1\) is
+\(b\), it is not in the domain of \(b \circ a\), and because \(1\) is
 never an output of \(a\), the value of \(b(1) = 2\) is not in the range
-of \(a \circ b\) unless that value is mapped to for some other input (it
+of \(b \circ a\) unless that value is mapped to for some other input (it
 is not), so
 
-\(a \circ b:\{ x:R\ \&\ x \neq 0\ \&\ x\  \neq - 1\} \rightarrow \{ z:R\ \&\ z > 0\ \&\ z \neq 2\} = \{ x \rightarrow {z = 2}^{1/(1 + 1/x)}\}\ \)
+\(b \circ a:\{ x:R\ \&\ x \neq 0\ \&\ x\  \neq - 1\} \rightarrow \{ z:R\ \&\ z > 0\ \&\ z \neq 2\} = \{ x \rightarrow {z = 2}^{1/(1 + 1/x)}\}\ \)
 
 \hypertarget{multiple-arguments}{%
 \section{Multiple Arguments}\label{multiple-arguments}}
@@ -652,7 +652,7 @@ variable is concave if and only if its second derivative is nonpositive
 on its entire domain. The negative of a concave function is convex and
 vice versa.
 
-\(f(x) = log_{b}(x)\) for \(b > 1\) is an important concave function
+\(f(x) = \log_{b}(x)\) for \(b > 1\) is an important concave function
 here.
 
 \hypertarget{logarithms-and-exponents}{%
@@ -661,7 +661,7 @@ here.
 When working with large numbers, logarithms represent large numbers with
 smaller ones, they are connected by
 
-\(log_{b}(n) = p\) (log form) is the same as \(n = b^{p}\) (exponent
+\(\log_{b}(n) = p\) (log form) is the same as \(n = b^{p}\) (exponent
 form)
 
 Here \(n\) is any positive number, \(b\) is a positive base, and \(p\)
@@ -673,39 +673,39 @@ bases \(b\) are \(10\) in engineering, \(2\) in computer science, and
 \item
   \begin{quote}
   Logarithms roughly ``count digits'' in the given base. For example
-  \(log_{10}(1\_ 000) = 3\) and \(log_{10}(1\_ 000\_ 000) = 6\). Writing
-  \(32\) in binary is \(10\_ 0000_{2}\) and \(log_{2}(32) = 5\).
+  \(\log_{10}(1\_ 000) = 3\) and \(\log_{10}(1\_ 000\_ 000) = 6\). Writing
+  \(32\) in binary is \(10\_ 0000_{2}\) and \(\log_{2}(32) = 5\).
   \end{quote}
 \item
   \begin{quote}
   Increasing a value by a factor of \(b\) increases the base \(b\)
-  logarithm by \(1\): \(log_{b}(x \times b) = log_{b}(x) + 1\).
+  logarithm by \(1\): \(\log_{b}(x \times b) = \log_{b}(x) + 1\).
   \end{quote}
 \item
   \begin{quote}
   Decreasing a value by a factor of \(b\) decreases the base \(b\)
-  logarithm by \(1\): \(log_{b}(x \div b) = log_{b}(x) - 1\).
+  logarithm by \(1\): \(\log_{b}(x \div b) = \log_{b}(x) - 1\).
   \end{quote}
 \item
   \begin{quote}
   Logarithms convert multiplication into addition:
-  \(log_{b}(x \times y) = log_{b}(x) + log_{b}(y)\).
+  \(\log_{b}(x \times y) = \log_{b}(x) + \log_{b}(y)\).
   \end{quote}
 \item
   \begin{quote}
   Logarithms convert division into subtraction:
-  \(log_{b}(x \div y) = log_{b}(x) - log_{b}(y)\).
+  \(\log_{b}(x \div y) = \log_{b}(x) - \log_{b}(y)\).
   \end{quote}
 \item
   \begin{quote}
   Logarithms convert powers into products:
-  \(log_{b}(x^{y}) = y \times log_{b}(x)\).
+  \(\log_{b}(x^{y}) = y \times \log_{b}(x)\).
   \end{quote}
 \item
   \begin{quote}
   For \(b > 1\), logarithms are concave functions:
-  \(log_{b}(p \times x + q \times y) \geq p \times log_{b}(x) + q \times log_{b}(y)\)
-  so long as \(x > 0\), \(y > 0\). \(p \geq 0\), \(q \geq 0\), and
+  \(\log_{b}(p \times x + q \times y) \geq p \times \log_{b}(x) + q \times \log_{b}(y)\)
+  so long as \(x > 0\), \(y > 0\), \(p \geq 0\), \(q \geq 0\), and
   \(p + q = 1\). This can be extended to any number of terms.
   \end{quote}
 \item
@@ -796,10 +796,10 @@ For example
 \([ + ](\{ z:Z_{4} \rightarrow 2z + 1\}) = 1 + 3 + 5 + 7 = 16\)
 and \([ + ](\{ z:Z_{0} \rightarrow 2z + 1\}) = 0\)
 
-A common notation is \(\Sigma_x f(x) = [ + ](f)\).
+A common notation is \(\sum_{x:X} f(x) = [ + ](f)\), assuming \(X\) is the domain of \(f\).
 
 If \(X\) is a subset of the domain of \(f\), then
-\(\Sigma_{x \in X} f(x) = [ + ](\{ x:X \rightarrow f(x)\}) = [ + ](f(x:X))\)
+\(\sum_{x:X} f(x) = [ + ](\{ x:X \rightarrow f(x)\}) = [ + ](f(x:X))\)
 
 \hypertarget{products}{%
 \section{Products}\label{products}}
@@ -812,7 +812,7 @@ For example
 \([ \times ](\{ z:Z_{4} \rightarrow 2z + 1\} = 1 \times 3 \times 5 \times 7 = 105\)
 and \([ \times ](\{ z:Z_{0} \rightarrow 2z + 1\}) = 1\)
 
-A common notation is \( \Pi_x f(x) = [ \times ](f)\), and similarly \( \Pi_{x \in X} f(x) = [ \times ](f(x:X))\)
+A common notation is \( \prod_{x:X} f(x) = [ \times ](f)\), and similarly \( \prod_{x:X} f(x) = [ \times ](f(x:X))\) for a subset \(X\) of the domain.
 
 \hypertarget{summation-rules}{%
 \section{Summation Rules}\label{summation-rules}}
@@ -820,26 +820,26 @@ A common notation is \( \Pi_x f(x) = [ \times ](f)\), and similarly \( \Pi_{x \i
 Generalizing
 \(\left[ a \times y_{0} + b \times z_{0} \right] + \left[ a \times y_{1} + b \times z_{1} \right] = a \times (y_{0} + y_{1}) + b \times (z_{0} + z_{1})\),
 
-\(\left[ af(x) + bg(x) \right] = af(x) + bg(x)\)
+\(\sum_{x:X}\left[ af(x) + bg(x) \right] = a\sum_{x:X}f(x) + b\sum_{x:X}g(x)\)
 
 \([ + ](a \times f + b \times g) = a \times [ + ](f) + b \times [ + ](g)\)
 
 From the Venn diagram,
 
-\(f(x) = f(x) + f(x) - f(x)\)
+\(\sum_{x:X \cup Y}f(x) = \sum_{x:X}f(x) + \sum_{x:Y}f(x) - \sum_{x:X \cap Y}f(x)\)
 
 \([ + ](f(x:X \cup Y)) = [ + ](f(x:X)) + [ + ](f(x:Y)) - [ + ](f(x:X \cap Y))\)
 
 Because order does not matter when you are adding up terms,
 
-\(\left[ f(x,y) \right] = \left[ f(x,y) \right] = f(x,y)\)
+\(\sum_{x:X}\left[ \sum_{y:Y}f(x,y) \right] = \sum_{y:Y}\left[ \sum_{x:X}f(x,y) \right] = \sum_{x:X,y:Y}f(x,y)\)
 
-\([ + ](\{ x:X \rightarrow [ + ](f(x,y:Y))\}) = [ + ](\{ y:Y \rightarrow [ + ](f(x:X,y)))\}) = [ + ](f(x:X,y:Y))\)
+\([ + ](\{ x:X \rightarrow [ + ](f(x,y:Y))\}) = [ + ](\{ y:Y \rightarrow [ + ](f(x:X,y))\}) = [ + ](f(x:X,y:Y))\)
 
 Generalizing
 \((y_{0} + y_{1})^{2} = y_{0} \times y_{0} + y_{0} \times y_{1} + y_{1} \times y_{0} + y_{1} \times y_{1}\),
 
-\(\left[ f(x) \right]^{2} = \left[ f(x) \times f(x') \right]\)
+\(\left[ \sum_{x:X}f(x) \right]^{2} = \sum_{x:X,x':X}\left[ f(x) \times f(x') \right]\)
 
 \(\left[ [ + ](f(x:X)) \right]^{2} = [ + ](f(x:X) \times f(x':X))\)
 
@@ -848,15 +848,15 @@ Generalizing
 
 By counting on your fingers,
 
-\(1 = [ + ]\{ x:X \rightarrow 1\} = 1 + 1 + \cdot \cdot \cdot + 1 = \# X\)
+\(\sum_{x:X}1 = [ + ]\{ x:X \rightarrow 1\} = 1 + 1 + \cdot \cdot \cdot + 1 = \# X\)
 
 By reversing the list and adding again,
 
-\(z = [ + ]\{ z:Z_{n} \rightarrow z\} = 0 + 1 + \cdot \cdot \cdot + (n - 1) = \frac{n \times (n - 1)}{2}\)
+\(\sum_{z:Z_{n}}z = [ + ]\{ z:Z_{n} \rightarrow z\} = 0 + 1 + \cdot \cdot \cdot + (n - 1) = \frac{n \times (n - 1)}{2}\)
 
 By multiplying by \(\frac{b - 1}{b - 1}\) and canceling terms,
 
-\(b^{z} = {[ + ]\{ z:Z_{n} \rightarrow b^{z}\} = b}^{0} + b^{1} + \cdot \cdot \cdot + b^{n - 1} = \frac{b^{n} - 1}{b - 1}\)
+\(\sum_{z:Z_{n}}b^{z} = [ + ]\{ z:Z_{n} \rightarrow b^{z}\} = b^{0} + b^{1} + \cdot \cdot \cdot + b^{n - 1} = \frac{b^{n} - 1}{b - 1}\)
 
 \hypertarget{summation-inequalities}{%
 \section{Summation Inequalities}\label{summation-inequalities}}
@@ -864,25 +864,25 @@ By multiplying by \(\frac{b - 1}{b - 1}\) and canceling terms,
 \(l_{p}\)-norm
 
 We define
-\(\left| |f| \right|_{p} = \left\{ [ + ](|f|^{p}) \right\}^{1/p}\)
+\(\left\| f \right\|_{p} = \left\{ [ + ](|f|^{p}) \right\}^{1/p}\)
 for \(p:R \geq 1\), and
-\(\left| |f| \right|_{\infty} = [ max]\ |f(x)|\). (largest
+\(\left\| f \right\|_{\infty} = [ max]\ |f(x)|\). (largest
 absolute value in the range). These are called the \(l_{p}\)-norms and
 for \(1 \leq p \leq \infty\) have the properties of a norm, which means,
 for any finite domain real-valued functions \(f(x:X) \subseteq R\),
 \(g(x:X) \subseteq R\), \(h(x:X) \subseteq R\), and real value \(c\):
 
-\(\left| |cf| \right|_{p} = |c|\left| |f| \right|_{p}\)
+\(\left\| cf \right\|_{p} = |c|\left\| f \right\|_{p}\)
 
-\(\left| |f + g| \right|_{p} \leq \left| |f| \right|_{p} + \left| |g| \right|_{p}\)
+\(\left\| f + g \right\|_{p} \leq \left\| f \right\|_{p} + \left\| g \right\|_{p}\)
 
-\(\left| |f - g| \right|_{p} \leq \left| |f - h| \right|_{p} + \left| |h - g| \right|_{p}\)
+\(\left\| f - g \right\|_{p} \leq \left\| f - h \right\|_{p} + \left\| h - g \right\|_{p}\)
 
 \hypertarget{huxf6lders-inequality}{%
 \subsection{Hölder's Inequality}\label{huxf6lders-inequality}}
 
 If \(p:R > 1\), \(q:R > 1\), and \(1/p + 1/q = 1\), then
-\(\left| |fg| \right|_{1} \leq \left| |f| \right|_{p}\left| |g| \right|_{q}\)
+\(\left\| fg \right\|_{1} \leq \left\| f \right\|_{p}\left\| g \right\|_{q}\)
 
 \hypertarget{counting}{%
 \chapter{Counting}\label{counting}}
@@ -911,8 +911,14 @@ For example, tossing a coin (\(c(0) = 2\)), followed by a six-sided dice
 (\(c(1) = 6\)) has
 \([ \times ](c) = c(0) \times c(1) = 2 \times 6 = 12\)
 outcomes (each choice leads to a unique outcome). This can be visualized
-as a decision tree, where the initial branch is the choice of face on
-coin, followed by the choice of pips on die.
+as a decision tree (figure~\ref{fig:tree}), where the initial branch is
+the choice of face on coin, followed by the choice of pips on die.
+\begin{figure}
+\centering
+\includegraphics[width=\linewidth]{build/figures/tree.pdf}
+\caption{Decision tree for a coin toss followed by a die roll}
+\label{fig:tree}
+\end{figure}
 
 \hypertarget{factorial}{%
 \section{Factorial}\label{factorial}}
@@ -1014,13 +1020,16 @@ selecting the values of \(y\) in the order of \(x\). So you are using
 \([ 2,0,1] \circ [ 1,2,0] = [ 0,1,2]\),
 because the first permutation arranges the second in the order last,
 initial, middle. This is also consistent with the ``list as a function''
-idea and functional composition
+idea, chaining the functions with \(x\) acting first:
+\((x \circ y)(i) = y(x(i))\). (Note the order: for permutations we
+compose left to right --- \(x\) acts first --- which is the reverse of
+the \(b \circ a\) convention used for general functions.)
 
 \([ 2,0,1] \circ [ 1,2,0]\)
 
 \(\{ 0 \rightarrow 2,1 \rightarrow 0,2 \rightarrow 1\} \circ \{ 0 \rightarrow 1,1 \rightarrow 2,2 \rightarrow 0\}\)
 
-\(\{ 0 \rightarrow 1 \rightarrow 0,1 \rightarrow 2 \rightarrow 1,2 \rightarrow 0 \rightarrow 2\}\)
+\(\{ 0 \rightarrow 2 \rightarrow 0,1 \rightarrow 0 \rightarrow 1,2 \rightarrow 1 \rightarrow 2\}\)
 
 \(\{ 0 \rightarrow 0,1 \rightarrow 1,2 \rightarrow 2\}\)
 
@@ -1081,8 +1090,8 @@ will show this in a moment). Since \(\# gS = \# S\), then we can count
 the elements of \(G\) as \(\# G = \# P \times \# S\).
 
 To show \(P\) is a partition, the subsets have to all be the same or
-distinct (clearly their union is \(G\)). Suppose \(a\epsilon gS\) so and
-\(a = gs_{0}\) But \(aS = \{ gs_{0}s|s\epsilon S\}\) but that's just a
+distinct (clearly their union is \(G\)). Suppose \(a\ \epsilon\ gS\), so
+\(a = gs_{0}\). But \(aS = \{ gs_{0}s\ |\ s\ \epsilon\ S\}\), which is just a
 permutation of \(gS\), so \(aS = gS\). So if any two elements of \(P\)
 (like \(gS\) and \(g'S\)) have any element \(a\) in common, they are the
 same set \(aS\).
@@ -1103,7 +1112,7 @@ which are all the circular translations. It is generated by
 \(t^{n - 1} = [ n - 1,0,1,2,3,...,n - 2]\).
 
 For example,
-\(T_{3} = \{[ 0,1,2],[ 1,2,0],[ 2,1,0]\}\).
+\(T_{3} = \{[ 0,1,2],[ 1,2,0],[ 2,0,1]\}\).
 
 The translation group has the nice property
 \(t^{x} \circ t^{y} = t^{x \oplus y}\).
@@ -1112,11 +1121,17 @@ The translation group has the nice property
 \chapter{Graph}\label{graph}}
 
 A graph is a set of elements \(V\) called vertices connected by directed
-edges \(E\), as in
+edges \(E\), as in figure~\ref{fig:graph}.
+\begin{figure}
+\centering
+\includegraphics[width=0.55\linewidth]{build/figures/graph.pdf}
+\caption{A tiny directed graph}
+\label{fig:graph}
+\end{figure}
 
 Here \(V = Z_{3} = \{ 0,1,2\}\) and
-\(E = \{ 1 \rightarrow 0,1 \rightarrow 2,2 \rightarrow 2\}\). \(E\) is
-the ``connects to'' relationship for the \textbar graph.
+\(E = \{ 1 \rightarrow 0,1 \rightarrow 2,2 \rightarrow 0,2 \rightarrow 2\}\). \(E\) is
+the ``connects to'' relationship for the graph.
 
 \begin{itemize}
 \item
@@ -1132,7 +1147,7 @@ the ``connects to'' relationship for the \textbar graph.
     \end{quote}
   \item
     \begin{quote}
-    \(E(G) = \{ 1 \rightarrow 0,1 \rightarrow 2,2 \rightarrow 2\}\).
+    \(E(G) = \{ 1 \rightarrow 0,1 \rightarrow 2,2 \rightarrow 0,2 \rightarrow 2\}\).
     \end{quote}
   \end{itemize}
 \item
@@ -1243,7 +1258,7 @@ results in pairs. Delete all \([ H,H]\) and
 \([ T,T]\) pairs, and replace \([ H,T]\) with
 \(T\) and \([ T,H]\) with \(H\). The probability of heads in
 the new sequence is
-\(q(H) = \frac{p(T) \times p(H)}{p(T) \times P(H) + p(H) \times P(T)} = \frac{1}{2}\)
+\(q(H) = \frac{p(T) \times p(H)}{p(T) \times p(H) + p(H) \times p(T)} = \frac{1}{2}\)
 and similarly \(q(T) = \frac{1}{2}\).\\
 Note that the pairs have to come from the same coin, but different pairs
 can be from different coins to speed up the generation of random bits.
@@ -1298,7 +1313,7 @@ The uniform value is \(r{\  \oplus}_{n}\ 0\).
   \end{quote}
 \item
   \begin{quote}
-  \(k \leftarrow ceil(log_{b}(n))\)
+  \(k \leftarrow ceil(\log_{b}(n))\)
   \end{quote}
 \item
   \begin{quote}
@@ -1381,7 +1396,7 @@ the initial element, then the next, etc.
   \end{quote}
 \item
   \begin{quote}
-  \(r \leftarrow\)\([ m \leftrightarrow i](r)\)
+  \(r \leftarrow [ (m - 1) \leftrightarrow i](r)\)
   \end{quote}
 \item
   \begin{quote}
@@ -1393,10 +1408,12 @@ the initial element, then the next, etc.
 \section{Shannon Information}\label{shannon-information}}
 
 The information (measured in bits) of a certain set \(X\ \)of outcomes
-\(x\) with probabilities \(p(x)\) is the
-\(H(p) = - p(x)\ log_{2}(p(x))\)
+\(x\) with probabilities \(p(x)\) is
+\begin{equation*}
+H(p) = - \sum_{x:X}p(x)\ \log_{2}(p(x))
+\end{equation*}
 
-For uniform probabilities the information is \(log_{2}(\# X)\), which is
+For uniform probabilities the information is \(\log_{2}(\# X)\), which is
 the largest it can be.
 
 \hypertarget{missing-bits}{%
@@ -1406,45 +1423,57 @@ the largest it can be.
 In security, it is preferable to have uniform distributions since that
 provides the least amount of information to an attacker. So we define
 \(p(x) = 1/\# X + \delta p(x)\). Substituting into the information
-formula, \(M(p) = log_{2}(\# X) - H(p)\) is the number of missing bits
+formula, \(M(p) = \log_{2}(\# X) - H(p)\) is the number of missing bits
 of information from non-uniformity of the probabilities. We can bound
-\(M(p) \leq \frac{\# X}{log_{e}\ 2}(\delta p(x))^{2}\)
+\begin{equation*}
+M(p) \leq \frac{\# X}{\log_{e}\ 2}\sum_{x:X}(\delta p(x))^{2}
+\end{equation*}
 
-\(H(p) = - (1/\# X + \delta p(x))\ log_{2}(1/\# X + \delta p(x))\)
+\begin{equation*}
+H(p) = - \sum_{x:X}(1/\# X + \delta p(x))\ \log_{2}(1/\# X + \delta p(x))
+\end{equation*}
+\begin{equation*}
+= - \sum_{x:X}(1/\# X + \delta p(x))\ \left[ \log_{2}(1/\# X) + \log_{2}(1 + \# X\delta p(x)) \right]
+\end{equation*}
+\begin{equation*}
+= \log_{2}(\# X) - \frac{1}{\# X}\sum_{x:X}(1 + \# X\delta p(x))\log_{2}(1 + \# X\delta p(x))
+\end{equation*}
+\begin{equation*}
+M(p) = \log_{2}(\# X) - H = \frac{1}{\# X}\sum_{x:X}(1 + \# X\delta p(x))\log_{2}(1 + \# X\delta p(x))
+\end{equation*}
 
-\(= - (1/\# X + \delta p(x))\ \left[ log_{2}(1/\# X) + log_{2}(1 + \# X\delta p(x)) \right]\)
+Using \(\log_{2}(x) = \frac{\log_{e}(x)}{\log_{e}(2)}\), and
+\(\log_{e}(1 + x) \leq x\)
 
-\(= log_{2}(\# X) - \frac{1}{\# X}(1 + \# X\delta p(x))log_{2}(1 + \# X\delta p(x))\)
+\begin{equation*}
+M(p) \leq \frac{1}{\# X\log_{e}2}\sum_{x:X}(1 + \# X\delta p(x))\# X\delta p(x)
+\end{equation*}
+\begin{equation*}
+= \frac{\# X}{\log_{e}2}\sum_{x:X}(\delta p(x))^{2}
+\end{equation*}
+(the cross term vanishes because \(\sum_{x:X}\delta p(x) = 0\)).
 
-\(M(p) = log_{2}(\# X) - H = \frac{1}{\# X}(1 + \# X\delta p(x))log_{2}(1 + \# X\delta p(x))\)
-
-Using \(log_{2}(x) = \frac{log_{e}(x)}{log_{e}(2)}\), and
-\(log_{e}(1 + x) \leq x\)
-
-\(M(p) \leq \frac{1}{\# Xlog_{e}2}(1 + \# X\delta p(x))\# X\delta p(x)\)
-
-\(= \frac{\# X}{log_{e}2}(\delta p(x))^{2}\)
-
-Missing Bits (Improved)
+\hypertarget{missing-bits-improved}{%
+\section{Missing Bits (Improved)}\label{missing-bits-improved}}
 
 This can sharpened by restricting \(X\) to eliminate where the
 probability is known to be zero. Let \(X'\) be a subset of \(X\) where
 \(p(x) = 0\) outside of \(X'\). The above estimate is correct in the
 restricted domain \(X'\) and for the whole space \(X\) we obtain
-\(log_{2}(\# X') - M'(p) \leq H(p) \leq log_{2}(\# X')\) where
+\(\log_{2}(\# X') - M'(p) \leq H(p) \leq \log_{2}(\# X')\) where
 
-\(M'(p) \leq \frac{\# X'}{log_{e}2}(p(x) - 1/\# X')^{2}\).
+\(M'(p) \leq \frac{\# X'}{\log_{e}2}\sum_{x:X'}(p(x) - 1/\# X')^{2}\).
 
 \hypertarget{lower-bounds}{%
 \section{Lower Bounds}\label{lower-bounds}}
 
 We show
-\(- \frac{\alpha}{\alpha - 1}log_{2}\left| |p| \right|_{\alpha} \leq H(p)\)
+\(- \frac{\alpha}{\alpha - 1}\log_{2}\left\| p \right\|_{\alpha} \leq H(p)\)
 for \(\alpha > 1\).
 
 From concavity of the logarithm function
 
-\(log_{2}p(x)f(x) \geq p(x)log_{2}(f(x))\)
+\(\log_{2}\sum_{x}p(x)f(x) \geq \sum_{x}p(x)\log_{2}(f(x))\)
 
 Choosing
 
@@ -1452,22 +1481,42 @@ Choosing
 
 Gives
 
-\(log_{2}(p(x))^{\alpha} \geq (\alpha - 1)p(x)log_{2}(p(x))\)
+\(\log_{2}\sum_{x}(p(x))^{\alpha} \geq (\alpha - 1)\sum_{x}p(x)\log_{2}(p(x))\)
 
 Or
 
-\(- \frac{\alpha}{\alpha - 1}log_{2}\left[ (p(x))^{\alpha} \right]^{1/\alpha} \leq - p(x)log_{2}(p(x))\)
+\(- \frac{\alpha}{\alpha - 1}\log_{2}\left[ \sum_{x}(p(x))^{\alpha} \right]^{1/\alpha} \leq - \sum_{x}p(x)\log_{2}(p(x))\)
 
 Or
 
-\(- \frac{\alpha}{\alpha - 1}log_{2}\left| |p| \right|_{\alpha} \leq H(p)\)
+\(- \frac{\alpha}{\alpha - 1}\log_{2}\left\| p \right\|_{\alpha} \leq H(p)\)
 
 In the uniform case \(p(x) = 1/\# X\), this result is sharp,
 
-\(\left| |p| \right|_{\alpha} = \left[ \# X(1/\# X)^{\alpha} \right]^{1/\alpha} = (\# X)^{1/\alpha - 1} = (\# X)^{- \frac{\alpha - 1}{\alpha}}\)
+\(\left\| p \right\|_{\alpha} = \left[ \# X(1/\# X)^{\alpha} \right]^{1/\alpha} = (\# X)^{1/\alpha - 1} = (\# X)^{- \frac{\alpha - 1}{\alpha}}\)
 
 So
-\(- \frac{\alpha}{\alpha - 1}log_{2}\left| |p| \right|_{\alpha} = H(p)\)
+\(- \frac{\alpha}{\alpha - 1}\log_{2}\left\| p \right\|_{\alpha} = H(p)\)
+
+An alternative derivation uses convexity of the exponential instead:
+
+\(2^{\sum_{x}p(x)g(x)} \leq \sum_{x}p(x)2^{g(x)}\)
+
+Choosing
+
+\(g(x) = \log_{2}((p(x))^{\alpha - 1})\)
+
+Gives
+
+\(2^{(\alpha - 1)\sum_{x}p(x)\log_{2}(p(x))} \leq \sum_{x}(p(x))^{\alpha}\)
+
+Or
+
+\(- (\alpha - 1)H(p) \leq \log_{2}\left( \sum_{x}(p(x))^{\alpha} \right)\)
+
+Or
+
+\(H(p) \geq - \frac{1}{\alpha - 1}\log_{2}\left( \sum_{x}(p(x))^{\alpha} \right) = - \frac{\alpha}{\alpha - 1}\log_{2}\left\| p \right\|_{\alpha}\)
 
 \hypertarget{entropy-of-product-in-group}{%
 \section{Entropy of Product in
@@ -1477,58 +1526,61 @@ If \(p(x)\) and \(q(x)\ \) are probability distributions for elements of
 a finite group \(G\), then the probability distribution for the product
 is
 
-\(r(z) = p(x)\ q(x^{- 1} \circ z)\)
+\(r(z) = \sum_{x:G}p(x)\ q(x^{- 1} \circ z)\)
 
 Here we show
 
-\(H(r) = - \left[ p(x)q(y)log_{2}(r(x \circ y)) \right]\)
+\(H(r) = - \sum_{x}\sum_{y}\left[ p(x)q(y)\log_{2}(r(x \circ y)) \right]\)
 
 Using the definition,
 
-\(H(r) = - r(z) \times \ log_{2}(r(z))\)
+\(H(r) = - \sum_{z}r(z) \times \ \log_{2}(r(z))\)
 
 In the first definition for \(r(z)\) we sum over \(x\) and the second we
 sum over \(y\):
 
-\(H(r) = - \left( p(x)\ q(x^{- 1} \circ z) \right) \times log_{2}\left( p(y)\ q(y^{- 1} \circ z) \right)\)
+\(H(r) = - \sum_{z}\left( \sum_{x}p(x)\ q(x^{- 1} \circ z) \right) \times \log_{2}\left( \sum_{y}p(y)\ q(y^{- 1} \circ z) \right)\)
 
-We can distribute the \(log_{2}\) factor into the \(x\)-sum, and then
+We can distribute the \(\log_{2}\) factor into the \(x\)-sum, and then
 switch summation order
 
-\(H(r) = - \left[ p(x)q(x^{- 1} \circ z)log_{2}\left( p(y)\ q(y^{- 1} \circ z) \right) \right]\)
+\(H(r) = - \sum_{x}\sum_{z}\left[ p(x)q(x^{- 1} \circ z)\log_{2}\left( \sum_{y}p(y)\ q(y^{- 1} \circ z) \right) \right]\)
 
 And changing variables in the sum on \(z\) with \(w\) with the
 permutation \(x^{- 1} \circ z = w\),
 
-\(H(r) = - \left[ p(x)q(w)log_{2}\left( p(y)\ q(y^{- 1} \circ x \circ w) \right) \right]\)
+\(H(r) = - \sum_{x}\sum_{w}\left[ p(x)q(w)\log_{2}\left( \sum_{y}p(y)\ q(y^{- 1} \circ x \circ w) \right) \right]\)
 
-\(= - \left[ p(x)q(w)log_{2}(r(x \circ w)) \right]\)
+\(= - \sum_{x}\sum_{w}\left[ p(x)q(w)\log_{2}(r(x \circ w)) \right]\)
 
 Or, changing summation variables, we have our result
 
-\(H(r) = - \left[ p(x)q(y)log_{2}(r(x \circ y)) \right]\)
+\(H(r) = - \sum_{x}\sum_{y}\left[ p(x)q(y)\log_{2}(r(x \circ y)) \right]\)
 
 \hypertarget{hr-leq-hp-hq}{%
 \section{\texorpdfstring{\(H(r) \leq H(p) + H(q)\)}{H(r) \textbackslash leq H(p) + H(q)}}\label{hr-leq-hp-hq}}
 
-\(r(x \circ y) = p(z)\ q(z^{- 1} \circ x \circ y)\)
+\(r(x \circ y) = \sum_{z}p(z)\ q(z^{- 1} \circ x \circ y)\)
 
 We can instead sum over \(w\) with \(z = x \circ w\) or
 \(w = x^{- 1} \circ z\), which is just a permutation of the sum, so
 
-\(r(x \circ y) = p(x \circ w)\ q(w{}^{- 1} \circ y)\)
+\(r(x \circ y) = \sum_{w}p(x \circ w)\ q(w{}^{- 1} \circ y)\)
 
-Now in the \(log_{2}\) of the sum, we can distinguish the \(w = e\)
+Now in the \(\log_{2}\) of the sum, we can distinguish the \(w = e\)
 term:
 
-\(H(r) = - \left[ p(x)q(y)log_{2}\left( p(x)\ q(y) + p(x \circ w)\ q(w{}^{- 1} \circ y) \right) \right]\)
+\begin{multline*}
+H(r) = - \sum_{x,y}\Bigl[ p(x)q(y) \\
+\log_{2}\Bigl( p(x)\ q(y) + \sum_{w \neq e}p(x \circ w)\ q(w{}^{- 1} \circ y) \Bigr) \Bigr]
+\end{multline*}
 
-\(- log_{2}(u)\) is a decreasing function so dropping the remaining
-terms can only increase it's value,
+\(- \log_{2}(u)\) is a decreasing function so dropping the remaining
+terms can only increase its value,
 
-\(H(r) \leq - \left[ p(x)q(y)log_{2}\left( p(x)\ q(y) \right) \right]\)
+\(H(r) \leq - \sum_{x,y}\left[ p(x)q(y)\log_{2}\left( p(x)\ q(y) \right) \right]\)
 
-\(= - \left[ p(x)q(y)[ log_{2}(p(x)) + log_{2}(q(y))] \right]\)
+\(= - \sum_{x,y}\left[ p(x)q(y)[ \log_{2}(p(x)) + \log_{2}(q(y))] \right]\)
 
 \(= H(p) + H(q)\)
 
@@ -1665,10 +1717,10 @@ cipher with much less effort than finding the key.
 
 Spider Cipher uses the arrangement of a 40 card deck as the key. So the
 key space has
-
-\hypertarget{approx-2159.159}{%
-\section{\texorpdfstring{\(815\_ 915\_ 283\_ 247\_ 897\_ 734\_ 345\_ 611\_ 269\_ 596\_ 115\_ 894\_ 272\_ 000\_ 000\_ 000 \approx 2^{159.159}\)}{815\textbackslash\_ 915\textbackslash\_ 283\textbackslash\_ 247\textbackslash\_ 897\textbackslash\_ 734\textbackslash\_ 345\textbackslash\_ 611\textbackslash\_ 269\textbackslash\_ 596\textbackslash\_ 115\textbackslash\_ 894\textbackslash\_ 272\textbackslash\_ 000\textbackslash\_ 000\textbackslash\_ 000 \textbackslash approx 2\^{}\{159.159\}}}\label{approx-2159.159}}
-
+\begin{multline*}
+40! = 815\_ 915\_ 283\_ 247\_ 897\_ 734\_ 345\_ 611\_ 269\_ 596\_ \\
+115\_ 894\_ 272\_ 000\_ 000\_ 000 \approx 2^{159.159}
+\end{multline*}
 elements. Here is a version of understanding how big this is
 
 \begin{itemize}
@@ -1717,22 +1769,22 @@ probabilistic automata, the state of the system is a probability
 distribution \(p(x,t)\), which is the probability of the automata being
 in the state \(x:X\) at time \(t\). From each state, according to the
 input, there is a probability of transition to another state, so
-\(T(\sigma,x,y)\) is the transition probability of transitioning from
+\(T(s,x,y)\) is the transition probability of transitioning from
 state \(x\) to state \(y\) if the input to the automata is signal \(s\).
 We insist that, for any choice of initial state \(x\) and signal \(s\),
-the transition probability sum to \(1\): \(T(s,x,y) = 1\)
+the transition probability sum to \(1\): \(\sum_{y:X}T(s,x,y) = 1\)
 
 If \(s(t)\) is the signal over time, the state of the system evolves
 according to some initial state distribution \(p(x,0) = p_{0}(x)\), and
 then transitions according to
 
-\(p(y,t + 1) = T(s(t),x,y)p(x,t)\)
+\(p(y,t + 1) = \sum_{x:X}T(s(t),x,y)p(x,t)\)
 
 If the signal is also a probability then we also sum over the signal set
 \(S\) and provide a probability distribution, \(p_{s}(s,t)\), for the
 signal at time \(t\),
 
-\(p(y,t + 1) = p_{s}(s,t)T(s,x,y)p(x,t)\)
+\(p(y,t + 1) = \sum_{s:S}p_{s}(s,t)\sum_{x:X}T(s,x,y)p(x,t)\)
 
 \hypertarget{spider-graph}{%
 \chapter{Spider Graph}\label{spider-graph}}
@@ -1744,7 +1796,7 @@ outgoing edges,
 Here \(t^{c}\) are the members of \(T_{40}\), and {[}count down by odds,
 then up by evens{]}
 
-\(s = [ 39,37,35,33,31,...,9,7,5,3,1,0,2,4,6,8,...30,32,34,36,38]\).
+\(s = [ 39,37,35,33,31,...,9,7,5,3,1,0,2,4,6,8,...,30,32,34,36,38]\).
 
 This is the act of cutting the deck at index \(c\) followed by a
 back-front shuffle.
@@ -1830,9 +1882,11 @@ Here are the steps.
   \end{quote}
 \item
   \begin{quote}
-  \(e\) reaches \(T_{40}\). First reach \(s^{- 1}\), then move along the
-  edge \(v \rightarrow t^{c} \circ s \circ v\), so
-  \(s^{- 1} \rightarrow t^{c} \circ s \circ s^{- 1} = t^{c}\)
+  \(e\) reaches \(T_{40}\). First move along the edge with cut \(c\)
+  from \(e\) to reach \(s \circ t^{c}\), then continue with
+  \(k_{1} - k_{0} - 1\) more cut-\(0\) edges (each composes another
+  \(s\) on the left):
+  \(s^{k_{1} - k_{0} - 1} \circ (s \circ t^{c}) = s^{k_{1} - k_{0}} \circ t^{c} = e \circ t^{c} = t^{c}\)
   \end{quote}
 \item
   \begin{quote}
@@ -1860,7 +1914,7 @@ Here are the steps.
   \(b_{i,i \oplus 1} = [ 0,1,2,...,i \oplus 1,i,...,38,39]\)
   the permutation that swaps \(i\) with \(i \oplus 1\) in the deck
   (where \(\oplus\) is \(+\) modulo 40).
-  \(b_{i,i \oplus 1} = t^{- (i \oplus 1)} \circ t^{39} \circ x \circ t \circ r \circ s^{- 1} \circ t^{21} \circ s \circ t^{i \oplus 1}\),
+  \(b_{i,i \oplus 1} = t^{- (i \oplus 1)} \circ t^{39} \circ x \circ t \circ x \circ r \circ s^{- 1} \circ t^{21} \circ s \circ t^{i \oplus 1}\),
   as demonstrated in FACTS(BReachable).
   \end{quote}
 \item
@@ -1889,22 +1943,22 @@ Entropy}\label{group-products-hold-entropy}}
 Let \(p(x)\) and \(q(x)\) be two probability distributions on the group
 \(G\), then the distribution of the product is
 
-\(r(x) = p(a)q(a^{- 1} \circ x)\)
+\(r(x) = \sum_{a}p(a)q(a^{- 1} \circ x)\)
 
 Write \(p(x) = 1/\# G + \delta p(x)\) and
 \(q(x) = 1/\# G + \delta q(x)\), then this simplifies to
 
 \(r(x) = 1/\# G + \delta r(x)\), where
-\(\delta r(x) = \delta p(a)\delta q(a^{- 1} \circ x)\),
+\(\delta r(x) = \sum_{a}\delta p(a)\delta q(a^{- 1} \circ x)\),
 \(E(\delta r) = 0\),
-\(E(\delta r^{2}) = \delta p(a)\delta q(a^{- 1} \circ x)\delta p(b)\delta q(b^{- 1} \circ x)\)
+\(E(\delta r^{2}) = \frac{1}{\# G}\sum_{x,a,b}\delta p(a)\delta q(a^{- 1} \circ x)\delta p(b)\delta q(b^{- 1} \circ x)\)
 
 \hypertarget{spider-graph-is-a-good-entropy-pool}{%
 \chapter{Spider Graph is a Good Entropy
 Pool}\label{spider-graph-is-a-good-entropy-pool}}
 
 The maximum entropy of spider graph is
-\(log_{2}(\# S_{40}) = log_{2}(40!) \simeq 159.159\). Choosing an
+\(\log_{2}(\# S_{40}) = \log_{2}(40!) \simeq 159.159\). Choosing an
 initial deck at random (choose 1 of 40 cards for the first card, 1 of 39
 cards for the second card, etc.) would have this entropy with
 \(p(v) = 1/\# S_{40} \simeq 2^{- 159.159}\).
@@ -1912,19 +1966,19 @@ cards for the second card, etc.) would have this entropy with
 An important feature of spider graph it is good at keeping and
 increasing entropy.
 
-R = sum(pq) (chi(pq = r))
-
-e=-sum(rx) (p(x)q(x\^{}-1 r) log p(x)q(x\^{}-1 r) = -sum(xy) (pq log
-p)+-sum(xy)(pq log q) = \textgreater=
-
-Suppose \(p(v)\) is a probability distribution for vertex \(v\) and
-\(q(w)\). Define the mean \(\) and standard deviation \(\sigma_{p}\) as
-\(= E(p) = \frac{1}{\# S_{40}}p(v) = 1/\# S_{40}\), and \(\sigma_{p} =\)
-Since \(\) is constant, only \(\delta p = p -\) is interesting. After
+Suppose \(p(v)\) is a probability distribution for vertex \(v\). Define
+the mean \(\bar{p}\) and standard deviation \(\sigma_{p}\) as
+\begin{equation*}
+\bar{p} = E(p) = \frac{1}{\# S_{40}}\sum_{v \in S_{40}}p(v) = 1/\# S_{40}\,,
+\qquad
+\sigma_{p} = \sqrt{E\left( (p - \bar{p})^{2} \right)}\,.
+\end{equation*}
+Since \(\bar{p}\) is constant, only \(\delta p = p - \bar{p}\) is
+interesting. After
 \(r\) steps of the graph, where \(r < b\), the root ball size of the
 inverse spider graph, the probability distribution is
 
-\(p_{t + r}(v) = prob(path)\  \times p_{t}(path^{- 1}(v))\)
+\(p_{t + r}(v) = \sum_{\text{paths of length } r}prob(path)\  \times p_{t}(path^{- 1}(v))\)
 
 Suppose the probabilities are un-gamed, that the paths were not chosen
 because of the probability distribution \(p_{t}(v)\). In the normal
@@ -1935,9 +1989,9 @@ chosen plaintext has no bearing on the distribution of \(p_{t}(v)\).
 While inside the root ball size, the paths are a random subsample of
 \(p(v)\), which leads to this contraction on the standard deviation:
 
-\(\sigma_{t + r} = \sigma_{t}\), or
+\(\sigma_{t + r} = \sqrt{(1/40)^{r/2}}\ \sigma_{t}\), or
 \(\sigma_{t} = 2^{- \lambda t}\sigma_{0}\), where
-\(\lambda = \frac{1}{4}log_{2}(40) \approx 0.92\). For the initial
+\(\lambda = \frac{1}{4}\log_{2}(40) \approx 1.33\). For the initial
 cards, which are all random, we improve uniformity at twice this rate.
 The use of 10 initial random cards improves the key uniformity by about
 100\_000\_000.
@@ -1949,41 +2003,17 @@ vertex).
 \(\# B_{r}(v) = (40^{r} - 1)/(40 - 1)\) for \(r \leq b\). This is the
 decision tree counting problem, with \(40\) choices at each step.
 
-which you can think of as a pair of nodes
-
 It is important that the deck you choose for a key is random; otherwise
 your opponents might use insights as to what you like or don't like to
 narrow the options to something easier to guess.
 
-\href{https://www.dakkadakka.com/wiki/en/That\%27s_How_I_Roll_-_A_Scientific_Analysis_of_Dice\#Results}{\uline{https://www.dakkadakka.com/wiki/en/That\%27s\_How\_I\_Roll\_-\_A\_Scientific\_Analysis\_of\_Dice\#Results}}
+\url{https://www.dakkadakka.com/wiki/en/That%27s_How_I_Roll_-_A_Scientific_Analysis_of_Dice#Results}
 
-\href{https://cameroncounts.wordpress.com/2014/02/27/entropy-and-groups/}{\uline{https://cameroncounts.wordpress.com/2014/02/27/entropy-and-groups/}}
+\url{https://cameroncounts.wordpress.com/2014/02/27/entropy-and-groups/}
 
-\href{https://link.springer.com/chapter/10.1007/978-1-4419-8608-5_16}{\uline{https://link.springer.com/chapter/10.1007/978-1-4419-8608-5\_16}}
+\url{https://link.springer.com/chapter/10.1007/978-1-4419-8608-5_16}
 
-Feet
-
-\(log_{2}p(x)f(x) \geq p(x)log_{2}(f(x))\)
-
-\(f(x) = (p(x))^{\alpha - 1}\), \(\alpha > 1\)
-
-\(log_{2}(p(x))^{\alpha} \geq (\alpha - 1)p(x)log_{2}(p(x))\)
-
-\(- \frac{\alpha}{\alpha - 1}log_{2}\left[ (p(x))^{\alpha} \right]^{1/\alpha} \leq - p(x)log_{2}(p(x))\)
-
-\(- \frac{\alpha}{\alpha - 1}log_{2}\left| |p| \right|_{\alpha} \leq H(p)\)
-
-\(2^{p(x)g(x)} \leq p(x)2^{g(x)}\)
-
-\(g(x) = log_{2}((p(x))^{\alpha - 1})\)
-
-\(2^{(\alpha - 1)p(x)log_{2}(p(x))} \leq (p(x))^{\alpha}\)
-
-\(- (\alpha - 1)H(p) \leq log_{2}((p(x))^{\alpha}))\)
-
-\(H(p) \geq - \frac{\alpha}{\alpha - 1}log_{2}((p(x))^{\alpha}))\)
-
-https://eprint.iacr.org/2017/339.pdf
+\url{https://eprint.iacr.org/2017/339.pdf}
 
 \hypertarget{relation-leak-rate}{%
 \chapter{Relation Leak Rate}\label{relation-leak-rate}}
@@ -2028,7 +2058,7 @@ relator of length \(10\): \(c_{9} = 1\), \(c_{10} = 0\)
 (FACTS(Relations)). So the leak rate of the plain spider is dominated
 by its single shortest relation,
 
-\(\text{leak} \approx \frac{1}{40^{9}} \approx 3.9 \times 10^{- 15}\)
+\(\text{leak} \approx \frac{1}{40^{9}} \approx 3.8 \times 10^{- 15}\)
 
 per step, the next contribution not appearing until length \(12\)
 (where the cuts with cycle length \(12\) first add relators). This is
@@ -2042,10 +2072,10 @@ the first relator far deeper; its leak rate is treated in the companion
 The free depth governs entropy capture while the state is far from
 uniform (the capture theorem is stated in the companion \emph{Perfect
 Spider Cipher Theory}). Near saturation -- when the state entropy is
-already close to \(log_{2}(40!)\) -- a different mechanism takes over,
+already close to \(\log_{2}(40!)\) -- a different mechanism takes over,
 and it applies equally to the plain and perfect spider: spectral
 contraction. Write the deficit as
-\(\epsilon_{k} = log_{2}(40!) - H(X_{k})\), and call the inputs blind
+\(\epsilon_{k} = \log_{2}(40!) - H(X_{k})\), and call the inputs blind
 when the cut choices are independent of the state, as random padding
 cards are.
 
@@ -2099,7 +2129,7 @@ graph is open.
 Putting the regimes together, blind inputs give three simultaneous
 lower bounds,
 
-\(H(X_{k}) \geq max\left( H(X_{k - 1}),\ H(class(X_{0})) + k\, log_{2}40,\ log_{2}(40!) - \epsilon_{k} \right)\)
+\(H(X_{k}) \geq \max\left( H(X_{k - 1}),H(class(X_{0})) + k\,\log_{2}40,\log_{2}(40!) - \epsilon_{k} \right)\)
 
 the first always, the second while \(k\) is within the class free
 depth, the third with \(\epsilon_{k}\) contracting at the spectral
