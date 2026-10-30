@@ -182,7 +182,9 @@ Object.assign(Demos, {
     };
     const decrypt = () => {
       const cards = S40.parse(cipher.value);
-      plain.textContent = cards.length ? S40.decrypt(S40.keyDeck(key.value), cards).text : "";
+      if (!cards.length) { plain.textContent = ""; return; }
+      const { ok, text } = S40.decrypt(S40.keyDeck(key.value), cards);
+      plain.textContent = ok ? text : "Rejected: the packet was changed, or the key is wrong.";
     };
     const setFmt = f => {
       fmt = f;

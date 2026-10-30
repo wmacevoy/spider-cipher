@@ -29,6 +29,6 @@ When changing cipher behavior, keep the implementations consistent with each oth
 
 **Hardware & physical artifacts.** `src/*.v` is a Verilog true-RNG (45 ring oscillators → 3-stage synchronizers → uniform 0..39 in `rng40.v`); `die/` holds OpenSCAD dice models; `cards/` generates the printable deck.
 
-**Browser.** `docs/` is the GitHub Pages site: the overview (`index.html`, the talk's QR code target), the older Spiderweb tool (`spiderweb.html`) and its step-by-step animation (`explanation.html` + `demo.js`, an older two-cut form of the cipher), the ten-card math talk (`docs/talk/`, whose `talk.js` is the shared slide engine), and the 40-card system deck (`docs/forty/`, whose `spider40.js` ports `src/spider_cipher.c`). The working set (`REQUIREMENTS_v2`, `DESIGN_v1`, `QUEUE`, `FINDINGS`) also lives in `docs/`.
+**Browser.** `docs/` is the GitHub Pages site: the overview (`index.html`, the talk's QR code target), the older Spiderweb tool (`spiderweb.html`) and its step-by-step animation (`explanation.html` + `demo.js`, an older two-cut form of the cipher), the ten-card math talk (`docs/talk/`, whose `talk.js` is the shared slide engine), and the 40-card system deck (`docs/forty/`, whose `spider40.js` ports `src/spider_cipher.c`). The working set (`REQUIREMENTS_v3`, `DESIGN_v1`, `QUEUE`, `FINDINGS`) also lives in `docs/`.
 
 **Papers.** `paper.ltx` (overview/history), `theory.ltx` + `theory/` (security analysis), `foundations.ltx` (vertex transitivity, connectivity, free depth), `perfect-theory.ltx` (the perfect variant), bibliography in `spider.bib`.

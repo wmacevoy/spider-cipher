@@ -145,9 +145,19 @@
     const msg = encode(text), pkt = packet(msg, rand), [cipher] = run(deck, pkt, 1);
     return { msg, pkt, cipher };
   }
+  // the run of five 39s that ends every message; without it the packet was changed or the key
+  // is wrong, and the message is rejected rather than shown (REQ2/PK-2, as in bin/spider_cipher)
+  function complete(msg) {
+    let run = 0;
+    for (const card of msg) {
+      run = card === CARDS - 1 ? run + 1 : 0;
+      if (run >= PREFIX / 2) return true;
+    }
+    return false;
+  }
   function decrypt(deck, cipher) {
-    const [pkt] = run(deck, cipher, -1), msg = unpacket(pkt);
-    return { pkt, msg, text: decode(msg) };
+    const [pkt] = run(deck, cipher, -1), msg = unpacket(pkt), ok = complete(msg);
+    return { pkt, msg, ok, text: ok ? decode(msg) : "" };
   }
 
   // ---- formats ----

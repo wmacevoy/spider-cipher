@@ -46,7 +46,8 @@ it short and true: a change that makes a line here untrue updates it in the same
   it compares ends with `… truths and 0 (0.0%) fictions checked.`
 - **What it runs:** the default facts suite, its stdout diffed against
   `expected/spider_cipher_facts.out`, then an encrypt/decrypt round trip of `message` in all three
-  formats. About 6 s optimized and 15 s unoptimized on an M-series Mac; `FACTS_TIMEOUT` (default 300 s)
+  formats, then two fixed packets: `expected/message.packet` must decrypt to `message`, and
+  `expected/message-changed.packet` (one card changed) must be rejected. About 6 s optimized and 15 s unoptimized on an M-series Mac; `FACTS_TIMEOUT` (default 300 s)
   raises facts' own 10 s timeout, which the unoptimized build exceeds.
 - **Reproduce CI exactly:** `make -B CDBG="" COPT="" check`, then the `-g` and `-O2` variants in
   `.github/workflows/c-cpp.yml`. A failure in CI is reproduced with CI's command before it is
@@ -69,13 +70,13 @@ it short and true: a change that makes a line here untrue updates it in the same
   cipher changes all of them, or says which it leaves behind.
 - **Perfect variant** means the post-shuffle swap of positions 0 and 19 (equivalently: cut, swap
   the second and bottom cards, then shuffle). The first/last (0,39) swap is retired.
-- **Requirements are versioned, never edited in place:** `docs/REQUIREMENTS_v2.md` is current; it is
-  followed by `_v3`, not rewritten, and `_v1` stays as it was.
+- **Requirements are versioned, never edited in place:** `docs/REQUIREMENTS_v3.md` is current; it is
+  followed by `_v4`, not rewritten, and earlier versions stay as they were.
 - **The copy of AGENTS.md is not edited.** Local rules go here; this file wins where they disagree.
 
 ## Where things are
 
-- **Working set:** `docs/` — `REQUIREMENTS_v2`, `DESIGN_v1`, `QUEUE`, `FINDINGS`
+- **Working set:** `docs/` — `REQUIREMENTS_v3`, `DESIGN_v1`, `QUEUE`, `FINDINGS`
   ([SE1/W10](https://github.com/wmacevoy/software-engineering/blob/v1.3/guide/08-work.md#w10)).
   `docs/` is also the GitHub Pages site, so these are published too; that was chosen on 2026-10-29.
 - **Agents:** read `AGENTS.md` in this repository (copied from the
@@ -94,11 +95,11 @@ it short and true: a change that makes a line here untrue updates it in the same
 | findings                       | `docs/FINDINGS.md`                                                       |
 | the check command              | `make check`; success: `make` exits 0 with no diff output                |
 | the handoff check              | `./se --post`, a `SessionStart` hook (startup, resume, compact) in `.claude/settings.json` |
-| `Non-goals`, `Scope decisions` | sections of `docs/REQUIREMENTS_v2.md`                                    |
+| `Non-goals`, `Scope decisions` | sections of `docs/REQUIREMENTS_v3.md`                                    |
 
 ### Done
 
 A change is done when the [working checklist](https://github.com/wmacevoy/software-engineering/blob/v1.3/CHECKLISTS.md#working)
 holds: `make check` passes locally and in CI, a new test was seen to fail first, the change names
-its requirement (`REQ2/…`) or says *chore*, and what it made untrue here or in `docs/` is updated in
+its requirement (`REQ3/…`) or says *chore*, and what it made untrue here or in `docs/` is updated in
 the same change. Only the owner marks a queue item *done*.
