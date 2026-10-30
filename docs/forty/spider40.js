@@ -42,7 +42,7 @@
         ++i;
         if (shift === -1) {
           let b = 4;
-          while (2 ** b < chr) b += 4;
+          while (2 ** b <= chr) b += 4;
           while (b >= 4) { b -= 4; out.push(Math.floor(chr / 2 ** b) % 16); }
           if (ord(-1, peek(1)) >= 0) { out.push(SHIFT_LOCK_DOWN); next = -1; }
           else { out.push(SHIFT_LOCK_UP); next = 0; }

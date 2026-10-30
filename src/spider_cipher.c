@@ -342,7 +342,8 @@ int encodeIO(CIO *in, CIO *out)
       CIORead(in);
       if (shift == -1) {
 	int s=4;
-	while ((((uint64_t) 1)<<s) < ((uint64_t)chr)) { s += 4; }
+	// s bits must hold chr: 16 needs two hex digits, not one
+	while ((((uint64_t) 1)<<s) <= ((uint64_t)chr)) { s += 4; }
 	while (s >= 4) {
 	  s -= 4;
 	  uint8_t hex = (chr >> s) & 0xF;

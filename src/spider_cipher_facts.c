@@ -21,6 +21,13 @@ const char* const UTF8_TEST_STRINGS [] =
    u8"12",
    u8"♣",
    u8"♣♠",
+   // code points that are exact powers of 16 need every hex digit
+   u8"\x10",
+   u8"Ā",
+   u8"က",
+   u8"\U00010000",
+   u8"\U00100000",
+   u8"aĀb",
    u8"xX1♣xyXY12♣♠",
    u8"Spider Solitare",
    u8"int main(int argc, char** argv) {\n" 
