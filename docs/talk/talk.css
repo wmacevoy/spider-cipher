@@ -153,6 +153,9 @@ tr.cur td { background: #FBE9DC; }
 .pageno { position: absolute; right: 160px; bottom: 48px; font-size: 24px; color: var(--soft); }
 .dark .pageno { color: #6B7489; }
 .hint { position: absolute; left: 128px; bottom: 56px; font-size: 24px; color: #6B7489; }
+/* which worksheet part goes with this slide */
+.activity { position: absolute; left: 128px; bottom: 40px; font-size: 24px; font-weight: 600; color: var(--orange); border: 2px solid var(--orange); border-radius: 999px; padding: 6px 22px; }
+.activity::before { content: "✎  "; }
 
 /* chrome outside the stage */
 #nav { position: fixed; right: 16px; bottom: 16px; display: flex; gap: 8px; z-index: 10; opacity: .35; transition: opacity .2s; }

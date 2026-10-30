@@ -20,7 +20,8 @@ it short and true: a change that makes a line here untrue updates it in the same
   in card glyphs; `bin/spider_cipher --key='secret' --decrypt='…'` reads it back (`--decimal`,
   `--base40`, `--cards` pick the format; `-` reads stdin).
 - **Run the browser decks:** `python3 -m http.server -d docs 8000`, then open
-  `http://localhost:8000/talk/` and `http://localhost:8000/forty/`. GitHub Pages serves `docs/`
+  `http://localhost:8000/talk/` and `http://localhost:8000/forty/`; the talk's handout is
+  `talk/worksheet.html`, printed from the browser (two letter pages). GitHub Pages serves `docs/`
   from `main` at https://wmacevoy.github.io/spider-cipher/.
 - **Reset to a known state:** `rm -rf tmp bin && make all` — removes every object and binary,
   including ones `all` does not rebuild (`bin/spider_cipher_generic_facts`: `make` it by name);
