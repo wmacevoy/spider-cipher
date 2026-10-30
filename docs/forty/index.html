@@ -193,14 +193,14 @@
     <div class="arrow">→</div>
     <div class="box"><h3 class="serif">2 · Unpacket</h3><p class="soft" style="font-size:30px">Drop the first ten cards, then every other card.</p></div>
     <div class="arrow">→</div>
-    <div class="box"><h3 class="serif">3 · Detranslate</h3><p class="soft" style="font-size:30px">Read cards with the shift table until five ⤒ in a row.</p></div>
+    <div class="box"><h3 class="serif">3 · Detranslate</h3><p class="soft" style="font-size:30px">Read cards with the shift table until five ⤒ in a row. No five ⤒? The packet was changed, or the key is wrong: reject it.</p></div>
   </div>
   <div class="row">
     <div class="ruled"><h3>Same key deck</h3><p class="soft">Both sides start every message from the key deck.</p></div>
     <div class="ruled"><h3>Lockstep</h3><p class="soft">The cut uses the clear card, which the reader has just recovered.</p></div>
     <div class="ruled"><h3>Done</h3><p class="soft">Sort the deck when finished, so the key isn’t left lying on the table.</p></div>
   </div>
-  <aside class="notes">Unpacket order matters: drop the ten prefix cards, then every other card starting with the first (those are the random B cards), then stop at the first run of five ⤒. Any ⤒ that happen to appear after the end are ignored.</aside>
+  <aside class="notes">Unpacket order matters: drop the ten prefix cards, then every other card starting with the first (those are the random B cards), then stop at the first run of five ⤒. Any ⤒ that happen to appear after the end are ignored. The run of five ⤒ is also the check: a changed card puts the decks out of step, so the run never comes, and the reader rejects the packet (REQ2/PK-2), except by chance about once in 40<sup>5</sup> tries. bin/spider_cipher does not act on this yet; see QUEUE item 11.</aside>
 </section>
 
 <!-- 14 -->
@@ -229,7 +229,7 @@
       <div class="field"><label>Decrypts to</label><p id="p" class="out"></p></div>
     </div>
   </div>
-  <aside class="notes">Encrypt runs translate, packet (with fresh random cards each time) and scramble; the output is in the same format as bin/spider_cipher (groups of five, rows of twenty), and the tool accepts its output in either cards or decimal format. Paste a packet from the command line to decrypt it here, or the other way around. Change one card in the packet and watch the rest of the message fall apart.</aside>
+  <aside class="notes">Encrypt runs translate, packet (with fresh random cards each time) and scramble; the output is in the same format as bin/spider_cipher (groups of five, rows of twenty), and the tool accepts its output in either cards or decimal format. Paste a packet from the command line to decrypt it here, or the other way around. Change one card in the packet and watch the rest of the message fall apart: the five ⤒ never arrive, which is how the reader knows it was changed.</aside>
 </section>
 
 <!-- 16 -->

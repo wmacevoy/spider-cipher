@@ -7,6 +7,19 @@ Blameless: say what would have found it, not who should have asked
 ([SE1/H12](https://github.com/wmacevoy/software-engineering/blob/v1.3/guide/09-people.md#h12)).
 Started 2026-10-29; earlier entries are reconstructed from the history.
 
+## 2026-10-30 — Decrypt ignores its own check for a changed packet
+
+- **What happened:** the run of five 39s that ends every message is a check: change one card and the
+  decks fall out of step, so the run does not come out, and `decodeIO` returns −1. The CLI ignores
+  that result (`src/spider_cipher_main.c:145`): with one card of a 30-card packet changed, it printed
+  `hlhe<1p<t` and exited 0. REQUIREMENTS_v1, reconstructed from the CLI's behavior, listed message
+  authentication as a likely non-goal; the owner meant the 39s as the check.
+- **Kind:** K2 (surprise)
+- **Cost:** a changed or wrongly keyed packet decrypts to garbage with no error; v1 nearly recorded
+  the gap as a decision.
+- **Findable by:** the lying column of the inputs table (SE1/R6), run as a test that changes one card.
+- **Changed:** REQUIREMENTS_v2 adds PK-2; the fix is queued.
+
 ## 2026-10-29 — CI was red on every push for at least seven months
 
 - **What happened:** every `C/C++ CI` run listed, back to 2026-03-05, failed. In the runs whose

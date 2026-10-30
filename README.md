@@ -2,6 +2,9 @@
 
 A modern cipher based on cards and dice.
 
+Start at the overview: https://wmacevoy.github.io/spider-cipher/ (the talk, its worksheet, and the
+40-card deck).
+
 # Command line
 
 bin/spider-cipher [--decimal|--base40|--cards] --key='key message' --encrypt='plain' --decrypt='cipher'

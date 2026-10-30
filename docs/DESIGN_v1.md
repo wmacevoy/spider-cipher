@@ -66,8 +66,10 @@ today by reading the includes *(inferred)*.
 - **Perfect variant = swap shuffled positions 0 and 19** — REQ1/IM-1 — keeps the shortest
   single-cut loop at 30; the first/last (0,39) swap dropped it to 6 — source: commit 204d0f6,
   2026-06-12.
-- **Pad the message to a multiple of 10 with 39s** — REQ1/TR-2 — rather than random cards after the
-  message (the Google Slides' "C" cards) *(inferred; no source found)*.
+- **Pad the message to a multiple of 10 with at least five 39s** — REQ2/TR-2, REQ2/PK-2 — the run
+  is also the reader's check that nothing changed, so it ends every message; rather than four 39s to
+  a multiple of 5 and then random cards (the Google Slides' "C" cards), which made the check 40 times
+  weaker — source: the owner, 2026-10-30.
 - **Hex digit count: s bits must hold the code point (`<=`)** — REQ1/TR-1 — fixed 2026-10-29,
   commit 8648919; see FINDINGS.
 - **`make check` passes `--facts_timeout=$(FACTS_TIMEOUT)`, default 300 s** — REQ1/TH-1 — facts' own
@@ -79,3 +81,5 @@ today by reading the includes *(inferred)*.
 - Not yet: a check that the copies of the cipher agree (REQ1/IM-1) — the cross-check exists only as a
   script run by hand on 2026-10-29; see QUEUE.
 - Not yet: a test for REQ1/CT-1 — none exists.
+- Not yet: decrypt acting on the end-of-message check (REQ2/PK-2) — the check is in `decodeIO`, but
+  the CLI ignores its result; see QUEUE.

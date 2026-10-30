@@ -19,10 +19,11 @@ it short and true: a change that makes a line here untrue updates it in the same
 - **Run:** `bin/spider_cipher --cards --key='secret' --encrypt='message'` prints a scrambled packet
   in card glyphs; `bin/spider_cipher --key='secret' --decrypt='…'` reads it back (`--decimal`,
   `--base40`, `--cards` pick the format; `-` reads stdin).
-- **Run the browser decks:** `python3 -m http.server -d docs 8000`, then open
-  `http://localhost:8000/talk/` and `http://localhost:8000/forty/`; the talk's handout is
-  `talk/worksheet.html`, printed from the browser (two letter pages). GitHub Pages serves `docs/`
-  from `main` at https://wmacevoy.github.io/spider-cipher/.
+- **Run the browser decks:** `python3 -m http.server -d docs 8000`, then open the overview at
+  `http://localhost:8000/`, and the decks at `http://localhost:8000/talk/` and
+  `http://localhost:8000/forty/`; the talk's handout is `talk/worksheet.html`, printed from the
+  browser (two letter pages). GitHub Pages serves `docs/` from `main` at
+  https://wmacevoy.github.io/spider-cipher/, the address in the talk's QR code.
 - **Reset to a known state:** `rm -rf tmp bin && make all` — removes every object and binary,
   including ones `all` does not rebuild (`bin/spider_cipher_generic_facts`: `make` it by name);
   rebuilds in a few seconds. There is no `make clean` for the C build. The tests keep no state
@@ -68,13 +69,13 @@ it short and true: a change that makes a line here untrue updates it in the same
   cipher changes all of them, or says which it leaves behind.
 - **Perfect variant** means the post-shuffle swap of positions 0 and 19 (equivalently: cut, swap
   the second and bottom cards, then shuffle). The first/last (0,39) swap is retired.
-- **Requirements are versioned, never edited in place:** `docs/REQUIREMENTS_v1.md` is followed by
-  `_v2`, not rewritten.
+- **Requirements are versioned, never edited in place:** `docs/REQUIREMENTS_v2.md` is current; it is
+  followed by `_v3`, not rewritten, and `_v1` stays as it was.
 - **The copy of AGENTS.md is not edited.** Local rules go here; this file wins where they disagree.
 
 ## Where things are
 
-- **Working set:** `docs/` — `REQUIREMENTS_v1`, `DESIGN_v1`, `QUEUE`, `FINDINGS`
+- **Working set:** `docs/` — `REQUIREMENTS_v2`, `DESIGN_v1`, `QUEUE`, `FINDINGS`
   ([SE1/W10](https://github.com/wmacevoy/software-engineering/blob/v1.3/guide/08-work.md#w10)).
   `docs/` is also the GitHub Pages site, so these are published too; that was chosen on 2026-10-29.
 - **Agents:** read `AGENTS.md` in this repository (copied from the
@@ -93,11 +94,11 @@ it short and true: a change that makes a line here untrue updates it in the same
 | findings                       | `docs/FINDINGS.md`                                                       |
 | the check command              | `make check`; success: `make` exits 0 with no diff output                |
 | the handoff check              | `./se --post`, a `SessionStart` hook (startup, resume, compact) in `.claude/settings.json` |
-| `Non-goals`, `Scope decisions` | sections of `docs/REQUIREMENTS_v1.md`                                    |
+| `Non-goals`, `Scope decisions` | sections of `docs/REQUIREMENTS_v2.md`                                    |
 
 ### Done
 
 A change is done when the [working checklist](https://github.com/wmacevoy/software-engineering/blob/v1.3/CHECKLISTS.md#working)
 holds: `make check` passes locally and in CI, a new test was seen to fail first, the change names
-its requirement (`REQ1/…`) or says *chore*, and what it made untrue here or in `docs/` is updated in
+its requirement (`REQ2/…`) or says *chore*, and what it made untrue here or in `docs/` is updated in
 the same change. Only the owner marks a queue item *done*.
