@@ -20,7 +20,7 @@ Started 2026-10-29; earlier entries are reconstructed from the history.
 - **Findable by:** building the papers from a clean checkout, with a time limit.
 - **Changed:** the papers build with latexmk + LuaLaTeX in Docker (`./build.sh`), as `../luck`
   does. The first clean build showed `figures/venn.asy` drawing at the wrong scale (no
-  `unitsize`).
+  `unitsize`), with the overlap shaded the long way round and a `\\cap` label; fixed.
 
 ## 2026-10-30 — Decrypt ignores its own check for a changed packet
 
