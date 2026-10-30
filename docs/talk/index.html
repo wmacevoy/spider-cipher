@@ -33,37 +33,65 @@
     <div class="box"><p class="eyebrow">Trust</p><h3 class="serif">No hidden hardware</h3><p class="soft">You can’t audit a chip. You can audit forty cards on a table.</p></div>
     <div class="box"><p class="eyebrow">Teaching</p><h3 class="serif">You can hold it</h3><p class="soft">Key, keystream, and state are all physical: you can see every step.</p></div>
   </div>
-  <p style="font-size:36px;width:1400px"><b>Spider</b> is a hand cipher built to be practical to run, and simple enough to analyze as mathematics.</p>
-  <aside class="notes">Solitaire (Schneier, written for Cryptonomicon) showed you can build a stream cipher from a deck of cards, but it was found to be biased (Crowley 1999; Shiu 2019). Spider is named after the solitaire game Spider. Design goals: hand-operable, a key big enough to matter (a 40-card deck holds about 159 bits), and rules simple enough that we can prove things about them. Keep this short, about 2 minutes.</aside>
+  <div class="claim">
+    <p class="eyebrow">Doable by hand, but strong anyway</p>
+    <p>In cryptography, a scheme is <b>strong</b> when attacking it is infeasible for every reasonable future model of computation.</p>
+  </div>
+  <p style="font-size:32px;width:1500px"><b>Spider</b> is a hand cipher built to be practical to run, and simple enough to analyze as mathematics.</p>
+  <aside class="notes">“Strong” is the bar: not “hard for a person with pencil and paper,” but infeasible for any computer we can reasonably imagine, now or later. Spider is meant to be run by hand and still meet that bar. Solitaire (Schneier, written for Cryptonomicon) showed you can build a stream cipher from a deck of cards, but it was found to be biased (Crowley 1999; Shiu 2019). Spider is named after the solitaire game Spider. Design goals: hand-operable, a key big enough to matter (a 40-card deck holds about 159 bits), and rules simple enough that we can prove things about them. Keep this short, about 2 minutes.</aside>
 </section>
 
 <!-- 3 -->
 <section class="slide">
-  <h2>Ten cards, numbered 0 to 9</h2>
+  <h2>Ten cards: Q, A, 2, …, 9</h2>
+  <div class="row" style="gap:16px;flex:none;align-items:center">
+    <p class="eyebrow" style="flex:none;width:150px">Card</p>
+    <div class="card" style="position:static;width:96px;height:124px;font-size:52px;flex:none">Q</div>
+    <div class="card" style="position:static;width:96px;height:124px;font-size:52px;flex:none">A</div>
+    <div class="card" style="position:static;width:96px;height:124px;font-size:52px;flex:none">2</div>
+    <div class="card" style="position:static;width:96px;height:124px;font-size:52px;flex:none">3</div>
+    <p class="soft" style="flex:none;font-size:52px">…</p>
+    <div class="card" style="position:static;width:96px;height:124px;font-size:52px;flex:none">9</div>
+    <p style="font-size:40px;margin-left:32px">Q is <b class="accent">0</b>, A is <b class="accent">1</b>, the rest are their own numbers.</p>
+  </div>
   <div class="col" style="gap:20px">
     <p class="eyebrow">The key: a shared order of the deck (top → bottom)</p>
     <div class="row mono" style="gap:16px;flex:none">
-      <div class="card" style="position:static;width:112px;height:150px;font-size:60px;flex:none">3</div>
-      <div class="card" style="position:static;width:112px;height:150px;font-size:60px;flex:none">7</div>
-      <div class="card" style="position:static;width:112px;height:150px;font-size:60px;flex:none">0</div>
-      <div class="card" style="position:static;width:112px;height:150px;font-size:60px;flex:none">9</div>
       <div class="card" style="position:static;width:112px;height:150px;font-size:60px;flex:none">4</div>
-      <div class="card" style="position:static;width:112px;height:150px;font-size:60px;flex:none">1</div>
+      <div class="card" style="position:static;width:112px;height:150px;font-size:60px;flex:none">2</div>
       <div class="card" style="position:static;width:112px;height:150px;font-size:60px;flex:none">8</div>
       <div class="card" style="position:static;width:112px;height:150px;font-size:60px;flex:none">5</div>
-      <div class="card" style="position:static;width:112px;height:150px;font-size:60px;flex:none">2</div>
+      <div class="card" style="position:static;width:112px;height:150px;font-size:60px;flex:none">Q</div>
+      <div class="card" style="position:static;width:112px;height:150px;font-size:60px;flex:none">9</div>
       <div class="card" style="position:static;width:112px;height:150px;font-size:60px;flex:none">6</div>
+      <div class="card" style="position:static;width:112px;height:150px;font-size:60px;flex:none">7</div>
+      <div class="card" style="position:static;width:112px;height:150px;font-size:60px;flex:none">3</div>
+      <div class="card" style="position:static;width:112px;height:150px;font-size:60px;flex:none">A</div>
     </div>
   </div>
   <div class="row">
     <div class="ruled"><h3>Mod 10</h3><p class="soft">All arithmetic wraps around: 7 + 5 = 2. The real deck uses 40 cards and mod 40.</p></div>
-    <div class="ruled"><h3>Same start</h3><p class="soft">Sender and receiver each hold a deck in this exact order.</p></div>
+    <div class="ruled"><h3>Symmetric key</h3><p class="soft">Sender and receiver hold the same key: each starts from a deck in this exact order.</p></div>
     <div class="ruled"><h3>Just digits</h3><p class="soft">Today: no padding, no letter encoding. Messages are strings of digits.</p></div>
   </div>
-  <aside class="notes">Hand out the 10-card decks now if you have them. The real cipher uses 40 cards (0–39, suit as tens digit, rank as ones digit) and adds padding and a letter encoding. We skip all of that: the core idea is the same. Have everyone put their deck in the order 3 7 0 9 4 1 8 5 2 6, top card first.</aside>
+  <aside class="notes">The queen stands for 0 and the ace for 1, so one suit is the digits 0–9. The real cipher uses all 40 cards (Q, A, 2–9 of four suits; suit as tens digit, rank as ones digit) and adds padding and a letter encoding. We skip all of that: the core idea is the same. Symmetric key: the same secret encrypts and decrypts, so it must be shared ahead of time. The slides use this key, 4 2 8 5 Q 9 6 7 3 A; each pair picks its own on the next slide.</aside>
 </section>
 
 <!-- 4 -->
+<section class="slide" style="gap:44px">
+  <h2>Your turn: set up your decks</h2>
+  <div class="row">
+    <div class="box"><p class="step-no">1</p><h3 class="serif">Make the 40</h3><p class="soft">From a standard deck keep Q, A, 2–9 of all four suits. Set aside 10s, jacks, and kings.</p></div>
+    <div class="box"><p class="step-no">2</p><h3 class="serif">Two suits</h3><p class="soft">Each pair takes two suits: one for the <b>sender</b>, one for the <b>receiver</b>.</p></div>
+    <div class="box"><p class="step-no">3</p><h3 class="serif">Agree on a key</h3><p class="soft">Choose an order of the ten cards together and write it on the worksheet.</p></div>
+    <div class="box"><p class="step-no">4</p><h3 class="serif">Same start</h3><p class="soft">Both put your suit in key order, top card first. Check each other.</p></div>
+  </div>
+  <div class="banner"><p>Keep the worksheet out: each part of the talk has an activity on it.</p></div>
+  <p class="activity">Worksheet 1 · Set up</p>
+  <aside class="notes">Activity: hand out one worksheet per pair (docs/talk/worksheet.html, printed two-sided). Each pair filters a standard deck to the 40 Spider cards, then takes two suits. They choose a key, any order of Q A 2 … 9, and write it in the boxes on the worksheet. The sender and receiver each arrange their own suit in that order. Keep the rest of the 40 aside. A pair that wants a key quickly can use the one on the slides: 4 2 8 5 Q 9 6 7 3 A. On each later slide with a “Worksheet” tag, give them a minute to do it.</aside>
+</section>
+
+<!-- 5 -->
 <section class="slide" data-demo="moves" style="gap:36px">
   <h2>Two moves</h2>
   <div class="row" style="gap:64px">
@@ -75,53 +103,72 @@
     <p class="narr" style="flex:1"></p>
     <div class="btns" style="flex:none">
       <button data-act="cut3">Cut on 3</button>
+      <button data-act="deal">Deal one</button>
       <button data-act="shuffle" class="primary">Shuffle</button>
       <button data-act="reset">Reset</button>
     </div>
   </div>
-  <aside class="notes">Click a card to cut on it; Enter does “cut on 3” and then shuffles. Then demonstrate with real cards. The cut is a rotation: (t<sup>c</sup>d)<sub>i</sub> = d<sub>i+c</sub>. The back-front (Monge) shuffle sends card 2i to position n/2 + i and card 2i+1 to position n/2 − 1 − i. From sorted: 0123456789 → 9753102468, odds rise in reverse, evens sink in order. Fun fact: the shuffle alone has order 6 on ten cards and 27 on forty. The shuffle never looks at the cards; only the cut depends on anything.</aside>
+  <p class="activity">Worksheet 2 · Cut and shuffle a sorted suit</p>
+  <aside class="notes">Click a card to cut on it. Enter does “cut on 3,” then deals the first shuffle one card per press so the room can deal along, then does whole shuffles. Activity: each person sorts their suit Q A 2 … 9, cuts on 3 (3 4 5 6 7 8 9 Q A 2), and shuffles; everyone should get 2 Q 8 6 4 3 5 7 9 A. The cut is a rotation: (t<sup>k</sup>d)<sub>i</sub> = d<sub>i+k</sub>. The back-front (Monge) shuffle sends card 2i to position n/2 + i and card 2i+1 to position n/2 − 1 − i. From sorted: Q A 2 … 9 → 9 7 5 3 A Q 2 4 6 8, odds rise in reverse, evens sink in order. Fun fact: the shuffle alone has order 6 on ten cards and 27 on forty. The shuffle never looks at the cards; only the cut depends on anything.</aside>
 </section>
 
-<!-- 5 -->
+<!-- 6 -->
 <section class="slide" data-demo="pad">
   <h2>Reading the pad from the deck</h2>
   <div class="deckview"></div>
   <div class="row steps">
-    <div class="ruled"><p class="eyebrow">1</p><p>Look at the <b>third</b> card.</p></div>
+    <div class="ruled"><p class="eyebrow">1</p><p>Look at the <b>third</b> card, always.</p></div>
     <div class="ruled"><p class="eyebrow">2</p><p>Subtract 1, mod 10.</p></div>
     <div class="ruled"><p class="eyebrow">3</p><p>Find that card in the deck.</p></div>
     <div class="ruled"><p class="eyebrow">4</p><p>The card <b>after</b> it is the pad (wrap to the top if needed).</p></div>
   </div>
   <div class="row" style="align-items:center;gap:40px">
     <p class="narr" style="flex:1"></p>
-    <div class="btns" style="flex:none"><button data-act="next" class="primary">Next</button><button data-act="reset">Reset</button></div>
+    <div class="btns" style="flex:none"><button data-act="next" class="primary">Next</button><button data-act="random">Random deck</button><button data-act="reset">Reset</button></div>
   </div>
-  <aside class="notes">Enter steps through. Third card is 0; 0 − 1 ≡ 9 (mod 10); 9 sits in position 3; the next card is 4, so the pad is 4. The pad is the keystream: a fresh digit drawn from the current state of the deck (spider_cipher_noise in the code). It depends on the whole deck order, not just a fixed position.</aside>
-</section>
-
-<!-- 6 -->
-<section class="slide">
-  <h2>Encrypting one digit <i>x</i></h2>
-  <div class="row">
-    <div class="box"><p class="step-no">1</p><h3 class="serif">Add the pad</h3><p class="soft">Send <i>y</i> = <i>x</i> + pad (mod 10).</p></div>
-    <div class="box"><p class="step-no">2</p><h3 class="serif">Cut</h3><p class="soft">Cut so the card numbered (top card + <i>x</i>) is on top.</p></div>
-    <div class="box"><p class="step-no">3</p><h3 class="serif">Shuffle</h3><p class="soft">One back-front shuffle. Repeat for the next digit.</p></div>
-  </div>
-  <div class="banner" style="display:flex;gap:28px;align-items:center;padding:32px 40px">
-    <p class="eyebrow" style="font-family:var(--sans);font-size:24px;color:var(--orange-light);white-space:nowrap">Decrypt</p>
-    <p style="font-family:var(--sans);font-size:32px"><i>x</i> = <i>y</i> − pad, then the <b>same</b> cut and shuffle.</p>
-  </div>
-  <aside class="notes">This is the whole cipher (minus padding and letter encoding). Step 2 is the clever part: the cut depends on the plaintext x, so the message itself steers the deck. Code: spider_cipher_scramble in core/src/spider_cipher.c. Ask: why does the receiver use x, not y, for the cut?</aside>
+  <p class="activity">Worksheet 3 · Find the pad of your key deck</p>
+  <aside class="notes">Enter steps through. You always start from the third card, whatever the top card is. Key deck: third card is 8; 8 − 1 = 7; 7 is the 8th card; the next card is 3, so the pad is 3. Random deck deals a fresh order and steps through again: different decks give different pads. Reset returns to the key deck. Activity: each pair finds the pad of their own key deck; sender and receiver should agree. The pad is the keystream: a fresh digit drawn from the current state of the deck (spider_cipher_noise in the code). It depends on the whole deck order, not just a fixed position.</aside>
 </section>
 
 <!-- 7 -->
+<section class="slide" style="gap:40px">
+  <h2>Encrypting one digit <i>p</i></h2>
+  <div class="row" style="gap:64px;flex:none">
+    <p><i>p</i> = <b>plaintext</b>, the digit you mean</p>
+    <p><i>c</i> = <b>ciphertext</b>, the digit you send</p>
+  </div>
+  <div class="row">
+    <div class="box inverse"><p class="step-no">1</p><h3 class="serif">Add the pad</h3><p>Send <i>c</i> = <i>p</i> + pad (mod 10).</p></div>
+    <div class="box"><p class="step-no">2</p><h3 class="serif">Cut</h3><p class="soft">Cut so the card numbered (top card + <i>p</i>) is on top.</p></div>
+    <div class="box"><p class="step-no">3</p><h3 class="serif">Shuffle</h3><p class="soft">One back-front shuffle. Repeat for the next digit.</p></div>
+  </div>
+  <div class="banner"><p>The cut uses <i>p</i>: <span class="accent">the message steers the deck.</span></p></div>
+  <aside class="notes">This is the whole cipher (minus padding and letter encoding). Step 2 is the clever part: the cut depends on the plaintext p, so the message itself steers the deck. Code: spider_cipher_scramble in core/src/spider_cipher.c.</aside>
+</section>
+
+<!-- 8 -->
+<section class="slide" style="gap:40px">
+  <h2>Decrypting one digit <i>c</i></h2>
+  <div class="row" style="gap:64px;flex:none">
+    <p>Start from the same key deck; read the same pad.</p>
+  </div>
+  <div class="row">
+    <div class="box inverse"><p class="step-no">1</p><h3 class="serif">Subtract the pad</h3><p>Read <i>p</i> = <i>c</i> − pad (mod 10).</p></div>
+    <div class="box"><p class="step-no">2</p><h3 class="serif">Cut</h3><p class="soft">Cut so the card numbered (top card + <i>p</i>) is on top.</p></div>
+    <div class="box"><p class="step-no">3</p><h3 class="serif">Shuffle</h3><p class="soft">One back-front shuffle. Repeat for the next digit.</p></div>
+  </div>
+  <div class="banner"><p>The only difference: <span class="accent">subtract instead of add.</span><br>Steps 2 and 3 are the same; the cut still uses <i>p</i>.</p></div>
+  <aside class="notes">Put this side by side with the last slide in your head: step 1 flips from + to −, nothing else changes. Ask: why does the receiver cut with p, not c? (Because the sender did: the cut uses the plaintext, and the receiver knows p as soon as they subtract.) Code: spider_cipher_unscramble in core/src/spider_cipher.c.</aside>
+</section>
+
+<!-- 9 -->
 <section class="slide" data-demo="example" style="gap:40px">
   <h2>Encrypting 2026, digit by digit</h2>
   <div class="row" style="gap:48px;align-items:start">
     <div class="deckview" style="flex:none"></div>
     <div class="col" style="gap:28px">
       <table>
-        <thead><tr><th><i>x</i></th><th>pad</th><th><i>y</i></th><th>cut on</th></tr></thead>
+        <thead><tr><th><i>p</i></th><th>pad</th><th><i>c</i></th><th>cut on</th></tr></thead>
         <tbody>
           <tr><td>2</td><td class="y" style="color:inherit"></td><td class="y"></td><td></td></tr>
           <tr><td>0</td><td class="y" style="color:inherit"></td><td class="y"></td><td></td></tr>
@@ -129,27 +176,60 @@
           <tr><td>6</td><td class="y" style="color:inherit"></td><td class="y"></td><td></td></tr>
         </tbody>
       </table>
-      <p class="result mono" style="font-size:60px;font-weight:700;visibility:hidden">2026 <span class="soft">→</span> <span class="accent">6107</span></p>
+      <p class="result mono" style="font-size:60px;font-weight:700;visibility:hidden">2026 <span class="soft">→</span> <span class="accent">5716</span></p>
     </div>
   </div>
   <p class="narr"></p>
-  <div class="btns"><button data-act="next" class="primary">Next</button><button data-act="reset">Reset</button></div>
-  <aside class="notes">Enter steps: third card, minus one, pad, cut, shuffle, for each digit. Work row 1 with real cards alongside. Row 1: pad 4, y = 6; cut on 3 + 2 = 5 gives 5 2 6 3 7 0 9 4 1 8; shuffle to 8 4 0 3 2 5 6 7 9 1. Row 2: pad 1; cut on 8, already on top, so nothing moves. Row 3: third card 5, find 4, next 8. Row 4: third card 6, find 5 (on top), next 1; cut on 5 + 6 ≡ 1. Notice the two 2s encrypt differently: 6, then 0. The animation runs the same rules as core/src/spider_cipher.c.</aside>
+  <div class="btns"><button data-act="next" class="primary">Next</button><button data-act="random">Random key</button><button data-act="reset">Reset</button></div>
+  <p class="activity">Worksheet 4 · Send your partner a secret</p>
+  <aside class="notes">Enter steps: third card, minus one, pad, cut, shuffle, for each digit. Work row 1 with real cards alongside (key 4 2 8 5 Q 9 6 7 3 A). Row 1: third card 8, find 7, next 3: pad 3, c = 5; cut on 4 + 2 = 6 gives 6 7 3 A 4 2 8 5 Q 9; shuffle to 9 5 2 A 7 6 3 4 8 Q. Row 2: pad 7, c = 7; cut on 9 + 0 = 9, already on top, so nothing moves; shuffle to Q 4 6 A 5 9 2 7 3 8. Row 3: third card 6, find 5, next 9: c = 1. Row 4: pad Q = 0, so c = 6 is the plaintext digit, and that’s fine: the eavesdropper can’t tell which pads were 0. Notice the two 2s encrypt differently: 5, then 1. Random key encrypts 2026 again from a fresh key: a different key, a different ciphertext. Reset returns to the slide key. Activity: the sender writes a secret 4-digit number, encrypts it with their suit, and hands over only the ciphertext; the receiver decrypts with theirs. Then swap roles, starting again from the key order. The animation runs the same rules as core/src/spider_cipher.c.</aside>
 </section>
 
-<!-- 8 -->
+<!-- 10 -->
 <section class="slide">
   <h2>Why the receiver can follow</h2>
   <div class="row">
-    <div class="ruled"><h3>Same pad</h3><p class="soft">Same deck, so the receiver reads the same pad and gets <i>x</i> = <i>y</i> − pad.</p></div>
-    <div class="ruled"><h3>Same move</h3><p class="soft">Now they know <i>x</i>, so they make the same cut and shuffle. The decks stay in lockstep.</p></div>
-    <div class="ruled"><h3>No repeats</h3><p class="soft">With the same key, 5555 encrypts to 9024.</p></div>
+    <div class="ruled"><h3>Same pad</h3><p class="soft">Same deck, so the receiver reads the same pad and gets <i>p</i> = <i>c</i> − pad.</p></div>
+    <div class="ruled"><h3>Same move</h3><p class="soft">Now they know <i>p</i>, so they make the same cut and shuffle. The decks stay in lockstep.</p></div>
+    <div class="ruled"><h3>No repeats</h3><p class="soft">With the same key, 5555 encrypts to 8139.</p></div>
   </div>
   <div class="banner"><p>The deck is the state.<br><span class="accent">The message picks the next state.</span></p></div>
-  <aside class="notes">Have pairs swap: one encrypts a 3-digit message from the key deck, the other decrypts. The message feeds back into the state (like an autokey cipher), which is why the same digit doesn’t give the same output. Bridge to the math: if the deck is the state, the set of all states is the set of all orderings, and each step is a move from one ordering to another.</aside>
+  <aside class="notes">Check in on Worksheet 4: did the receiver read the right number? If not, one wrong cut or shuffle desynchronizes every digit after it; start again from the key order. The message feeds back into the state (like an autokey cipher), which is why the same digit doesn’t give the same output. Bridge to the math: if the deck is the state, the set of all states is the set of all orderings, and each step is a move from one ordering to another.</aside>
 </section>
 
-<!-- 9 -->
+<!-- 11 -->
+<section class="slide" style="gap:40px">
+  <h2>Two ideas for the rest of the talk</h2>
+  <div class="row" style="gap:56px">
+    <div class="col" style="gap:20px">
+      <p class="eyebrow">A group</p>
+      <p>A set of moves you can combine.</p>
+      <p class="soft" style="font-size:28px;line-height:1.5">Do one move, then another: that is a move too.<br>“Do nothing” is a move.<br>Every move can be undone.<br>(<i>a</i> then <i>b</i>) then <i>c</i> is <i>a</i> then (<i>b</i> then <i>c</i>).</p>
+      <p style="font-size:28px">All the ways to rearrange <i>n</i> cards form a group: S<sub><i>n</i></sub>, the <b>symmetric group</b>.</p>
+    </div>
+    <div class="col" style="gap:20px">
+      <p class="eyebrow blue">A graph</p>
+      <p>Dots joined by arrows.</p>
+      <svg viewBox="0 0 640 330" style="width:640px;height:330px" role="img" aria-label="Four decks of four cards in a loop: 0123, 1230, 2301, 3012, each joined to the next by a cut-1 arrow">
+        <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto"><path d="M0 0L10 5L0 10z" fill="#2F6FB0"/></marker></defs>
+        <g fill="none" stroke="#2F6FB0" stroke-width="4" marker-end="url(#ah)">
+          <path d="M226 60H414"/><path d="M500 92V238"/><path d="M414 270H226"/><path d="M140 238V92"/>
+        </g>
+        <g font-family="JetBrains Mono, monospace" font-size="34" font-weight="700" text-anchor="middle" fill="#1B2130">
+          <rect x="60" y="30" width="160" height="60" rx="30" fill="#F8D9C2" stroke="#B5541A" stroke-width="3"/><text x="140" y="72">0123</text>
+          <rect x="420" y="30" width="160" height="60" rx="30" fill="#FFFDF8" stroke="#1B2130" stroke-width="2"/><text x="500" y="72">1230</text>
+          <rect x="420" y="240" width="160" height="60" rx="30" fill="#FFFDF8" stroke="#1B2130" stroke-width="2"/><text x="500" y="282">2301</text>
+          <rect x="60" y="240" width="160" height="60" rx="30" fill="#FFFDF8" stroke="#1B2130" stroke-width="2"/><text x="140" y="282">3012</text>
+        </g>
+        <text x="320" y="175" font-family="IBM Plex Sans, sans-serif" font-size="28" text-anchor="middle" fill="#4A5263">each arrow: cut 1</text>
+      </svg>
+    </div>
+  </div>
+  <div class="banner"><p>Draw a group as a graph: <span class="accent">a dot for each element, an arrow for each move.</span></p></div>
+  <aside class="notes">Orientation for the math half. A group is a set with a way to combine (closure), an identity, inverses, and associativity. The example everyone already has in their hands: rearrangements of a deck, the symmetric group. A graph here means directed: dots (vertices) and arrows (edges). The picture is the cut-by-one move on four cards: four cuts bring you home, so it draws a loop of four; that loop is the cyclic group of order 4. Drawing a group this way, one arrow per chosen move, is called a Cayley graph. Next: the dots will be all the decks, and the arrows the cipher’s cut-then-shuffle moves.</aside>
+</section>
+
+<!-- 12 -->
 <section class="slide dark spread" style="gap:48px">
   <h2>A deck is a permutation</h2>
   <div class="col">
@@ -164,7 +244,7 @@
   <aside class="notes">Each deck order is an element of the symmetric group S<sub>n</sub>: the deck d = [d<sub>0</sub>, …, d<sub>n−1</sub>] lists the card in each position. 40! = 8.16 × 10<sup>47</sup>, and log<sub>2</sub>(40!) ≈ 159.16. The sorted deck 0, 1, …, n−1 is the identity e. From now on: n cards, n even (the 10-card toy and the 40-card cipher both qualify).</aside>
 </section>
 
-<!-- 10 -->
+<!-- 13 -->
 <section class="slide">
   <h2>Each step is one of <i>n</i> fixed moves</h2>
   <div class="row">
@@ -173,10 +253,10 @@
     <div class="box inverse"><p class="eyebrow">One step</p><p class="serif" style="font-size:60px;line-height:1.1">g<sub><i>k</i></sub> = β t<sup><i>k</i></sup></p><p class="soft" style="font-size:30px">Cut, then shuffle. <i>k</i> = 0, 1, …, <i>n</i> − 1.</p></div>
   </div>
   <p style="font-size:34px;width:1500px">The key and the message decide <b>which</b> <i>k</i>, but the menu never changes: <span class="accent">exactly <i>n</i> permutations</span>.</p>
-  <aside class="notes">In the cipher, k is the position of the card (top + x). For the math, forget why k was chosen: from any deck there are exactly n possible next decks, g<sub>0</sub>d, …, g<sub>n−1</sub>d. Note g<sub>0</sub> = β. Notation follows foundations.ltx (g<sub>c</sub> = β∘t<sup>c</sup>); generators act on the left, on positions.</aside>
+  <aside class="notes">In the cipher, k is the position of the card (top + x). For the math, forget why k was chosen: from any deck there are exactly n possible next decks, g<sub>0</sub>d, …, g<sub>n−1</sub>d. Note g<sub>0</sub> = β. foundations.ltx writes g<sub>c</sub> = β∘t<sup>c</sup>; the slides say k because c is the ciphertext. Generators act on the left, on positions.</aside>
 </section>
 
-<!-- 11 -->
+<!-- 14 -->
 <section class="slide">
   <h2>The spider graph</h2>
   <div class="row">
@@ -189,7 +269,7 @@
   <aside class="notes">A Cayley graph: vertices are group elements, arrows are multiplication by a fixed generating set. Classic viewpoint (Aldous–Diaconis, Bayer–Diaconis): shuffling is a walk on S<sub>n</sub>. The difference here: the walk is not random; the key and the message steer it. The three questions are the outline of the rest: vertex transitivity, connectivity, free depth.</aside>
 </section>
 
-<!-- 12 -->
+<!-- 15 -->
 <section class="slide dark" style="gap:40px">
   <img src="spider-web-n4.svg" alt="The 4-card spider graph drawn as a web: 24 decks, the sorted deck at the center, rings of 4, 15 and 4 decks at distance 1, 2 and 3, with bold spanning-tree arrows and faint remaining arrows colored by cut 0 to 3" style="position:absolute;left:992px;top:140px;width:800px;height:800px">
   <h2 style="width:820px">Four cards: the whole web</h2>
@@ -207,7 +287,7 @@
   <aside class="notes">The full graph for n = 4, drawn from the sorted deck 0123 at the center (orange ring). Why 15 and not 16 at distance 2? Cut 1 twice brings you home: g<sub>1</sub><sup>2</sup> = e, so one of the 16 two-step walks returns to the center. Every deck is within 3 steps of 0123. For n = 6: 720 decks, connected, all within 5 steps. For n = 40: 8 × 10<sup>47</sup> decks. Ask: if I put a different deck in the center, would the picture change? That’s the next slide.</aside>
 </section>
 
-<!-- 13 -->
+<!-- 16 -->
 <section class="slide" style="gap:48px">
   <h2>Every deck sees the same web</h2>
   <div class="claim">
@@ -224,7 +304,7 @@
   <aside class="notes">Formally: right translation ρ<sub>h</sub>(d) = d∘h is a bijection of S<sub>n</sub>, and ρ<sub>h</sub>(g<sub>k</sub>d) = g<sub>k</sub>dh = g<sub>k</sub>ρ<sub>h</sub>(d): generators act on the left, h on the right, and multiplication is associative. Taking h = v<sup>−1</sup>w gives ρ<sub>h</sub>(v) = w. Every Cayley graph has this property. Card picture: the moves only care where cards are, not what they say, so repainting all faces consistently is a symmetry. Subtlety for the sharp student: in the cipher, which arrow you take does depend on the faces (top + x), but the graph’s arrows are labeled by cut position, so the graph itself is face-blind. Consequence: the pictures and counts made from 0123… hold from every deck. Cryptographic reading: the shape of the walk tells you nothing about where it started.</aside>
 </section>
 
-<!-- 14 -->
+<!-- 17 -->
 <section class="slide" style="gap:40px">
   <h2>Can the walk reach every deck?</h2>
   <div class="claim">
@@ -240,7 +320,7 @@
   <aside class="notes">τ = t<sup>1</sup> is the one-card cut. Setup: β = g<sub>0</sub> is a move; β<sup>−1</sup> = β<sup>ord−1</sup> since S<sub>n</sub> is finite; τ = β<sup>−1</sup>g<sub>1</sub>. So everything is generated by β and τ. Each identity is a direct position-chase valid for every even n (foundations.ltx: Reversal, Pair exchange, A transposition). Alternative finish: the group is primitive and contains a transposition, so it is S<sub>n</sub> by Jordan’s theorem. The perfect variant (an extra swap each step) is proven connected for n = 40; all even n is open. Next slide: step 1 with cards.</aside>
 </section>
 
-<!-- 15 -->
+<!-- 18 -->
 <section class="slide" data-demo="reverse" style="gap:40px">
   <h2>Try it: reverse ten cards</h2>
   <div class="reverse-steps">
@@ -252,10 +332,11 @@
     <div class="btns" style="flex:none"><button data-act="next" class="primary">Next</button><button data-act="reset">Reset</button></div>
   </div>
   <p class="soft" style="font-size:30px">No unshuffle move? Shuffle five more times: on ten cards the shuffle has order 6, so β<sup>5</sup> = β<sup>−1</sup>.</p>
-  <aside class="notes">Physical demo of step 1 of the ladder: β, then cut half (5 cards to the bottom), then β<sup>−1</sup>, reverses the deck: 0123456789 → 9753102468 → 0246897531 → 9876543210. The unshuffle can be done by dealing in reverse, or by shuffling 5 more times since β has order 6 on ten cards (27 on forty). Question for the room: is reversal of 10 cards an even or odd permutation? (5 swaps: odd.)</aside>
+  <p class="activity">Worksheet 5 · Reverse your suit</p>
+  <aside class="notes">Activity: each person sorts their suit and does it with real cards; partners check each other. Physical demo of step 1 of the ladder: β, then cut half (5 cards to the bottom), then β<sup>−1</sup>, reverses the deck: Q A 2 3 4 5 6 7 8 9 → 9 7 5 3 A Q 2 4 6 8 → Q 2 4 6 8 9 7 5 3 A → 9 8 7 6 5 4 3 2 A Q. The unshuffle can be done by dealing in reverse, or by shuffling 5 more times since β has order 6 on ten cards (27 on forty). Question for the room: is reversal of 10 cards an even or odd permutation? (5 swaps: odd.)</aside>
 </section>
 
-<!-- 16 -->
+<!-- 19 -->
 <section class="slide dark" style="gap:48px">
   <h2>How long do two walks stay apart?</h2>
   <div class="row" style="gap:80px;align-items:center">
@@ -273,7 +354,7 @@
   <aside class="notes">Why care: if two different messages (cut sequences) of length k lead to the same deck, the cipher has merged two paths, which leaks information. Pigeonhole forces a loop by length about 30 (40<sup>31</sup> &gt; 40! &gt; 40<sup>30</sup>). Birthday heuristic: collisions become likely when the number of pairs ~ (40<sup>k</sup>)<sup>2</sup> reaches 40!, so k ≈ ½ log<sub>40</sub>(40!) ≈ 14.95. For n = 4 the free depth is 1 since g<sub>1</sub><sup>2</sup> = e (the 15 instead of 16 on the web slide).</aside>
 </section>
 
-<!-- 17 -->
+<!-- 20 -->
 <section class="slide dark" data-demo="girth" style="gap:36px">
   <h2>The shortest loop on 40 cards</h2>
   <div class="row" style="gap:56px;align-items:center">
@@ -293,7 +374,7 @@
   <aside class="notes">The colors are the sorted order; watch them scramble and come back. Meet in the middle: a loop of length L ≤ 8 would put some non-identity deck in both the forward ball B<sub>4</sub> and the backward ball B<sub>4</sub><sup>−</sup>; both have 1 + 40 + … + 40<sup>4</sup> ≈ 2.6 million decks, and they meet only at e. So the plain free depth is between 4 and 8. Relator counts c<sub>9</sub> = 1, c<sub>10</sub> = 0; each relator of length L costs about c<sub>L</sub>/n<sup>L</sup> of collisions (leak rate). Perfect variant (swap positions 0 and 19 after the shuffle): c<sub>9</sub> = c<sub>10</sub> = 0, and its single-cut loops all have length ≥ 30. All machine-checked in the repo’s test suite.</aside>
 </section>
 
-<!-- 18 -->
+<!-- 21 -->
 <section class="slide">
   <h2>Open questions</h2>
   <div class="row">
@@ -305,16 +386,18 @@
   <aside class="notes">1. The plain variant is proven for all even n by closed-form identities; the perfect variant’s entry transposition is n-specific, so a uniform proof needs a new idea. 2. A provable free-depth lower bound would be a girth/expansion estimate for an explicit Cayley graph of S<sub>n</sub> at near-optimal scale; related to open problems (Helfgott–Seress–Zuk; Babai–Seress). One idea: Bayer–Diaconis-style bit accumulation, since each inverse back-front step sorts a card into a half. 3. Classical mixing results (Aldous–Diaconis, Bayer–Diaconis, Diaconis–Shahshahani) are for random shuffles; here the walk is deterministic given the input. Good student research projects.</aside>
 </section>
 
-<!-- 19 -->
+<!-- 22 -->
 <section class="slide dark center" style="gap:48px">
   <img class="backdrop" src="spider-web-n4.svg" alt="" style="opacity:.35">
   <h1 style="font-size:120px;width:960px">Take a deck home</h1>
   <div class="col" style="gap:20px;width:880px">
     <p class="soft" style="font-size:36px">Pick an order of ten cards with a friend. Send them four digits. See if they can read it.</p>
-    <p class="accent">github.com/wmacevoy/spider-cipher</p>
+    <p class="accent">wmacevoy.github.io/spider-cipher</p>
+    <p class="soft" style="font-size:28px">github.com/wmacevoy/spider-cipher</p>
   </div>
   <p class="serif" style="font-size:72px">Questions?</p>
-  <aside class="notes">Leave this up during questions. The repo has the reference C implementation, the 40-card rules with padding and letter encoding, and the papers (foundations.ltx has tonight’s vertex-transitivity and connectivity proofs). Possible follow-ups: the 40-card deck maps suits to tens digits; padding hides message length; the perfect variant’s extra swap.</aside>
+  <img src="qr.svg" alt="QR code for wmacevoy.github.io/spider-cipher" style="position:absolute;right:368px;top:380px;width:320px;height:320px;background:#FFFDF8;border-radius:16px;padding:14px">
+  <aside class="notes">Leave this up during questions; the QR code is the same one on the worksheet. The repo has the reference C implementation, the 40-card rules with padding and letter encoding, and the papers (foundations.ltx has tonight’s vertex-transitivity and connectivity proofs). Possible follow-ups: the 40-card deck maps suits to tens digits; padding hides message length; the perfect variant’s extra swap.</aside>
 </section>
 
 </div>

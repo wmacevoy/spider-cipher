@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spider Cipher Worksheet</title>
+<meta name="description" content="Printable worksheet for pairs following the Spider cipher math club talk: setup, key terms, and one activity per part of the talk.">
+<meta name="author" content="Warren MacEvoy">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..700;1,400..700&family=IBM+Plex+Sans:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;700&display=swap">
+<style>
+  /* same palette as talk.css; this page is for paper, so no dark mode */
+  :root {
+    --text: #1B2130;
+    --soft: #4A5263;
+    --orange: #B5541A;
+    --blue: #2F6FB0;
+    --rule: #C9C1B1;
+    --tint: #F5F1E8;
+    --serif: 'EB Garamond', Georgia, serif;
+    --sans: 'IBM Plex Sans', Arial, sans-serif;
+    --mono: 'JetBrains Mono', 'Courier New', monospace;
+  }
+  @page { size: letter; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #8A8F99; color: var(--text); font: 10.5pt/1.35 var(--sans); }
+  .sheet {
+    width: 8.5in; height: 11in; margin: 24px auto; padding: 0.5in 0.55in;
+    background: #fff; display: flex; flex-direction: column; gap: 0.13in; overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, .3);
+  }
+  @media print {
+    body { background: #fff; }
+    .sheet { margin: 0; box-shadow: none; break-after: page; }
+    .sheet:last-child { break-after: auto; }
+  }
+  @media screen and (max-width: 8.6in) {
+    .sheet { width: auto; height: auto; margin: 0; padding: 16px; }
+    .terms { columns: 1; }
+  }
+
+  h1 { font: 500 30pt/1 var(--serif); }
+  h2 { font: 600 15pt/1.1 var(--serif); display: flex; gap: 8px; align-items: baseline; }
+  h2 .n { color: var(--orange); font-size: 18pt; }
+  h2 .slide { margin-left: auto; font: 600 7.5pt var(--sans); letter-spacing: 1.5px; text-transform: uppercase; color: var(--soft); }
+  .eyebrow { font: 600 8pt var(--sans); letter-spacing: 2px; text-transform: uppercase; color: var(--orange); }
+  .soft { color: var(--soft); }
+  .mono { font-family: var(--mono); }
+  i { font-family: var(--serif); font-size: 1.12em; }
+  b { font-weight: 600; }
+  section { display: flex; flex-direction: column; gap: 6px; }
+  ol { padding-left: 1.3em; }
+  ol li { margin: 1px 0; }
+
+  header { display: flex; gap: 0.25in; align-items: flex-start; }
+  header .title { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+  .names { display: flex; gap: 12px; margin-top: 8px; font-size: 10pt; align-items: flex-end; }
+  .names span { flex: 1; border-bottom: 1px solid var(--text); height: 22px; }
+  .qr { width: 2.1in; display: flex; flex-direction: column; align-items: center; gap: 2px; text-align: center; }
+  .qr img { width: 1.25in; height: 1.25in; }
+  .qr p { font-size: 7.5pt; line-height: 1.2; }
+
+  .cards { display: flex; gap: 5px; align-items: center; }
+  .card {
+    width: 0.46in; height: 0.6in; border: 1.5px solid var(--text); border-radius: 5px;
+    display: flex; align-items: center; justify-content: center;
+    font: 700 15pt var(--mono);
+  }
+  .card small { font: 400 7pt var(--sans); color: var(--soft); }
+  .card.blank { border-style: solid; }
+  .value { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .arrow { font-size: 9pt; color: var(--soft); }
+
+  .rules { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .rule { background: var(--tint); border-radius: 6px; padding: 8px 10px; display: flex; flex-direction: column; gap: 3px; font-size: 9.5pt; }
+  .rule .eq { font: 10.5pt var(--serif); }
+
+  .terms { columns: 2; column-gap: 0.3in; font-size: 9pt; line-height: 1.3; }
+  .terms p { break-inside: avoid; margin-bottom: 4px; }
+  .terms b { color: var(--orange); }
+
+  table { border-collapse: collapse; font-size: 9pt; width: 100%; }
+  th, td { border: 1px solid var(--rule); padding: 0 6px; text-align: center; height: 0.27in; }
+  th { background: var(--tint); font-weight: 600; height: auto; padding: 4px 6px; }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 0.2in; }
+  .line { display: flex; gap: 8px; align-items: flex-end; font-size: 9.5pt; }
+  .line span.fill { flex: 1; border-bottom: 1px solid var(--text); height: 18px; }
+  .slots { display: flex; gap: 5px; }
+  .slots span { width: 0.32in; height: 0.36in; border: 1px solid var(--rule); border-radius: 4px; }
+  .ask p { font-size: 9.5pt; margin-bottom: 10px; }
+
+  .answers { margin-top: auto; transform: rotate(180deg); font-size: 7.5pt; color: var(--soft); border-top: 1px dashed var(--rule); padding-top: 4px; }
+</style>
+</head>
+<body>
+
+<div class="sheet">
+  <header>
+    <div class="title">
+      <p class="eyebrow">Math Club · October 30, 2026 · one sheet per pair</p>
+      <h1>The Spider Cipher</h1>
+      <p class="soft">Ten cards, a little modular arithmetic, and a very large graph. Keep this out during the talk: when a slide shows <b>✎ Worksheet</b>, do that part.</p>
+      <div class="names"><b>Sender</b><span></span><b>Receiver</b><span></span></div>
+    </div>
+    <div class="qr">
+      <img src="qr.svg" alt="QR code for wmacevoy.github.io/spider-cipher">
+      <p class="mono">wmacevoy.github.io/spider-cipher</p>
+    </div>
+  </header>
+
+  <section>
+    <h2><span class="n">1</span> Set up your decks <span class="slide">Slide 4</span></h2>
+    <ol>
+      <li>From a standard deck keep <b>Q, A, 2–9</b> of all four suits: 40 cards. Set aside 10s, jacks, and kings.</li>
+      <li>Take two suits: one for the sender, one for the receiver.</li>
+      <li>Agree on a <b>key</b>, any order of the ten cards, and write it below. Both put your suit in this order, top card first.</li>
+    </ol>
+    <div class="cards" style="gap:12px">
+      <div class="value"><div class="card">Q</div><small>0</small></div>
+      <div class="value"><div class="card">A</div><small>1</small></div>
+      <div class="value"><div class="card">2</div><small>2</small></div>
+      <div class="value"><div class="card">3</div><small>3</small></div>
+      <span class="soft">…</span>
+      <div class="value"><div class="card">9</div><small>9</small></div>
+      <p class="soft" style="font-size:9.5pt;margin-left:6px">The queen is 0 and the ace is 1;<br>every other card is its own number.</p>
+    </div>
+    <p class="eyebrow" style="margin-top:4px">Our key (top → bottom)</p>
+    <div class="cards">
+      <div class="card"></div><div class="card"></div><div class="card"></div><div class="card"></div><div class="card"></div>
+      <div class="card"></div><div class="card"></div><div class="card"></div><div class="card"></div><div class="card"></div>
+    </div>
+  </section>
+
+  <section>
+    <p class="eyebrow">The rules</p>
+    <div class="rules">
+      <div class="rule"><b>Read the pad</b><span>1. Look at the <b>third</b> card, always.</span><span>2. Subtract 1, mod 10.</span><span>3. Find that card.</span><span>4. The card <b>after</b> it is the pad (wrap to the top).</span></div>
+      <div class="rule"><b>Encrypt a digit <i>p</i></b><span class="eq"><i>c</i> = <i>p</i> + pad (mod 10)</span><span>Cut so card (top card + <i>p</i>) is on top.</span><span>One back-front shuffle.</span></div>
+      <div class="rule"><b>Decrypt a digit <i>c</i></b><span class="eq"><i>p</i> = <i>c</i> − pad (mod 10)</span><span>Cut so card (top card + <i>p</i>) is on top.</span><span>One back-front shuffle.</span></div>
+    </div>
+  </section>
+
+  <section>
+    <p class="eyebrow">Key terms</p>
+    <div class="terms">
+      <p><b>Plaintext</b> (<i>p</i>): the message you mean.</p>
+      <p><b>Ciphertext</b> (<i>c</i>): the scrambled message you send.</p>
+      <p><b>Key</b>: the shared secret; here, the starting order of the deck.</p>
+      <p><b>Symmetric key</b>: sender and receiver use the same key, one to encrypt, the other to decrypt.</p>
+      <p><b>Pad</b>: the digit read from the deck and added to <i>p</i>; a new one for every digit.</p>
+      <p><b>Mod 10</b>: arithmetic that wraps around: 7 + 5 ≡ 2.</p>
+      <p><b>Cut</b>: move cards from the top to the bottom as one block.</p>
+      <p><b>Back-front shuffle</b>: deal into a new pile, alternating on top and underneath.</p>
+      <p><b>State</b>: what the cipher remembers between digits: the order of the deck.</p>
+      <p><b>Strong</b>: attacking it is infeasible for every reasonable future model of computation.</p>
+      <p><b>Permutation</b>: an ordering, or rearrangement, of the cards.</p>
+      <p><b>Group</b>: a set of moves you can combine, including “do nothing,” where every move can be undone.</p>
+      <p><b>Symmetric group</b> S<sub><i>n</i></sub>: all <i>n</i>! rearrangements of <i>n</i> cards. (No relation to “symmetric key.”)</p>
+      <p><b>Graph</b>: dots (vertices) joined by arrows (edges).</p>
+      <p><b>Cayley graph</b>: a group drawn as a graph: a dot for each element, an arrow for each chosen move.</p>
+      <p><b>Vertex transitive</b>: the graph looks the same from every dot.</p>
+      <p><b>Connected</b>: you can walk from any deck to any other.</p>
+      <p><b>Free depth</b>: the longest length for which different messages always lead to different decks.</p>
+      <p><b>Girth</b>: the length of the shortest loop in the graph.</p>
+    </div>
+  </section>
+</div>
+
+<div class="sheet">
+  <section>
+    <h2><span class="n">2</span> Cut and shuffle a sorted suit <span class="slide">Slide 5</span></h2>
+    <p>Each of you: sort your suit Q A 2 … 9, top card first. Cut on 3, then do one back-front shuffle. Did you both get the same deck?</p>
+    <div class="line" style="margin-top:4px"><b style="width:1.3in">After the cut</b><div class="slots"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div></div>
+    <div class="line"><b style="width:1.3in">After the shuffle</b><div class="slots"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div></div>
+  </section>
+
+  <section>
+    <h2><span class="n">3</span> Find the pad of your key deck <span class="slide">Slide 6</span></h2>
+    <p>Put your suit back in key order. Both of you find the pad, then compare.</p>
+    <div class="line"><span>Third card</span><span class="fill"></span><span>minus 1</span><span class="fill"></span><span>the card after it</span><span class="fill"></span><b>Pad</b><span class="fill"></span></div>
+  </section>
+
+  <section>
+    <h2><span class="n">4</span> Send your partner a secret <span class="slide">Slides 7–10</span></h2>
+    <p>Start from the key order. The sender picks a secret 4-digit number, encrypts it, and passes over <b>only</b> the ciphertext. The receiver decrypts it. Then both reset to the key order, swap roles, and use the second pair of tables.</p>
+    <div class="pair">
+      <div>
+        <p class="eyebrow">Sender: encrypt</p>
+        <table>
+          <tr><th><i>p</i></th><th>pad</th><th><i>c</i> = <i>p</i> + pad</th><th>top card</th><th>cut on top + <i>p</i></th></tr>
+          <tr><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td></td><td></td><td></td><td></td><td></td></tr>
+        </table>
+      </div>
+      <div>
+        <p class="eyebrow">Receiver: decrypt</p>
+        <table>
+          <tr><th><i>c</i></th><th>pad</th><th><i>p</i> = <i>c</i> − pad</th><th>top card</th><th>cut on top + <i>p</i></th></tr>
+          <tr><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td></td><td></td><td></td><td></td><td></td></tr>
+        </table>
+      </div>
+    </div>
+    <p class="eyebrow" style="margin-top:6px">Swap roles</p>
+    <div class="pair">
+      <div>
+        <p class="eyebrow">Sender: encrypt</p>
+        <table>
+          <tr><th><i>p</i></th><th>pad</th><th><i>c</i> = <i>p</i> + pad</th><th>top card</th><th>cut on top + <i>p</i></th></tr>
+          <tr><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td></td><td></td><td></td><td></td><td></td></tr>
+        </table>
+      </div>
+      <div>
+        <p class="eyebrow">Receiver: decrypt</p>
+        <table>
+          <tr><th><i>c</i></th><th>pad</th><th><i>p</i> = <i>c</i> − pad</th><th>top card</th><th>cut on top + <i>p</i></th></tr>
+          <tr><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td></td><td></td><td></td><td></td><td></td></tr>
+        </table>
+      </div>
+    </div>
+    <p class="soft" style="font-size:9pt">Garbage after a few digits? One wrong cut or shuffle changes every digit after it. Reset to the key order and try again.</p>
+  </section>
+
+  <section>
+    <h2><span class="n">5</span> Reverse your suit <span class="slide">Slide 18</span></h2>
+    <p>Sort your suit. Shuffle once, cut 5 (the top half to the bottom), then shuffle five more times (on ten cards, five shuffles undo one).</p>
+    <div class="line"><b style="width:1.3in">Result</b><div class="slots"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div></div>
+  </section>
+
+  <section class="ask">
+    <h2><span class="n">6</span> Think about it</h2>
+    <p>a. Why does the receiver cut on top + <i>p</i>, and not top + <i>c</i>?</p>
+    <p>b. How many different keys are there for ten cards? For the full 40?</p>
+    <p>c. Is reversing ten cards an even or an odd number of swaps?</p>
+  </section>
+
+  <p class="answers">Answers. 2: after the cut 3 4 5 6 7 8 9 Q A 2; after the shuffle 2 Q 8 6 4 3 5 7 9 A. 5: 9 8 7 6 5 4 3 2 A Q. 6a: the sender cut on top + <i>p</i>, and the receiver knows <i>p</i> as soon as they subtract, so their decks stay the same. 6b: 10! = 3,628,800; 40! ≈ 8.2 × 10<sup>47</sup> ≈ 2<sup>159</sup>. 6c: odd: 5 swaps.</p>
+</div>
+
+</body>
+</html>

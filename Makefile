@@ -45,16 +45,19 @@ bin/spider_cipher : tmp/spider_cipher_main.o tmp/spider_cipher.o tmp/cio.o tmp/u
 .PHONY: all
 all : bin/spider_cipher bin/spider_cipher_facts
 
+# The default suite takes ~15 s unoptimized (CI's plain build), past facts' 10 s default timeout.
+FACTS_TIMEOUT?=300
+
 .PHONY: check
 check : all
-	bin/spider_cipher_facts | diff - expected/spider_cipher_facts.out
+	bin/spider_cipher_facts --facts_timeout=$(FACTS_TIMEOUT) | diff - expected/spider_cipher_facts.out
 	bin/spider_cipher --decimal --key='secret' --encrypt='message' | bin/spider_cipher --key='secret' --decrypt=- | diff - expected/message.out
 	bin/spider_cipher --base40 --key='secret' --encrypt='message' | bin/spider_cipher --key='secret' --decrypt=- | diff - expected/message.out
 	bin/spider_cipher --cards --key='secret' --encrypt='message' | bin/spider_cipher --key='secret' --decrypt=- | diff - expected/message.out
 
 .PHONY: expected
 expected : all
-	bin/spider_cipher_facts >expected/spider_cipher_facts.out
+	bin/spider_cipher_facts --facts_timeout=$(FACTS_TIMEOUT) >expected/spider_cipher_facts.out
 	echo "message" >expected/message.out
 
 # -------------- LaTeX docs --------------

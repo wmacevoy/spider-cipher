@@ -120,10 +120,16 @@ class DeckView {
 
   // deal from the top, one card at a time, into a new pile below; then lift the pile into place
   async deal(next, ep) {
-    for (const v of this.order) {
-      this.put(v, next.indexOf(v), this.dealY);
-      await this.wait(this.o.stagger, ep);
-    }
+    for (let j = 0; j < this.order.length; ++j) await this.dealOne(next, j, ep);
+    await this.gather(next, ep);
+  }
+  // the j-th card from the top drops to its place in the new pile, which grows outward from the middle
+  async dealOne(next, j, ep) {
+    const v = this.order[j];
+    this.put(v, next.indexOf(v), this.dealY);
+    await this.wait(this.o.stagger, ep);
+  }
+  async gather(next, ep) {
     await this.wait(this.o.dur, ep);
     next.forEach((v, i) => this.put(v, i, this.lift));
     await this.wait(this.o.dur, ep);
@@ -136,8 +142,24 @@ class DeckView {
 
 // ---- demos, one per slide that has data-demo ----
 
-const KEY = [3, 7, 0, 9, 4, 1, 8, 5, 2, 6];
+// the ten cards are Q, A, 2, …, 9 from one suit: the queen is 0 and the ace is 1
+const face = v => (v === 0 ? "Q" : v === 1 ? "A" : `${v}`);
+// a card's face with its value, for arithmetic in the narration: "Q (0)"
+const faceVal = v => (v < 2 ? `${face(v)} (${v})` : `${v}`);
+// position i (0 = top) as the audience counts it
+const ordinal = i => ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th"][i];
+
+// the top card is not 3, so "the third card" can't be mistaken for "the card numbered 3"
+const KEY = [4, 2, 8, 5, 0, 9, 6, 7, 3, 1];
 const SORTED10 = [...Array(10).keys()];
+const randomDeck = () => {
+  const d = SORTED10.slice();
+  for (let i = d.length - 1; i > 0; --i) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [d[i], d[j]] = [d[j], d[i]];
+  }
+  return d;
+};
 
 function buttons(slide, handlers) {
   for (const b of slide.querySelectorAll("button[data-act]")) {
@@ -147,23 +169,47 @@ function buttons(slide, handlers) {
 
 const Demos = {
   moves(slide) {
-    const deck = new DeckView(slide.querySelector(".deckview"), SORTED10, { w: 96, h: 124, gap: 14, font: 52 });
+    const deck = new DeckView(slide.querySelector(".deckview"), SORTED10, { w: 96, h: 124, gap: 14, font: 52, label: face });
     const narr = slide.querySelector(".narr");
-    let cuts = 0;
+    // dealing: the shuffle being dealt one card at a time, as {next, j}; null between shuffles
+    let cuts, shuffles, dealing;
     const cutOn = card => deck.run(async ep => {
+      if (dealing) { narr.innerHTML = "Finish dealing the shuffle first."; return; }
       const at = deck.order.indexOf(card);
       deck.clear(); deck.mark(card, "cutcard");
       narr.innerHTML = at === 0
-        ? `<b>${card}</b> is already on top: the cut does nothing.`
-        : `Cut on <b>${card}</b>: the ${at} card${at > 1 ? "s" : ""} above it move to the bottom as one block.`;
+        ? `<b>${face(card)}</b> is already on top: the cut does nothing.`
+        : `Cut on <b>${face(card)}</b>: the ${at} card${at > 1 ? "s" : ""} above it move to the bottom as one block.`;
       await deck.cut(at, ep);
       ++cuts;
     });
+    // one card per press, so the room can deal along with real cards
+    const dealOne = () => deck.run(async ep => {
+      if (!dealing) { deck.clear(); dealing = { next: Spider.shuffle(deck.order), j: 0 }; }
+      const { next, j } = dealing, v = deck.order[j];
+      narr.innerHTML = j === 0 ? `<b>${face(v)}</b> starts the new pile.`
+        : j % 2 === 1 ? `<b>${face(v)}</b> goes <b>on top</b> of the pile.`
+        : `<b>${face(v)}</b> goes <b>underneath</b> the pile.`;
+      await deck.dealOne(next, j, ep);
+      if (++dealing.j === next.length) {
+        await deck.gather(next, ep);
+        dealing = null; ++shuffles;
+        narr.innerHTML = "Pick up the pile: that is the shuffled deck.";
+      }
+    });
     const shuffle = () => deck.run(async ep => {
+      if (dealing) { // finish the one being dealt
+        for (; dealing.j < deck.order.length; ++dealing.j) await deck.dealOne(dealing.next, dealing.j, ep);
+        await deck.gather(dealing.next, ep);
+        dealing = null; ++shuffles;
+        narr.innerHTML = "Pick up the pile: that is the shuffled deck.";
+        return;
+      }
       deck.clear();
       const sorted = deck.order.every((v, i) => v === i);
       narr.innerHTML = "Deal from the top: the first card starts a new pile, then alternate <b>on top</b>, <b>underneath</b>, on top, underneath…";
       await deck.shuffle(ep);
+      ++shuffles;
       if (sorted) narr.innerHTML = "Odd cards rose to the top in reverse; even cards sank to the bottom in order.";
     });
     deck.el.classList.add("clickable");
@@ -171,39 +217,48 @@ const Demos = {
       const c = e.target.closest(".card");
       if (c) cutOn(Number(c.dataset.v));
     });
-    const reset = () => { deck.reset(); cuts = 0; narr.innerHTML = "Click any card to cut on it, or press <b>Shuffle</b>."; };
-    buttons(slide, { cut3: () => cutOn(3), shuffle, reset });
-    return { reset, next: () => (cuts === 0 ? cutOn(3) : shuffle()) };
+    const reset = () => {
+      deck.reset(); cuts = 0; shuffles = 0; dealing = null;
+      narr.innerHTML = "Click any card to cut on it. <b>Deal one</b> steps through a shuffle; <b>Shuffle</b> does it all.";
+    };
+    buttons(slide, { cut3: () => cutOn(3), deal: dealOne, shuffle, reset });
+    // Enter: cut on 3, deal the first shuffle card by card, then whole shuffles
+    return { reset, next: () => (cuts === 0 ? cutOn(3) : shuffles === 0 ? dealOne() : shuffle()) };
   },
 
   pad(slide) {
-    const deck = new DeckView(slide.querySelector(".deckview"), KEY, { w: 112, h: 150, gap: 16, font: 60, static: true });
+    const deck = new DeckView(slide.querySelector(".deckview"), KEY, { w: 112, h: 150, gap: 16, font: 60, static: true, label: face });
     const steps = [...slide.querySelectorAll(".steps .ruled")];
     const narr = slide.querySelector(".narr");
-    const info = Spider.pad(KEY);
-    let phase = 0;
+    let info, phase;
     const show = [
-      () => { deck.mark(info.third, "third"); narr.innerHTML = `The third card is <b>${info.third}</b>.`; },
+      () => { deck.mark(info.third, "third"); narr.innerHTML = `Always start at the third card, whatever is on top. Here it is <b>${faceVal(info.third)}</b>.`; },
       () => { narr.innerHTML = `${info.third} − 1 ≡ <b>${info.tag}</b> (mod 10).`; },
-      () => { deck.mark(info.tag, "tag"); narr.innerHTML = `Card <b>${info.tag}</b> is in position ${info.at}.`; },
-      () => { deck.mark(info.pad, "pad"); narr.innerHTML = `The card after it is <b>${info.pad}</b>. The pad is ${info.pad}.`; },
+      () => { deck.mark(info.tag, "tag"); narr.innerHTML = `Card <b>${face(info.tag)}</b> is the ${ordinal(info.at)} card.`; },
+      () => {
+        deck.mark(info.pad, "pad");
+        narr.innerHTML = `The card after it${info.wraps ? " (wrapping to the top)" : ""} is <b>${faceVal(info.pad)}</b>. The pad is ${info.pad}.`;
+      },
     ];
-    const reset = () => {
-      deck.reset(); phase = 0;
+    const start = d => {
+      deck.initial = d; deck.reset(); phase = 0;
+      info = Spider.pad(d);
       steps.forEach(s => s.classList.remove("on"));
       narr.innerHTML = "Press <b>Next</b> to find the pad.";
     };
+    const reset = () => start(KEY);
     const next = () => {
       if (phase >= show.length) return;
       steps[phase].classList.add("on");
       show[phase++]();
     };
-    buttons(slide, { next, reset });
+    // a different deck gives a different pad
+    buttons(slide, { next, random: () => start(randomDeck()), reset });
     return { reset, next };
   },
 
   example(slide) {
-    const deck = new DeckView(slide.querySelector(".deckview"), KEY, { w: 92, h: 124, gap: 12, font: 52 });
+    const deck = new DeckView(slide.querySelector(".deckview"), KEY, { w: 92, h: 124, gap: 12, font: 52, label: face });
     const narr = slide.querySelector(".narr");
     const rows = [...slide.querySelectorAll("tbody tr")];
     const result = slide.querySelector(".result");
@@ -211,38 +266,38 @@ const Demos = {
     let digit, phase, info, out;
 
     const cell = (r, j, s) => { rows[r].children[j].textContent = s; };
-    const reset = () => {
-      deck.reset(); digit = 0; phase = 0; out = [];
+    const start = key => {
+      deck.initial = key; deck.reset(); digit = 0; phase = 0; out = [];
       rows.forEach((r, i) => { r.classList.remove("cur"); for (let j = 1; j < 4; ++j) cell(i, j, ""); });
       result.style.visibility = "hidden";
-      narr.innerHTML = "Press <b>Next</b> (or Enter) to encrypt <b>2026</b> with the key deck.";
+      narr.innerHTML = `Press <b>Next</b> (or Enter) to encrypt <b>2026</b> with the key deck ${key.map(face).join(" ")}.`;
     };
+    const reset = () => start(KEY);
 
     const next = () => deck.run(async ep => {
       if (digit >= msg.length) return;
-      const d = deck.order, x = msg[digit];
+      const d = deck.order, p = msg[digit];
       rows.forEach((r, i) => r.classList.toggle("cur", i === digit));
       if (phase === 0) {
         info = Spider.pad(d);
         deck.clear(); deck.mark(info.third, "third");
-        narr.innerHTML = `Digit <b>x = ${x}</b>. The third card is <b>${info.third}</b>.`;
+        narr.innerHTML = `Digit <b><i>p</i> = ${p}</b>. The third card is <b>${faceVal(info.third)}</b>.`;
       } else if (phase === 1) {
         deck.mark(info.tag, "tag");
-        narr.innerHTML = `${info.third} − 1 ≡ <b>${info.tag}</b>. Find card ${info.tag}.`;
+        narr.innerHTML = `${info.third} − 1 ≡ <b>${info.tag}</b>. Find card ${face(info.tag)}.`;
       } else if (phase === 2) {
-        const y = mod(x + info.pad, n);
+        const c = mod(p + info.pad, n);
         deck.mark(info.pad, "pad");
-        cell(digit, 1, info.pad); cell(digit, 2, y); out.push(y);
-        narr.innerHTML = `The card after ${info.tag} is <b>${info.pad}</b>${info.wraps ? " (wrapping to the top)" : ""}. ` +
-          `Pad ${info.pad}, so y = ${x} + ${info.pad} ≡ <b>${y}</b>.`;
+        cell(digit, 1, info.pad); cell(digit, 2, c); out.push(c);
+        narr.innerHTML = `The card after ${face(info.tag)} is <b>${faceVal(info.pad)}</b>${info.wraps ? " (wrapping to the top)" : ""}. ` +
+          `Pad ${info.pad}, so <i>c</i> = ${p} + ${info.pad} ≡ <b>${c}</b>.`;
       } else if (phase === 3) {
-        const top = d[0], c = mod(top + x, n), at = d.indexOf(c);
-        const eq = top + x >= n ? "≡" : "=";
-        deck.clear(); deck.mark(c, "cutcard");
-        cell(digit, 3, `${top}+${x} ${eq} ${c}`);
-        narr.innerHTML = at === 0
-          ? `Cut on top card + x = ${top} + ${x} ${eq} <b>${c}</b>: it is already on top, so nothing moves.`
-          : `Cut on top card + x = ${top} + ${x} ${eq} <b>${c}</b>.`;
+        const top = d[0], card = mod(top + p, n), at = d.indexOf(card);
+        const eq = top + p >= n ? "≡" : "=";
+        deck.clear(); deck.mark(card, "cutcard");
+        cell(digit, 3, `${top}+${p} ${eq} ${face(card)}`);
+        narr.innerHTML = `Cut on top card + <i>p</i> = ${faceVal(top)} + ${p} ${eq} <b>${faceVal(card)}</b>` +
+          (at === 0 ? ": it is already on top, so nothing moves." : ".");
         await deck.cut(at, ep);
       } else {
         deck.clear();
@@ -251,6 +306,7 @@ const Demos = {
         ++digit; phase = -1;
         if (digit === msg.length) {
           rows.forEach(r => r.classList.remove("cur"));
+          result.querySelector(".accent").textContent = out.join("");
           result.style.visibility = "visible";
           narr.innerHTML = `Done: <b>2026 → ${out.join("")}</b>. The receiver subtracts each pad and makes the same moves.`;
         } else {
@@ -259,12 +315,13 @@ const Demos = {
       }
       ++phase;
     });
-    buttons(slide, { next, reset });
+    // a different key encrypts the same message differently
+    buttons(slide, { next, random: () => start(randomDeck()), reset });
     return { reset, next };
   },
 
   reverse(slide) {
-    const deck = new DeckView(slide.querySelector(".deckview"), SORTED10, { w: 100, h: 134, gap: 14, font: 56 });
+    const deck = new DeckView(slide.querySelector(".deckview"), SORTED10, { w: 100, h: 134, gap: 14, font: 56, label: face });
     const labels = [...slide.querySelectorAll(".reverse-steps p")];
     const narr = slide.querySelector(".narr");
     const acts = [
@@ -287,7 +344,7 @@ const Demos = {
         labels[k].classList.replace("on", "done");
         if (++k === acts.length) {
           for (const v of deck.order) deck.mark(v, "done");
-          narr.innerHTML = "<b>9876543210</b>: the deck is reversed.";
+          narr.innerHTML = "<b>9 8 7 6 5 4 3 2 A Q</b>: the deck is reversed.";
         }
       });
     };

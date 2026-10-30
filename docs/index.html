@@ -1,39 +1,129 @@
 <!doctype html>
-
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Spiderweb</title>
-    <meta name="description" content="A web implementation of the spider cipher">
-    <meta name="author" content="Caleb Spiess, with the help and based on the code of Warren MacEvoy">
-    <meta property="og:title" content="Spider">
-    <meta property="og:type" content="website">
-    <link rel="stylesheet" href="style.css">
-    <script src="spiderweb.js"></script>
-    <script src="spidertests.js"></script>
-    <script src="main.js"></script>        
-  </head>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Spider Cipher</title>
+<meta name="description" content="A self has an inside. The Spider cipher lets anyone choose, with a deck of cards, which secrets they keep and which they share.">
+<meta name="author" content="Warren MacEvoy">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..700;1,400..700&family=IBM+Plex+Sans:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;700&display=swap">
+<style>
+  /* the talk's palette (talk/talk.css); most visitors arrive by the talk's QR code, on a phone */
+  :root {
+    --paper: #F5F1E8;
+    --text: #1B2130;
+    --soft: #4A5263;
+    --orange: #B5541A;
+    --rule: #DDD6C8;
+    --card: #FFFDF8;
+    --serif: 'EB Garamond', Georgia, serif;
+    --sans: 'IBM Plex Sans', Arial, sans-serif;
+    --mono: 'JetBrains Mono', 'Courier New', monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--paper); color: var(--text); font: 18px/1.55 var(--sans); }
+  main { max-width: 640px; margin: 0 auto; padding: 72px 20px 56px; display: flex; flex-direction: column; gap: 56px; }
+  h1 { font: 500 clamp(44px, 11vw, 68px)/1.02 var(--serif); }
+  h2 { font: 500 30px/1.15 var(--serif); }
+  p + p { margin-top: 14px; }
+  .lead { font: 400 clamp(23px, 5.6vw, 28px)/1.4 var(--serif); }
+  .soft { color: var(--soft); }
+  .mono { font-family: var(--mono); }
+  i { font-family: var(--serif); font-size: 1.1em; }
+  a { color: var(--orange); text-underline-offset: 3px; }
+  .eyebrow { font-size: 14px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--orange); }
+  section { display: flex; flex-direction: column; gap: 16px; }
 
-  <body>
-    The spider cipher is a cipher based on a deck of cards which is designed to be verifiable by a human. Try putting in a comma-separated sequence of cards in numeric form below (e.g. 3, 28, 6, 20, 33) along with a message, and hitting "Scramble!" Send it to a friend, and they can either take out a pen and paper or put it in here with the deck and hit "Unscramble!"
-    <br /> <br />
-    Only works with most ASCII right now. Should work with all text found on a standard qwerty keyboard. With minimal know-how, the source code can be modified to work with character sets 108 characters and smaller. Emoji are included, but their implementation is a little bit finicky, and the same is to be expected of all things that get encoded as multiple characters in a javascript string. Still, the emoji code should be able to act as a guideline if you know what you're doing.
-    <br /> <br />    
-    For an explanation of how to operate the cipher by hand, see <a href="explanation.html">here.</a>
-    <br /> <br />
-    Deck:
-    <br />
-    <input type="text" size=100 id="deck"></input>
-    <br />
-    Message (scrambled or unscrambled):
-    <br />
-    <input type="text" size=100 id="msg"></input>
-    <br />
-    <button onclick="pageScramble(scrambleMsg = true)">Scramble!</button>
-    <button onclick="pageScramble(scrambleMsg = false)">Unscramble!</button>
-    <button onclick="fillDeckWithDefault()">Fill in default deck</button>
-    <br /> <br />
-    <button onclick="runTests(tests, beLoud = false)">Run Tests</button> <-- Output in console (ctrl+shift+i) (beware: it's a lot! but it's pretty repetitive)
-  </body>
+  figure svg { width: 100%; height: auto; display: block; }
+  figcaption { font-size: 15px; color: var(--soft); margin-top: 8px; }
+
+  ol.steps { list-style: none; counter-reset: s; display: flex; flex-direction: column; gap: 12px; }
+  ol.steps li { counter-increment: s; display: grid; grid-template-columns: 32px 1fr; }
+  ol.steps li::before { content: counter(s); font: 500 24px/1.1 var(--serif); color: var(--orange); }
+
+  .links { display: grid; gap: 12px; }
+  .links a { display: block; background: var(--card); border: 1px solid var(--rule); border-radius: 12px; padding: 16px 18px; color: var(--text); text-decoration: none; }
+  .links a:hover { border-color: var(--orange); }
+  .links b { display: block; font: 500 22px/1.2 var(--serif); color: var(--orange); }
+  .links span { font-size: 15px; color: var(--soft); }
+
+  footer { border-top: 1px solid var(--rule); padding-top: 20px; font-size: 14px; color: var(--soft); }
+</style>
+</head>
+<body>
+<main>
+
+  <header style="display:flex;flex-direction:column;gap:22px">
+    <p class="eyebrow">The Spider cipher</p>
+    <h1>A self has an inside.</h1>
+    <p class="lead">Others are outside it. What crosses between is yours to choose.</p>
+  </header>
+
+  <section>
+    <p>Attention chooses what comes in. A secret chooses what goes out.</p>
+    <p>The Spider cipher exists so that anyone, with a deck of cards and someone they trust, can choose which secrets they keep and which they share. No device, no account, no one to ask. Forty cards on a table, and an order of them that only the two of you know.</p>
+  </section>
+
+  <figure>
+    <svg viewBox="0 0 600 270" role="img" aria-label="Two circles, you and someone you choose, perhaps just your future self. Inside each is the message 2026. Between them, only 5716 crosses, and someone outside sees only 5716.">
+      <g fill="none" stroke="#1B2130" stroke-width="2">
+        <circle cx="105" cy="105" r="88"/>
+        <circle cx="495" cy="105" r="88"/>
+      </g>
+      <g font-family="JetBrains Mono, monospace" font-weight="700" text-anchor="middle">
+        <text x="105" y="117" font-size="34" fill="#1B2130">2026</text>
+        <text x="495" y="117" font-size="34" fill="#1B2130">2026</text>
+        <text x="300" y="92" font-size="30" fill="#B5541A">5716</text>
+        <text x="300" y="232" font-size="22" fill="#4A5263">5716</text>
+      </g>
+      <path d="M200 105H388" stroke="#B5541A" stroke-width="3"/>
+      <path d="M386 97l14 8-14 8z" fill="#B5541A"/>
+      <path d="M300 118V196" stroke="#4A5263" stroke-width="1.5" stroke-dasharray="4 5"/>
+      <g font-family="IBM Plex Sans, Arial, sans-serif" font-size="20" text-anchor="middle" fill="#4A5263">
+        <text x="105" y="218">you</text>
+        <text x="495" y="218">someone you choose</text>
+        <text x="495" y="242" font-size="17">(perhaps just</text>
+        <text x="495" y="262" font-size="17">your future self)</text>
+        <text x="300" y="210">anyone else</text>
+      </g>
+    </svg>
+    <figcaption>Inside, the message. Between, only what the deck made of it.</figcaption>
+  </figure>
+
+  <section>
+    <h2>How it works</h2>
+    <ol class="steps">
+      <li><span>Agree, in person, on a key: an order of the cards.</span></li>
+      <li><span>For each digit, read a pad from the deck and add it.</span></li>
+      <li><span>Cut the deck on the card the message chooses, then shuffle.</span></li>
+      <li><span>Your partner subtracts instead of adding. Your decks stay in step.</span></li>
+    </ol>
+    <p class="soft">Everything about the cipher is public. Only the order of your deck is secret.</p>
+  </section>
+
+  <section>
+    <h2>Strong, and checkable</h2>
+    <p>A scheme is strong when attacking it is infeasible for every reasonable future model of computation. Spider is meant to meet that bar by hand. The argument is in the open, with the proofs, the computer searches, and the questions still unanswered, so it can be checked rather than trusted.</p>
+    <p class="soft">It will tell you if a message was changed on the way. Every message ends in a row of five of the same card; change any card before it and the decks fall out of step, the row never comes, and the reader knows. What it won’t do is carry the key for you.</p>
+  </section>
+
+  <section>
+    <h2>Try it</h2>
+    <div class="links">
+      <a href="talk/"><b>The talk</b><span>Ten cards, a little modular arithmetic, and a very large graph.</span></a>
+      <a href="talk/worksheet.html"><b>The worksheet</b><span>Print it and work in pairs: set up, encrypt, decrypt.</span></a>
+      <a href="forty/"><b>Forty cards</b><span>The full system: letters, packets, and the real deck.</span></a>
+      <a href="https://github.com/wmacevoy/spider-cipher"><b>The code and papers</b><span>github.com/wmacevoy/spider-cipher</span></a>
+    </div>
+    <p class="soft" style="font-size:15px">Earlier work, kept as it was: <a href="spiderweb.html">Spiderweb</a>, a browser tool by Caleb Spiess, and its <a href="explanation.html">step-by-step animation</a> of an older form of the cipher.</p>
+  </section>
+
+  <footer>
+    <p>wmacevoy.github.io/spider-cipher · the Spider cipher, by Warren MacEvoy</p>
+  </footer>
+
+</main>
+</body>
 </html>
