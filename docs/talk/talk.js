@@ -33,16 +33,19 @@ const CANCEL = Symbol("cancel");
 class DeckView {
   constructor(el, values, opt = {}) {
     this.el = el;
-    this.o = Object.assign({ w: 100, h: 134, gap: 14, font: 56, dur: 420, stagger: 110, hue: false }, opt);
+    this.o = Object.assign({ w: 100, h: 134, gap: 14, font: 56, dur: 420, stagger: 110, hue: false,
+      perRow: values.length, rowGap: 24, label: v => v, cls: () => "" }, opt);
     // a static deck only highlights; an animated one needs room to lift and deal
     this.lift = this.o.static ? 0 : Math.round(this.o.h * 0.45);
     this.dealY = this.lift + this.o.h + 28;
+    this.rowH = (this.o.static ? this.o.h : this.dealY + this.o.h) + this.o.rowGap;
     this.initial = values.slice();
     this.epoch = 0;
     this.busy = false;
     el.classList.add("deckview");
-    el.style.width = `${values.length * this.o.w + (values.length - 1) * this.o.gap}px`;
-    el.style.height = `${this.o.static ? this.o.h : this.dealY + this.o.h}px`;
+    const cols = Math.min(values.length, this.o.perRow), rows = Math.ceil(values.length / this.o.perRow);
+    el.style.width = `${cols * this.o.w + (cols - 1) * this.o.gap}px`;
+    el.style.height = `${rows * this.rowH - this.o.rowGap}px`;
     this.build(values);
   }
 
@@ -52,8 +55,8 @@ class DeckView {
     this.cards = new Map();
     for (const v of values) {
       const c = document.createElement("div");
-      c.className = "card";
-      c.textContent = v;
+      c.className = `card ${this.o.cls(v)}`.trim();
+      c.textContent = this.o.label(v);
       c.dataset.v = v;
       Object.assign(c.style, {
         width: `${this.o.w}px`, height: `${this.o.h}px`,
@@ -71,8 +74,11 @@ class DeckView {
     }
   }
 
-  x(i) { return i * (this.o.w + this.o.gap); }
-  put(v, i, y) { this.cards.get(v).style.transform = `translate(${this.x(i)}px, ${y}px)`; }
+  x(i) { return (i % this.o.perRow) * (this.o.w + this.o.gap); }
+  put(v, i, y) {
+    const top = Math.floor(i / this.o.perRow) * this.rowH;
+    this.cards.get(v).style.transform = `translate(${this.x(i)}px, ${top + y}px)`;
+  }
   layout() { this.order.forEach((v, i) => this.put(v, i, this.lift)); }
 
   reset() { ++this.epoch; this.busy = false; this.build(this.initial); }
@@ -339,11 +345,11 @@ slides.forEach((s, j) => {
   no.className = "pageno";
   no.textContent = `${j + 1}`;
   s.appendChild(no);
-  if (s.dataset.demo) demos.set(s, Demos[s.dataset.demo](s));
 });
 
 addEventListener("keydown", e => {
   if (e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.target.closest?.("input, textarea, select")) return; // typing in a demo
   const demo = demos.get(slides[cur]);
   switch (e.key) {
     case "ArrowRight": case "PageDown": case " ": show(cur + 1); break;
@@ -367,4 +373,8 @@ document.getElementById("next").addEventListener("click", () => show(cur + 1));
 addEventListener("resize", fit);
 addEventListener("hashchange", () => show(parseInt(location.hash.slice(1), 10) - 1 || 0));
 fit();
-show(parseInt(location.hash.slice(1), 10) - 1 || 0);
+// start after every script has loaded, so another deck can add to Demos
+document.addEventListener("DOMContentLoaded", () => {
+  slides.forEach(s => { if (s.dataset.demo) demos.set(s, Demos[s.dataset.demo](s)); });
+  show(parseInt(location.hash.slice(1), 10) - 1 || 0);
+});

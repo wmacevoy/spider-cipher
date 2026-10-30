@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spider Cipher: 40 Cards</title>
+<meta name="description" content="The 40-card Spider cipher: card numbers, mod 40, translation with shift states, packets, and scrambling, with live demos.">
+<meta name="author" content="Warren MacEvoy">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..700;1,400..700&family=IBM+Plex+Sans:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="../talk/talk.css">
+<link rel="stylesheet" href="forty.css">
+</head>
+<body>
+<div id="stage">
+
+<!-- 1 -->
+<section class="slide dark center" style="gap:40px">
+  <img class="backdrop" src="../talk/spider-web-n4.svg" alt="">
+  <p class="eyebrow" style="font-size:28px;letter-spacing:4px">The 40-card system</p>
+  <h1 style="width:960px">Spider Cipher</h1>
+  <p class="soft" style="font-size:44px;line-height:1.3;width:880px">A visible cipher: cards, two-digit arithmetic, and patience</p>
+  <p>Warren MacEvoy</p>
+  <p class="hint">→ or space: next · Enter: step a demo · N: notes · F: full screen</p>
+  <aside class="notes">A summary of the full 40-card system: card numbers, mod 40 arithmetic, translation with shift states, packets, and the scramble step. Every demo here runs a JavaScript port of src/spider_cipher.c that is checked against bin/spider_cipher, both directions.</aside>
+</section>
+
+<!-- 2 -->
+<section class="slide">
+  <h2>Why a visible cipher?</h2>
+  <div class="row">
+    <div class="box"><p class="eyebrow">Invisible magic</p><h3 class="serif">You can’t watch it</h3><p class="soft" style="font-size:30px">Modern ciphers are unintelligible to almost everyone and impossible to observe in action.</p></div>
+    <div class="box"><p class="eyebrow">Time</p><h3 class="serif">Technology ages fast</h3><p class="soft" style="font-size:30px">Will your heirs be able to decode your keys in 100 years? Cards and arithmetic will still work.</p></div>
+    <div class="box"><p class="eyebrow">Trust</p><h3 class="serif">Who do you trust?</h3><p class="soft" style="font-size:30px">Hardware and apps can be compromised. A deck of cards on a table can be audited.</p></div>
+  </div>
+  <div class="banner"><p style="font-size:52px">By hand with a deck of cards, or by computer.<br><span class="accent">Either way, 40! ≈ 2<sup>159</sup> possible keys.</span></p></div>
+  <aside class="notes">From the original deck: modern ciphers are invisible magic; technology ages fast (cryptocurrency keys and heirs); trust (root-kits, man-in-the-middle, hardware back doors). Spider is doable by hand with cards, some dice, and two-digit arithmetic, and it is a concrete example of a modern stream cipher. You can use a computer, but you don’t have to.</aside>
+</section>
+
+<!-- 3 -->
+<section class="slide">
+  <h2>The whole system</h2>
+  <div class="box inverse" style="flex-direction:row;align-items:center;gap:32px;padding:32px 40px">
+    <p class="eyebrow" style="white-space:nowrap">Once</p>
+    <p>Share a shuffled deck in secret. Its order is the key.</p>
+  </div>
+  <div class="col" style="gap:20px">
+    <p class="eyebrow">For every message</p>
+    <div class="flow">
+      <div class="box"><h3 class="serif">1 · Translate</h3><p class="soft" style="font-size:30px">Text → cards, with shift cards for capitals, digits, and symbols.</p></div>
+      <div class="arrow">→</div>
+      <div class="box"><h3 class="serif">2 · Packet</h3><p class="soft" style="font-size:30px">Add random cards before and between the message cards.</p></div>
+      <div class="arrow">→</div>
+      <div class="box"><h3 class="serif">3 · Scramble</h3><p class="soft" style="font-size:30px">Add noise from the deck to each card, moving the deck as you go.</p></div>
+    </div>
+  </div>
+  <p class="soft" style="font-size:30px">To read a message, do the reverse: unscramble, unpacket, detranslate.</p>
+  <aside class="notes">Keep the three stages separate in people’s minds: translate is a public encoding (no secret), packet adds randomness (so the same message never scrambles the same way twice), and scramble is the only step that uses the key.</aside>
+</section>
+
+<!-- 4 -->
+<section class="slide" data-demo="cards40" style="gap:36px">
+  <h2>40 cards as the numbers 00 to 39</h2>
+  <div class="grid40"></div>
+  <p class="soft" style="font-size:30px">Queen = 0 (a Q looks like a 0), Ace = 1, then 2 to 9. Suits in alphabetical order give the tens digit.</p>
+  <aside class="notes">Take the Q, A, 2–9 of each suit from a standard deck: 40 cards. Clubs are 00–09, diamonds 10–19, hearts 20–29, spades 30–39 (alphabetical: clubs, diamonds, hearts, spades). Kings, jacks and tens are unused; laying the kings out in suit order makes a handy reference.</aside>
+</section>
+
+<!-- 5 -->
+<section class="slide">
+  <h2>Mod 40 arithmetic</h2>
+  <div class="row" style="gap:48px">
+    <div class="box">
+      <p class="eyebrow">Add ⊕</p>
+      <p class="serif" style="font-size:52px;line-height:1.3"><span class="red">9♦</span> ⊕ 2♠<br>= 19 + 32 = 51<br>≡ 11 = <span class="red">A♦</span></p>
+    </div>
+    <div class="box">
+      <p class="eyebrow blue">Subtract ⊖</p>
+      <p class="serif" style="font-size:52px;line-height:1.3"><span class="red">9♦</span> ⊖ 2♠<br>= 19 − 32 = −13<br>≡ 27 = <span class="red">7♥</span></p>
+    </div>
+  </div>
+  <div class="banner" style="padding:32px 48px"><p style="font-family:var(--sans);font-size:32px">Add or subtract 40 until the result is in 00 to 39. Shortcut: 32 + 8 = 40, so ⊕ 32 is the same as ⊖ 8.</p></div>
+  <aside class="notes">Card arithmetic is clock arithmetic with 40 hours. Practice: 19 ⊕ 32: 19 − 8 = 11. 19 ⊖ 32: 19 + 8 = 27. Everyone should do two or three of these before scrambling anything.</aside>
+</section>
+
+<!-- 6 -->
+<section class="slide" data-demo="codes" style="gap:28px">
+  <h2>Translate: one card, three meanings</h2>
+  <div class="codes"></div>
+  <p class="soft" style="font-size:28px">Big: <b>normal</b> · <span style="color:var(--blue)">left: shifted <b>up</b></span> · <span class="accent">right: shifted <b>down</b></span> · ␣ space, ⏎ new line</p>
+  <aside class="notes">Each card 00–35 means one character in each of three shift states: normal (lower case, space and punctuation), up (capitals and brackets), and down (digits, hex A–F, symbols). Spades 6–9 (36–39) change state: ↓ shift down and ↑ shift up for the next character only; ⤓ lock down and ⤒ lock up until changed. 34 and 35 are emoji: 👎 👍 normal, 💔 ❤ up, 😢 😄 down. This is the table in src/spider_cipher.c (CODES, UP_CODES, DOWN_CODES).</aside>
+</section>
+
+<!-- 7 -->
+<section class="slide" style="gap:44px">
+  <h2>Shift states</h2>
+  <div class="states">
+    <div class="state"><h3>hex</h3><p>any Unicode</p></div>
+    <div class="link"><span>⤒ →</span><span class="bar"></span><span>← ⤓</span></div>
+    <div class="state"><h3>down</h3><p>0–9 A–F # $ %</p></div>
+    <div class="link"><span>↑ ⤒ →</span><span class="bar"></span><span>← ↓ ⤓</span></div>
+    <div class="state home"><h3>normal</h3><p>a–z ␣ , . "</p></div>
+    <div class="link"><span>↑ ⤒ →</span><span class="bar"></span><span>← ↓ ⤓</span></div>
+    <div class="state"><h3>up</h3><p>A–Z { } [ ]</p></div>
+  </div>
+  <div class="row">
+    <div class="ruled"><h3>Start normal</h3><p class="soft">Every message starts in the normal state.</p></div>
+    <div class="ruled"><h3>↑ ↓ one shot</h3><p class="soft">Shift for the next character, then come back.</p></div>
+    <div class="ruled"><h3>⤒ ⤓ lock</h3><p class="soft">Stay in the new state until the next shift card.</p></div>
+    <div class="ruled"><h3>Anything else</h3><p class="soft">Below down: the character’s code point in hex, cards 00–15.</p></div>
+  </div>
+  <p class="soft" style="font-size:30px">Example: “café” → c a f ⤓ ⤓ <span class="accent">E 9</span> ⤒ — two locks down to hex, then é = U+00E9.</p>
+  <aside class="notes">The encoder looks ahead (up to ten characters) to choose the state that covers the most text, and locks when a run is longer than one character. After a hex character it writes ⤓ if another hex character follows, otherwise ⤒ back to the down state. The example is exactly what the reference encoder produces: 02 00 05 38 38 14 09 39, then end-of-message cards.</aside>
+</section>
+
+<!-- 8 -->
+<section class="slide" data-demo="translate" style="gap:32px">
+  <h2>Translate it yourself</h2>
+  <div class="field"><label for="tx">Message</label><input id="tx" value="#SPIDER Cipher." spellcheck="false" autocomplete="off"></div>
+  <div class="chips"></div>
+  <p class="narr"></p>
+  <aside class="notes">Type anything: the cards update live. Blue chips are shift cards, purple are hex digits, dashed are the end-of-message ⤒ cards. The message ends with at least five ⤒ (39), more until the length is a multiple of 10. The original slides hand-encode “#SPIDER Cipher.” as ↓ # ⤒ S P I D E R ⤓ ␣ ↑ C i p h e r . (36 20 39 18 …); the program finds a different but equally valid path (38 20 39 39 …). Any path decodes the same way.</aside>
+</section>
+
+<!-- 9 -->
+<section class="slide" style="gap:44px">
+  <h2>Put the message in a packet</h2>
+  <div class="col" style="gap:20px">
+    <div class="packet-row">
+      <div class="cell A">A</div><div class="cell A">A</div><div class="cell A">…</div><div class="cell A">A</div>
+      <div class="cell B">B</div><div class="cell M">M</div><div class="cell B">B</div><div class="cell M">M</div><div class="cell B">B</div><div class="cell M">…</div><div class="cell B">B</div><div class="cell M">M</div>
+      <div class="cell B">B</div><div class="cell M">⤒</div><div class="cell B">B</div><div class="cell M">…</div><div class="cell B">B</div><div class="cell M">⤒</div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="ruled"><h3>M · message</h3><p class="soft">The translated cards, ending with five or more ⤒ so the count is a multiple of 10.</p></div>
+    <div class="ruled"><h3>A · ten random</h3><p class="soft">Ten random cards in front. They stir the deck before any message card.</p></div>
+    <div class="ruled"><h3>B · one before each</h3><p class="soft">A random card before every message card.</p></div>
+  </div>
+  <div class="banner" style="padding:32px 48px"><p style="font-family:var(--sans);font-size:32px">Packet length = 10 + 2 × (message length): always a multiple of 10. The same message never scrambles the same way twice.</p></div>
+  <aside class="notes">Random cards: draw from a second shuffled deck, roll dice, or use a computer. Change from the original slides: the reference code rounds the message itself up to a multiple of 10 with ⤒ cards (at least five), instead of adding random C cards at the end. The B cards are scrambled like everything else; the decrypter writes them to a separate “deniable” channel, so they can carry a second message.</aside>
+</section>
+
+<!-- 10 -->
+<section class="slide">
+  <h2>Tag, noise, and cut cards</h2>
+  <table style="font-family:var(--sans);font-size:30px">
+    <thead><tr><th style="text-align:left">Card</th><th style="text-align:left">How to find it</th><th>Sorted deck,<br>packet card 23</th><th>Reversed deck,<br>packet card 23</th></tr></thead>
+    <tbody>
+      <tr><td style="text-align:left"><b>Tag</b></td><td style="text-align:left">Third card in the deck ⊖ 1</td><td class="mono">01</td><td class="mono">36</td></tr>
+      <tr><td style="text-align:left"><b>Noise</b></td><td style="text-align:left">The card after the tag (wrap to the front)</td><td class="mono y">02</td><td class="mono y">35</td></tr>
+      <tr><td style="text-align:left"><b>Cut</b></td><td style="text-align:left">First card in the deck ⊕ the clear card</td><td class="mono">23</td><td class="mono">22</td></tr>
+    </tbody>
+  </table>
+  <p class="soft" style="font-size:30px">The noise hides the card. The cut moves the deck, steered by the clear card.</p>
+  <aside class="notes">Sorted deck 00…39: third card 02, tag 01, the card after 01 is 02, cut = 00 ⊕ 23 = 23. Reversed deck 39…00: third card 37, tag 36, the card after 36 is 35, cut = 39 ⊕ 23 = 62 ≡ 22. Both examples are checked against the reference code.</aside>
+</section>
+
+<!-- 11 -->
+<section class="slide">
+  <h2>Scramble one card</h2>
+  <div class="row">
+    <div class="box"><p class="step-no">1</p><h3 class="serif">Noise</h3><p class="soft" style="font-size:30px">Tag = third ⊖ 1; noise = the card after the tag.</p></div>
+    <div class="box"><p class="step-no">2</p><h3 class="serif">Add</h3><p class="soft" style="font-size:30px">Scrambled = clear ⊕ noise. Write it down.</p></div>
+    <div class="box"><p class="step-no">3</p><h3 class="serif">Cut</h3><p class="soft" style="font-size:30px">Cut card = first ⊕ clear. Cut it to the front.</p></div>
+    <div class="box"><p class="step-no">4</p><h3 class="serif">Shuffle</h3><p class="soft" style="font-size:30px">Back-front: front card to back, front card to front, repeat.</p></div>
+  </div>
+  <div class="banner" style="display:flex;gap:28px;align-items:center;padding:32px 40px">
+    <p class="eyebrow" style="font-family:var(--sans);font-size:24px;color:var(--orange-light);white-space:nowrap">Unscramble</p>
+    <p style="font-family:var(--sans);font-size:32px">Clear = scrambled ⊖ noise, then the <b>same</b> cut (using the clear card) and shuffle.</p>
+  </div>
+  <aside class="notes">Arrange the key deck face up; for each packet card do 1–4; sort the deck when finished. Note: the original slides describe an older step (cut on the tag card, shuffle, then cut on the cut card). The current reference code (src/spider_cipher.c deckAdvance, and core/) cuts once, on first ⊕ clear, then shuffles; that is what these slides and demos use.</aside>
+</section>
+
+<!-- 12 -->
+<section class="slide" data-demo="scramble40" style="gap:22px">
+  <h2>Watch a packet scramble</h2>
+  <div class="deckview"></div>
+  <div class="strip"></div>
+  <div class="row" style="align-items:center;gap:32px">
+    <p class="narr" style="flex:1;font-size:28px;min-height:80px"></p>
+    <div class="btns" style="flex:none"><button data-act="step" class="primary">Step</button><button data-act="card">Whole card</button><button data-act="all">Run to end</button><button data-act="reset">Reset</button></div>
+  </div>
+  <aside class="notes">The deck is the key from the passphrase “math club” (sorted deck, then the passphrase scrambled through it). The strip is the 30-card packet for “Hi”: grey cells are the ten random prefix cards, dashed are the random B cards, orange are message cards. Step shows tag (dashed outline; the third card is blue), noise (orange), the cut, then the shuffle. The scrambled card appears under each packet card. At the end the demo unscrambles the result with the key and gets “Hi” back.</aside>
+</section>
+
+<!-- 13 -->
+<section class="slide">
+  <h2>Reading a message</h2>
+  <div class="flow back">
+    <div class="box"><h3 class="serif">1 · Unscramble</h3><p class="soft" style="font-size:30px">Start from the key deck. Clear = card ⊖ noise; cut and shuffle.</p></div>
+    <div class="arrow">→</div>
+    <div class="box"><h3 class="serif">2 · Unpacket</h3><p class="soft" style="font-size:30px">Drop the first ten cards, then every other card.</p></div>
+    <div class="arrow">→</div>
+    <div class="box"><h3 class="serif">3 · Detranslate</h3><p class="soft" style="font-size:30px">Read cards with the shift table until five ⤒ in a row.</p></div>
+  </div>
+  <div class="row">
+    <div class="ruled"><h3>Same key deck</h3><p class="soft">Both sides start every message from the key deck.</p></div>
+    <div class="ruled"><h3>Lockstep</h3><p class="soft">The cut uses the clear card, which the reader has just recovered.</p></div>
+    <div class="ruled"><h3>Done</h3><p class="soft">Sort the deck when finished, so the key isn’t left lying on the table.</p></div>
+  </div>
+  <aside class="notes">Unpacket order matters: drop the ten prefix cards, then every other card starting with the first (those are the random B cards), then stop at the first run of five ⤒. Any ⤒ that happen to appear after the end are ignored.</aside>
+</section>
+
+<!-- 14 -->
+<section class="slide">
+  <h2>Making a key</h2>
+  <div class="row">
+    <div class="box"><p class="eyebrow">By hand</p><h3 class="serif">Shuffle and copy</h3><p class="soft" style="font-size:30px">Shuffle thoroughly and write down the order, or make two decks in that order. 40! ≈ 2<sup>159</sup> possible keys.</p></div>
+    <div class="box"><p class="eyebrow blue">From a passphrase</p><h3 class="serif">Scramble a phrase</h3><p class="soft" style="font-size:30px">Start with a sorted deck and scramble the translated passphrase through it. The deck you end with is the key.</p></div>
+  </div>
+  <p class="soft" style="font-size:30px">The command-line tool uses the passphrase method: <span class="mono" style="font-size:26px">spider_cipher --key='…' --encrypt='…'</span></p>
+  <aside class="notes">A passphrase key is only as strong as the passphrase; a well-shuffled deck carries the full 159 bits. The passphrase method is DeckKey in src/spider_cipher_main.c: deckInit, then encode the key text (including its end-of-message cards) through the scramble step, discarding the output.</aside>
+</section>
+
+<!-- 15 -->
+<section class="slide" data-demo="tryit" style="gap:32px">
+  <h2>Try it</h2>
+  <div class="row" style="gap:48px;align-items:start">
+    <div class="col" style="gap:24px">
+      <div class="field"><label for="k">Key passphrase</label><input id="k" value="math club" spellcheck="false" autocomplete="off"></div>
+      <div class="field"><label for="m">Message</label><input id="m" value="Meet at 9" spellcheck="false" autocomplete="off"></div>
+      <div class="btns"><button data-act="encrypt" class="primary">Encrypt</button><span class="toggle"><button data-act="cards" class="on">Cards</button><button data-act="decimal">Decimal</button></span></div>
+      <p id="stats" class="soft" style="font-size:26px"></p>
+    </div>
+    <div class="col" style="gap:24px;flex:1.7">
+      <div class="field"><label for="c">Scrambled packet (edit or paste)</label><textarea id="c" spellcheck="false" style="font-size:22px;height:230px"></textarea></div>
+      <div class="field"><label>Decrypts to</label><p id="p" class="out"></p></div>
+    </div>
+  </div>
+  <aside class="notes">Encrypt runs translate, packet (with fresh random cards each time) and scramble; the output is in the same format as bin/spider_cipher (groups of five, rows of twenty), and the tool accepts its output in either cards or decimal format. Paste a packet from the command line to decrypt it here, or the other way around. Change one card in the packet and watch the rest of the message fall apart.</aside>
+</section>
+
+<!-- 16 -->
+<section class="slide" style="gap:40px">
+  <h2>Pocket reference</h2>
+  <div class="ref">
+    <div class="box"><p class="eyebrow">Cards</p><p class="f">Q A 2–9 = 0–9</p><p class="soft">♣ 00s · ♦ 10s · ♥ 20s · ♠ 30s</p></div>
+    <div class="box"><p class="eyebrow">Shifts</p><p class="f">↓ 36 ↑ 37 ⤓ 38 ⤒ 39</p><p class="soft">One-shot ↓ ↑; locks ⤓ ⤒</p></div>
+    <div class="box"><p class="eyebrow">Packet</p><p class="f">10 random, then B M B M …</p><p class="soft">Message ends with ⤒⤒⤒⤒⤒…</p></div>
+    <div class="box"><p class="eyebrow">Tag</p><p class="f">third ⊖ 1</p><p class="soft">Noise = the card after the tag</p></div>
+    <div class="box"><p class="eyebrow">Scramble</p><p class="f">out = clear ⊕ noise</p><p class="soft">Unscramble: clear = in ⊖ noise</p></div>
+    <div class="box"><p class="eyebrow">Move</p><p class="f">cut on first ⊕ clear</p><p class="soft">Then one back-front shuffle</p></div>
+  </div>
+  <aside class="notes">One slide to photograph. Everything else follows from these six boxes and the translation table.</aside>
+</section>
+
+<!-- 17 -->
+<section class="slide dark center" style="gap:48px">
+  <img class="backdrop" src="../talk/spider-web-n4.svg" alt="" style="opacity:.35">
+  <h1 style="font-size:120px;width:960px">Spider Cipher</h1>
+  <div class="col" style="gap:20px;width:880px">
+    <p class="soft" style="font-size:36px">The math behind it: the ten-card talk, with the spider graph and its theorems.</p>
+    <p><a class="accent" href="../talk/">wmacevoy.github.io/spider-cipher/talk</a></p>
+    <p class="accent">github.com/wmacevoy/spider-cipher</p>
+  </div>
+  <aside class="notes">The companion talk covers the ten-card cipher and the Cayley graph: vertex transitivity, connectivity for every even deck size, free depth, and girth 9.</aside>
+</section>
+
+</div>
+<div id="notes"></div>
+<div id="nav"><button id="prev" aria-label="Previous slide">‹</button><button id="next" aria-label="Next slide">›</button></div>
+<script src="spider40.js"></script>
+<script src="../talk/talk.js"></script>
+<script src="forty.js"></script>
+</body>
+</html>
