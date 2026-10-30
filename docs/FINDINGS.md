@@ -18,7 +18,8 @@ Started 2026-10-29; earlier entries are reconstructed from the history.
 - **Cost:** a changed or wrongly keyed packet decrypts to garbage with no error; v1 nearly recorded
   the gap as a decision.
 - **Findable by:** the lying column of the inputs table (SE1/R6), run as a test that changes one card.
-- **Changed:** REQUIREMENTS_v2 adds PK-2; the fix is queued.
+- **Changed:** REQUIREMENTS_v2 adds PK-2; decrypt now rejects such a packet (CLI and the 40-card
+  deck), and `make check` decrypts a fixed packet with one card changed.
 
 ## 2026-10-29 — CI was red on every push for at least seven months
 

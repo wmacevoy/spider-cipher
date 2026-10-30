@@ -142,13 +142,32 @@ int main(int argc, char *argv[]) {
 	CIO deny;
 	CIOInit(&deny);
 
-	decryptEnvelopeIO(deck,&cardIn.base, &deny, &cioU32Stdout.base);
+	// hold the message until the run of 39s that ends it arrives: a changed card
+	// (or a wrong key) desynchronizes the decks, and the garbage must not be printed
+	CIOArray message;
+	CIOArrayU32Init(&message,NULL,0,0,0,INT_MAX);
 
+	int status = decryptEnvelopeIO(deck,&cardIn.base, &deny, &message.base);
+	if (status >= 0) {
+	  const uint32_t *chars = (const uint32_t*) CIOArrayGetData(&message);
+	  int size = CIOArrayGetSize(&message);
+	  for (int i=0; i<size; ++i) {
+	    CIOWrite(&cioU32Stdout.base,chars[i]);
+	  }
+	}
+
+	CIOClose(&message);
 	CIOClose(&deny);
 	CIOClose(&cardIn);
 	CIOClose(&memU32Cipher);
-	CIOClose(&memCipher);	
+	CIOClose(&memCipher);
 	deckInit(deck);
+	if (status < 0) {
+	  CIOClose(&cioU32Stdout);
+	  CIOClose(&cioStdout);
+	  fprintf(stderr,"spider_cipher: the packet was changed, or the key is wrong: no message\n");
+	  return 1;
+	}
 	printf("\n");
 	continue;
       }

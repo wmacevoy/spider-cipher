@@ -29,12 +29,19 @@ tmp/spider_cipher_facts.o : src/spider_cipher_facts.c include/spider_cipher.h ..
 	mkdir -p tmp
 	$(CC) -c $(CFLAGS) $(LDFLAGS) -o $@ $<
 
+tmp/spider_cipher_generic_facts.o : src/spider_cipher_generic_facts.c ../facts/include/facts.h
+	mkdir -p tmp
+	$(CC) -c $(CFLAGS) $(LDFLAGS) -o $@ $<
 
 tmp/spider_cipher_main.o : src/spider_cipher_main.c include/spider_cipher.h
 	mkdir -p tmp
 	$(CC) -c $(CFLAGS) $(LDFLAGS) -o $@ $<
 
 bin/spider_cipher_facts : tmp/spider_cipher_facts.o tmp/spider_cipher.o tmp/cio.o tmp/utf8.o tmp/facts.o
+	mkdir -p bin
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LDLIBS)
+
+bin/spider_cipher_generic_facts : tmp/spider_cipher_generic_facts.o tmp/facts.o
 	mkdir -p bin
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LDLIBS)
 
@@ -54,6 +61,11 @@ check : all
 	bin/spider_cipher --decimal --key='secret' --encrypt='message' | bin/spider_cipher --key='secret' --decrypt=- | diff - expected/message.out
 	bin/spider_cipher --base40 --key='secret' --encrypt='message' | bin/spider_cipher --key='secret' --decrypt=- | diff - expected/message.out
 	bin/spider_cipher --cards --key='secret' --encrypt='message' | bin/spider_cipher --key='secret' --decrypt=- | diff - expected/message.out
+# REQ2/PK-2: a fixed packet decrypts and exits 0; the same packet with its first message card
+# changed prints nothing, says why on stderr, and exits nonzero.
+	bin/spider_cipher --key='secret' --decrypt=- <expected/message.packet >tmp/message.out && diff tmp/message.out expected/message.out
+	! bin/spider_cipher --key='secret' --decrypt=- <expected/message-changed.packet >tmp/changed.out 2>tmp/changed.err
+	test ! -s tmp/changed.out && test -s tmp/changed.err
 
 .PHONY: expected
 expected : all
@@ -68,7 +80,7 @@ ASYFLAGS?=-tex $(ASY_ENGINE)
 TECTONIC?=tectonic
 TEX_OUT?=build
 
-FIGURES=$(TEX_OUT)/figures/venn.pdf
+FIGURES=$(TEX_OUT)/figures/venn.pdf $(TEX_OUT)/figures/graph.pdf $(TEX_OUT)/figures/tree.pdf
 
 $(TEX_OUT)/figures/%.pdf: figures/%.asy
 	mkdir -p $(dir $@)

@@ -75,11 +75,13 @@ today by reading the includes *(inferred)*.
 - **`make check` passes `--facts_timeout=$(FACTS_TIMEOUT)`, default 300 s** — REQ1/TH-1 — facts' own
   10 s default is shorter than an unoptimized run — source: 2026-10-29, see FINDINGS.
 - **Browser decks share `docs/talk/talk.js`** — rather than a copy per deck — source: 2026-10-29.
+- **Decrypt holds the message until the run of 39s arrives** — REQ2/PK-2 — the CLI decodes into a
+  buffer and prints it only if `decodeIO` succeeds, so a changed packet prints nothing; rather than
+  printing as it reads and reporting at the end, which shows the garbage — source: 2026-10-30. The
+  browser port does the same (`complete` in `spider40.js`).
 
 ## Deferred
 
 - Not yet: a check that the copies of the cipher agree (REQ1/IM-1) — the cross-check exists only as a
   script run by hand on 2026-10-29; see QUEUE.
 - Not yet: a test for REQ1/CT-1 — none exists.
-- Not yet: decrypt acting on the end-of-message check (REQ2/PK-2) — the check is in `decodeIO`, but
-  the CLI ignores its result; see QUEUE.
