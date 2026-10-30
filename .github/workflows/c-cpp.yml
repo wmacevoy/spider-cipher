@@ -46,3 +46,7 @@ jobs:
 
     - name: make debug optimized check
       run: make -B CDBG="-g" COPT="-O2" -C "main" check
+
+    - name: the repository guide's check (CONTRIBUTING.md)
+      working-directory: main
+      run: make check
